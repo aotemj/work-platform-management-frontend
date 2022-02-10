@@ -1,0 +1,137 @@
+@font-size-s: 12px;
+@font-size-xs: 10px;
+@font-size-m: 14px;
+@label-line-hight: 14px;
+@label-max-line: 2;
+@form-field-margin-size-xs: 8px;
+@label-text-max-width: 70px;
+@required-asterisk-width: 6px;
+@label-tooltip-width: 14px;
+@form-field-hint-margin-size-xs: 4px;
+@form-field-error-message-margin-size-xs: 4px;
+
+.root {
+    margin-top: 0 !important;
+    display: flex;
+    margin-bottom: 16px;
+}
+
+.no-label {
+    // margin-left: 0;
+}
+
+.error {
+    color: #ff5630;
+}
+
+.warning {
+    color: var(--theme-warning-color);
+}
+
+.success {
+    color: var(--theme-success-color);
+}
+
+.label {
+    height: 35px;
+    display: flex;
+    font-size: @font-size-m;
+    color: #4d545e;
+    font-weight: 400;
+    // margin-top: 5px; // 第一行文本的位置
+    // margin-bottom: @form-field-margin-size-xs;
+    line-height: 32px;
+    padding: 0 0 3px;
+}
+
+.tooltip {
+    font-weight: 500;
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    width: @label-tooltip-width;
+    height: @label-line-hight;
+    margin-left: @form-field-margin-size-xs;
+
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+.required {
+    text-align: right;
+    margin-right: 8px;
+    color: #de350b;
+    font-size: @font-size-xs;
+    line-height: @label-line-hight;
+}
+
+.input {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.control {
+    display: flex;
+    align-items: center;
+    min-height: 30px; // 暂时不支持更大尺寸的
+}
+
+.vertical {
+    display: flex;
+    flex-direction: column;
+
+    .label {
+        position: relative;
+        display: flex;
+        align-items: center;
+        width: 100%;
+    }
+}
+
+.horizontal {
+    display: flex;
+    flex-direction: row;
+
+    .label {
+        flex: 0 0 auto;
+        display: flex;
+        // justify-content: flex-end;
+        align-items: flex-start;
+        width: calc(
+            @label-text-max-width +
+            @required-asterisk-width +
+            @form-field-margin-size-xs +
+            @label-tooltip-width +
+            @form-field-margin-size-xs
+        );
+
+        .text {
+            max-width: @label-text-max-width;
+            color: #4d545e;
+            text-align: right;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            word-break: break-all;
+            white-space: pre-wrap;
+            -webkit-line-clamp: @label-max-line;
+            -webkit-box-orient: vertical;
+        }
+    }
+}
+
+.error-message {
+    display: flex;
+    align-items: center;
+    font-size: 12px;
+    line-height: 1.5;
+    color: #ff5630;
+}
+
+.hint {
+    font-size: 12px;
+    color: #909AAA;
+    line-height: 24px;
+}
