@@ -1,6 +1,6 @@
 import axios from 'axios';
 import {message} from '@osui/ui';
-import {getCompanyFix, getCompanyFix} from '../utils/getRouteIds';
+import {getCompanyFix, getSpaceFix} from '../utils/getRouteIds';
 
 const service = axios.create({
     timeout: 6000000,
@@ -52,7 +52,7 @@ service.interceptors.response.use(
                 window.location.href = `${localtions.origin}/login?user_status=FORBIDDENED}`;
                 break;
             case 403:
-                window.location.href = `${localtions.origin}/${getCompanyFix()}/${getCompanyFix()}/403`;
+                window.location.href = `${localtions.origin}/${getCompanyFix()}/${getSpaceFix()}/403`;
                 break;
             case 404:
                 msg = data.message || '资源为空';

@@ -1,15 +1,11 @@
-const EslintPlugin=require('eslint-webpack-plugin');
 module.exports = {
-    parser: '@babel/eslint-parser',
-    plugins: [
-        new EslintPlugin(),
-        'react-hooks',
-    ],
+    parser: 'babel-eslint',
     extends: [
         '@ecomfe/eslint-config',
         '@ecomfe/eslint-config/react',
-        'eslint:recommended',
-        'plugin: react/recommended'
+    ],
+    plugins: [
+        'react-hooks',
     ],
     rules: {
         'brace-style': [1, '1tbs'],

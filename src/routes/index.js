@@ -22,10 +22,10 @@ const App = () => (
         >
             <BrowserRouter>
                 <Routes>
-                    {/*<Route path="/:company/:project/cov/module/list" element={<ModuleList />} />*/}
-                    {/*<Route path="/:company/:project/cov/module/edit" element={<ModuleEdit />} />*/}
-                    {/*<Route path="/:company/:project/cov/task/list" element={<TaskList />} />*/}
-                    {/*<Route path="/:company/:project/cov/detail" element={<CovDetail />} />*/}
+                    {/* <Route path="/:company/:project/cov/module/list" element={<ModuleList />} /> */}
+                    {/* <Route path="/:company/:project/cov/module/edit" element={<ModuleEdit />} /> */}
+                    {/* <Route path="/:company/:project/cov/task/list" element={<TaskList />} /> */}
+                    {/* <Route path="/:company/:project/cov/detail" element={<CovDetail />} /> */}
                 </Routes>
             </BrowserRouter>
         </div>

@@ -1,4 +1,3 @@
-// eslint-disable-next-line
 import React, {useMemo} from 'react';
 import {Tooltip} from '@osui/ui';
 import {ReactComponent as IconError} from './icons/error.svg';
@@ -75,14 +74,12 @@ const Layout = ({
                     {children}
                 </div>
                 {printableErrors.map(({text, level}, index) => (
-                    // eslint-disable-next-line
                     <div key={index} className={cx('error-message', `level-${level}`)}>
                         {LevelIconMap[level]}
                         {text}
                     </div>
                 ))}
                 {hints.map((text, i) => (
-                    // eslint-disable-next-line
                     <div key={i} className={cx('hint')}>
                         {text}
                     </div>

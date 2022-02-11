@@ -1,11 +1,11 @@
-const { PROXY_TARGET, COOKIE: Cookie } = require('./conf.default')
+const {PROXY_TARGET, COOKIE: Cookie} = require('./conf.default');
 
-module.exports =  {
-    "/api": {
+module.exports = {
+    '/api': {
         target: PROXY_TARGET,
         changeOrigin: true,
-        headers:{
+        headers: {
             Cookie,
         },
     },
-}
+};
