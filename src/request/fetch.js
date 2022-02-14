@@ -1,11 +1,9 @@
 import service from './service';
-import {getPrefix, getCompanyPrefix} from '../utils/getRouteIds';
+import {getPrefix} from '../utils/getRouteIds';
 
-export const fetch = (url, params, method, type) => {
+export const fetch = (url, params, method, type, hasFix) => {
     let fetchUrl = '';
-    if (type === 'noProject') {
-        fetchUrl = getCompanyPrefix() + url;
-    } else if (url.indexOf('/api/facade') > -1) {
+    if (hasFix === 'none' || hasFix === 'no') {
         fetchUrl = url;
     } else {
         fetchUrl = getPrefix() + url;
@@ -13,7 +11,7 @@ export const fetch = (url, params, method, type) => {
     const headers = {
         'Access-Control-Allow-Origin': '*',
     };
-    if (method === 'post') {
+    if (method === 'post' || method === 'put') {
         if (type === 'formData') {
             headers['Content-Type'] = 'application/x-www-form-urlencoded';
         } else {
@@ -24,12 +22,12 @@ export const fetch = (url, params, method, type) => {
         method: method,
         headers,
         url: fetchUrl,
-        data: method === 'post' ? params : '',
+        data: method === 'post' || method === 'put' ? params : '',
         response: type === 'blob' ? 'blob' : 'json',
         responseType: type === 'blob' ? 'blob' : 'json',
         transformRequest: [
             function (data) {
-                if (method === 'post') {
+                if (method === 'post' || method === 'put') {
                     if (type === 'formData') {
                         return data;
                     }
@@ -47,18 +45,10 @@ export const fetch = (url, params, method, type) => {
     });
 };
 
-export const postRequest = (url, params, type) => {
+export const request = ({url, params, method, type, hasFix}) => {
     return new Promise((resolve, reject) => {
-        fetch(url, params, 'post', type).then(res => {
-            resolve(res);
-        });
-    });
-};
-
-export const getRequest = (url, params, type) => {
-    return new Promise((resolve, reject) => {
-        fetch(url, params, 'get', type).then(res => {
-            resolve(res);
+        fetch(url, params, method, type, hasFix).then(res => {
+            resolve(res, hasFix);
         });
     });
 };

@@ -1895,14 +1895,6 @@
     "@types/estree" "*"
     "@types/json-schema" "*"
 
-"@types/eslint@^7.28.2":
-  version "7.29.0"
-  resolved "https://registry.npmmirror.com/@types/eslint/download/@types/eslint-7.29.0.tgz"
-  integrity sha512-VNcvioYDH8/FxaeTKkM4/TiTwt6pBV9E3OfGmvaw8tPl0rrHCJ4Ll15HRT+pMiFAf/MLQvAzC+6RzUMEL9Ceng==
-  dependencies:
-    "@types/estree" "*"
-    "@types/json-schema" "*"
-
 "@types/estree@*", "@types/estree@^0.0.50":
   version "0.0.50"
   resolved "https://registry.npmmirror.com/@types/estree/download/@types/estree-0.0.50.tgz"
@@ -2501,11 +2493,6 @@ array.prototype.flatmap@^1.2.4, array.prototype.flatmap@^1.2.5:
     call-bind "^1.0.0"
     define-properties "^1.1.3"
     es-abstract "^1.19.0"
-
-arrify@^2.0.1:
-  version "2.0.1"
-  resolved "https://registry.npmmirror.com/arrify/-/arrify-2.0.1.tgz#c9655e9331e0abcd588d2a7cad7e9956f66701fa"
-  integrity sha512-3duEwti880xqi4eAMN8AyR4a0ByT90zoYdLlevfrvU43vb0YZwZVfxOgxWrLXXXpyugL0hNZc9G6BiB5B3nUug==
 
 astral-regex@^2.0.0:
   version "2.0.0"
@@ -3463,11 +3450,6 @@ eslint-config-standard@16.0.3:
   resolved "https://registry.npmmirror.com/eslint-config-standard/-/eslint-config-standard-16.0.3.tgz#6c8761e544e96c531ff92642eeb87842b8488516"
   integrity sha512-x4fmJL5hGqNJKGHSjnLdgA6U6h1YW/G2dW9fA+cyVur4SK6lyue8+UgNKWlZtUDTXvgKDD/Oa3GQjmB5kjtVvg==
 
-eslint-config-standard@^14.1.1:
-  version "14.1.1"
-  resolved "https://registry.npmmirror.com/eslint-config-standard/-/eslint-config-standard-14.1.1.tgz#830a8e44e7aef7de67464979ad06b406026c56ea"
-  integrity sha512-Z9B+VR+JIXRxz21udPTL9HpFMyoMUEeX1G251EQ6e05WD9aPVtVBn09XUmZ259wCMlCDmYDSZG62Hhm+ZTJcUg==
-
 eslint-import-resolver-node@^0.3.6:
   version "0.3.6"
   resolved "https://registry.nlark.com/eslint-import-resolver-node/download/eslint-import-resolver-node-0.3.6.tgz?cache=0&other_urls=https%3A%2F%2Fregistry.nlark.com%2Feslint-import-resolver-node%2Fdownload%2Feslint-import-resolver-node-0.3.6.tgz"
@@ -3585,11 +3567,6 @@ eslint-plugin-react@~7.25.1:
     resolve "^2.0.0-next.3"
     string.prototype.matchall "^4.0.5"
 
-eslint-plugin-standard@^5.0.0:
-  version "5.0.0"
-  resolved "https://registry.npmmirror.com/eslint-plugin-standard/-/eslint-plugin-standard-5.0.0.tgz#c43f6925d669f177db46f095ea30be95476b1ee4"
-  integrity sha512-eSIXPc9wBM4BrniMzJRBm2uoVuXz2EPa+NXPk2+itrVt+r5SbKFERx/IgrK/HmfjddyKVz2f+j+7gBRvu19xLg==
-
 eslint-rule-composer@^0.3.0:
   version "0.3.0"
   resolved "https://registry.nlark.com/eslint-rule-composer/download/eslint-rule-composer-0.3.0.tgz#79320c927b0c5c0d3d3d2b76c8b4a488f25bbaf9"
@@ -3631,18 +3608,6 @@ eslint-visitor-keys@^3.0.0:
   version "3.1.0"
   resolved "https://registry.npmmirror.com/eslint-visitor-keys/download/eslint-visitor-keys-3.1.0.tgz?cache=0&sync_timestamp=1636378409939&other_urls=https%3A%2F%2Fregistry.npmmirror.com%2Feslint-visitor-keys%2Fdownload%2Feslint-visitor-keys-3.1.0.tgz#eee4acea891814cda67a7d8812d9647dd0179af2"
   integrity sha512-yWJFpu4DtjsWKkt5GeNBBuZMlNcYVs6vRCLoCVEJrTjaSB6LC98gFipNK/erM2Heg/E8mIK+hXG/pJMLK+eRZA==
-
-eslint-webpack-plugin@^2.6.0:
-  version "2.6.0"
-  resolved "https://registry.npmmirror.com/eslint-webpack-plugin/-/eslint-webpack-plugin-2.6.0.tgz#3bd4ada4e539cb1f6687d2f619073dbb509361cd"
-  integrity sha512-V+LPY/T3kur5QO3u+1s34VDTcRxjXWPUGM4hlmTb5DwVD0OQz631yGTxJZf4SpAqAjdbBVe978S8BJeHpAdOhQ==
-  dependencies:
-    "@types/eslint" "^7.28.2"
-    arrify "^2.0.1"
-    jest-worker "^27.3.1"
-    micromatch "^4.0.4"
-    normalize-path "^3.0.0"
-    schema-utils "^3.1.1"
 
 eslint@7.22.0:
   version "7.22.0"
@@ -4729,7 +4694,7 @@ isobject@^3.0.1:
   resolved "https://registry.npmmirror.com/isobject/download/isobject-3.0.1.tgz"
   integrity sha512-WhB9zCku7EGTj/HQQRz5aUQEUeoQZH2bWcltRErOpymJ4boYE6wL9Tbr23krRPSZ+C5zqNSrSw+Cc7sZZ4b7vg==
 
-jest-worker@^27.3.1, jest-worker@^27.4.1:
+jest-worker@^27.4.1:
   version "27.4.6"
   resolved "https://registry.npmmirror.com/jest-worker/download/jest-worker-27.4.6.tgz"
   integrity sha512-gHWJF/6Xi5CTG5QCvROr6GcmpIqNYpDJyc8A1h/DyXqH1tD6SnRCM0d3U5msV31D2LB/U+E0M+W4oyvKV44oNw==
@@ -5844,6 +5809,11 @@ queue-microtask@^1.2.2:
   version "1.2.3"
   resolved "https://registry.nlark.com/queue-microtask/download/queue-microtask-1.2.3.tgz"
   integrity sha1-SSkii7xyTfrEPg77BYyve2z7YkM=
+
+ramda@^0.28.0:
+  version "0.28.0"
+  resolved "https://registry.npmmirror.com/ramda/-/ramda-0.28.0.tgz#acd785690100337e8b063cab3470019be427cc97"
+  integrity sha512-9QnLuG/kPVgWvMQ4aODhsBUFKOUmnbUnsSXACv+NCQZcHbeb+v8Lodp8OVxtRULN1/xOyYLLaL6npE6dMq5QTA==
 
 randombytes@^2.1.0:
   version "2.1.0"
