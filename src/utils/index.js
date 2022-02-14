@@ -48,3 +48,4 @@ export function debounce(fn, delay = 1000) {
         }, delay);
     };
 }
+

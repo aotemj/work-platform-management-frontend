@@ -25,7 +25,7 @@ const useNoahList = () => {
 
     const [noahTypes, setNoahTypes] = useState([{name: '全部', id: 'all', tag: 'all'}]);
 
-    const updateData =  useCallback(newData => {
+    const updateData = useCallback(newData => {
         setData({
             ...data,
             ...newData,
@@ -45,13 +45,15 @@ const useNoahList = () => {
         const {pageNum, pageSize} = data;
         setLoading(true);
         try {
-            const res = await requestForAgn({url: LIST_URL, params: {
-                _offset: pageNum,
-                _limit: pageSize,
-                // TODO 作业类型字段
-                keyword: searchValue,
-                select: noahType,
-            }});
+            const res = await requestForAgn({
+                url: LIST_URL, params: {
+                    _offset: pageNum,
+                    _limit: pageSize,
+                    // TODO 作业类型字段
+                    keyword: searchValue,
+                    select: noahType,
+                },
+            });
             const {status, result, msg} = res;
             setLoading(false);
             if (!status) {
@@ -83,24 +85,46 @@ const useNoahList = () => {
 
     }, []);
 
+    const checkIfBatchesOperationIsValid = useCallback(() => {
+        const length = selectedRowKeys.length;
+        const valid = length !== 0;
+        if (!valid) {
+            message.error('请至少选择一个项目');
+        }
+        return valid;
+    }, [selectedRowKeys]);
+
     // 批量执行
-    const executeInBatches = useCallback(() => {}, []);
+    const executeInBatches = useCallback(() => {
+        if (checkIfBatchesOperationIsValid()) {
+            return false;
+        }
+        // TODO 批量执行
+    }, [checkIfBatchesOperationIsValid]);
+
     // 批量删除
-    const removeInBatches = useCallback(() => {}, []);
+    const removeInBatches = useCallback(() => {
+        if (checkIfBatchesOperationIsValid()) {
+            return false;
+        }
+        // TODO 批量删除
+    }, [checkIfBatchesOperationIsValid]);
+
     // 菜单点击
     const handleMenuClick = useCallback(e => {
+        const {key} = e;
         const {EXECUTING, REMOVE} = DROP_DOWN_MENU;
-        switch (e) {
-            case EXECUTING:
+        switch (key) {
+            case EXECUTING.key:
                 executeInBatches();
                 break;
-            case REMOVE:
+            case REMOVE.key:
                 removeInBatches();
                 break;
         }
     }, [executeInBatches, removeInBatches]);
 
-    const showDetail =  useCallback(id => {
+    const showDetail = useCallback(id => {
     }, []);
 
     // 作业类型筛选 change event

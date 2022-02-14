@@ -138,7 +138,6 @@ const NoahList = () => {
         handleChange,
         handleChangeInput,
         handleMenuClick,
-        // onClear: onNoahSelectClear,
     };
     return (
         <div className={cx('noah-container')}>
