@@ -1,5 +1,5 @@
 const path = require('path');
-const webpack = require('webpack');
+// const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const LessPluginLists = require('less-plugin-lists');
@@ -16,9 +16,10 @@ const smp = new SpeedMeasurePlugin();
 
 const distOutputPath = 'dist/assets/static';
 const proxyConfig = require('./config/proxyConfig.js');
+const {DEV_PORT} = require('./config/conf.default');
 
 
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+// const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 // output配置
 const outputConfig = isProd =>
@@ -132,15 +133,15 @@ module.exports = (cliEnv = {}, argv) => {
             extensions: ['.jsx', '.js', '.css'],
         },
         stats: {
-            "assets": false,
-            "builtAt": false,
-            "modules": false,
-            "entrypoints": false,
-            "warnings": false
+            'assets': false,
+            'builtAt': false,
+            'modules': false,
+            'entrypoints': false,
+            'warnings': false,
         },
         devServer: {
             hot: true,
-            port: 8001,
+            port: DEV_PORT,
             static: {
                 directory: path.resolve(__dirname, '../dist'),
             },
@@ -149,13 +150,13 @@ module.exports = (cliEnv = {}, argv) => {
                 overlay: {
                     errors: true,
                     warnings: false,
-                }
+                },
             },
             historyApiFallback: {
                 disableDotRule: true,
                 index: '/',
             },
-            proxy: isProd ? undefined :proxyConfig,
+            proxy: isProd ? undefined : proxyConfig,
         },
         plugins: [
             new HtmlWebpackPlugin({
@@ -211,7 +212,8 @@ module.exports = (cliEnv = {}, argv) => {
                             loader: 'babel-loader',
                             options: {
                                 presets: ['@babel/preset-env', '@babel/preset-react'],
-                                plugins: ["react-require", ['import', {libraryName: 'antd', libraryDirectory: 'es', style: true}]],
+                                // eslint-disable-next-line max-len
+                                plugins: ['react-require', ['import', {libraryName: 'antd', libraryDirectory: 'es', style: true}]],
                             },
                         },
                         // 'eslint-loader',
@@ -229,7 +231,7 @@ module.exports = (cliEnv = {}, argv) => {
                     use: [
                         extractOrStyleLoaderConfig,
                         {loader: 'css-loader', options: {importLoaders: 1}},
-                        postcssLoaderConfig
+                        postcssLoaderConfig,
                     ],
                 },
                 {
@@ -272,7 +274,10 @@ module.exports = (cliEnv = {}, argv) => {
                 },
                 {
                     test: /\.svg$/,
-                    include: [path.resolve(__dirname, 'node_modules/antd/'), path.resolve(__dirname, 'node_modules/@osui')],
+                    include: [
+                        path.resolve(__dirname, 'node_modules/antd/'),
+                        path.resolve(__dirname, 'node_modules/@osui'),
+                    ],
                     use: ['file-loader'],
                 },
 

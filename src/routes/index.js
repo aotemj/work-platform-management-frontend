@@ -2,10 +2,12 @@ import {BrowserRouter, Route, Routes} from 'react-router-dom';
 import zhCN from 'antd/lib/locale/zh_CN';
 import '../index.global.less';
 import {ConfigProvider, message} from '@osui/ui';
-import {ROUTE_PREFIX} from '../constant';
+import {CONTAINER_DOM_ID, ROUTE_PREFIX} from '../constant';
 
 import NoahList from '../pages/Noah/List';
 import {useEffect} from 'react';
+import AddOrEdit from '../pages/Noah/AddOrEdit';
+import {getContainerDOM} from '../utils';
 
 /**
  * 创建通用路由
@@ -22,19 +24,21 @@ export const routes = {
         url: 'noah/list',
         component: <NoahList />,
     },
-    // ASSIGNMENT_DETAIL: {
-    //     url: 'assignment/detail/:detailId',
-    //     getUrl: id => routes.ASSIGNMENT_DETAIL.url.replace(':detailId', id),
-    //     component: AssignmentDetail,
-    // },
+    NOAH_ADD: {
+        url: 'noah/add',
+        component: <AddOrEdit />,
+    },
+    NOAH_EDIT: {
+        url: 'noah/:detailId',
+        getUrl: id => `${ROUTE_PREFIX}/${routes.NOAH_EDIT.url.replace(':detailId', id)}`,
+        component: <AddOrEdit />,
+    },
 };
 
 const App = () => {
     useEffect(() => {
         message.config({
-            getContainer: () => {
-                return document.getElementById('osc-noah');
-            },
+            getContainer: getContainerDOM,
         });
         return () => {
             message.destroy();
@@ -43,7 +47,7 @@ const App = () => {
     return (
         <ConfigProvider
             getPopupContainer={() => {
-                const node = document.getElementById('osc-noah');
+                const node = getContainerDOM();
                 if (node) {
                     return node;
                 }
@@ -53,7 +57,7 @@ const App = () => {
         >
             <div
                 data-theme="osui"
-                id="osc-noah"
+                id={CONTAINER_DOM_ID}
                 className="osc-noah"
                 style={{height: '100%', maxHeight: '100vh', overflow: 'auto'}}
             >
