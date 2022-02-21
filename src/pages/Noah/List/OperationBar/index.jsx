@@ -4,7 +4,7 @@ import {DROP_DOWN_MENU} from '../constants';
 import {ReactComponent as IconSearch} from '../../../../statics/icons/search.svg';
 import React from 'react';
 
-const OperationBar = ({handleChange, noahTypes = [], handleMenuClick, handleChangeInput, noahType}) => {
+const OperationBar = ({handleChange, noahTypes = [], handleMenuClick, handleChangeInput, noahType, addNoah}) => {
 
     const typeSelectProps = {
         options: noahTypes.map(project => {
@@ -22,6 +22,7 @@ const OperationBar = ({handleChange, noahTypes = [], handleMenuClick, handleChan
         onChange: handleChange,
         value: noahType,
     };
+
     const menu = (
         <Menu onClick={handleMenuClick}>
             {
@@ -48,7 +49,7 @@ const OperationBar = ({handleChange, noahTypes = [], handleMenuClick, handleChan
                 <Select {...typeSelectProps} />
             </div>
             <div className={cx('right')}>
-                <Button type="primary" className={cx('create-button')}>新建</Button>
+                <Button type="primary" className={cx('create-button')} onClick={addNoah}>新建</Button>
                 <Dropdown
                     overlay={menu}
                     placement={'bottomCenter'}

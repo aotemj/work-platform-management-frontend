@@ -1,6 +1,7 @@
 import {request} from '../request/fetch';
 import {ROUTE_PREFIX} from './constant';
 import {getCompanyFix} from './getRouteIds';
+import {CONTAINER_DOM_ID} from '../constant';
 
 // eslint-disable-next-line max-len
 export const requestForAgn = ({url, params, method = 'get', type}) => request({
@@ -49,3 +50,6 @@ export function debounce(fn, delay = 1000) {
     };
 }
 
+export function getContainerDOM() {
+    return document.getElementById(CONTAINER_DOM_ID);
+}

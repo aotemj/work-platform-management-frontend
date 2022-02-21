@@ -30,6 +30,7 @@ const NoahList = () => {
         noahTypes,
         noahType,
         // onNoahSelectClear,
+        addNoah,
     } = useNoahList();
     const tableOperations = [
         {
@@ -138,6 +139,7 @@ const NoahList = () => {
         handleChange,
         handleChangeInput,
         handleMenuClick,
+        addNoah,
     };
     return (
         <div className={cx('noah-container')}>

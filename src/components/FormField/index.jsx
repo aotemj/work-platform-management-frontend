@@ -6,7 +6,7 @@ import Layout from './Layout';
 export const fakeEvent = (name, value) => ({target: {name, value}});
 
 // eslint-disable-next-line max-len
-const layoutProps = ['id', 'layout', 'label', 'tooltip', 'required', 'errors', 'hints', 'className', 'style', 'labelClassName'];
+const layoutProps = ['id', 'layout', 'label', 'tooltip', 'required', 'errors', 'hints', 'className', 'style', 'labelClassName', 'hideLabel'];
 
 const formikProps = ['as', 'children', 'component', 'innerRef', 'name', 'render', 'validate'];
 
@@ -35,7 +35,7 @@ const FormField = ({type, name, children, fast, ...rest}) => (name ? (
             };
 
             // TODO errors需要改成数组，而不是反映values的结构。
-            // 现在每个Feild的errors是数组，FieldArray，也是数组。
+            // 现在每个Field的errors是数组，FieldArray，也是数组。
             // 同时FieldArray的insert会给新添加的字段的error赋值一个null
             // 需要需要在Layout里边特殊适配
             // 以此保证错误信息的数组的数量与顺序是正确的 在这里进行一下兼容。

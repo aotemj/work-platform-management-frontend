@@ -26,6 +26,7 @@ const Layout = ({
     errors = [],
     hints = [],
     style,
+    hideLabel = false,
     ...rest
 }) => {
     const hasError = useMemo(
@@ -42,10 +43,13 @@ const Layout = ({
         },
         [errors],
     );
-
+    console.log(hideLabel);
     return (
-        <div className={cx('root', layout, {'no-label': label === undefined}, className)} style={style}>
-            {label !== undefined && (
+        <div
+            className={cx('root', layout, {'no-label': label === undefined || label === null}, className)}
+            style={style}
+        >
+            {!hideLabel && label !== undefined && label !== null && (
                 <label htmlFor={id} className={cx('label')}>
                     {required && layout === 'vertical' && (
                         <span className={cx({required})}>*</span>

@@ -8,10 +8,10 @@ import {Select, Tag} from '@osui/ui';
 const SYMBOL_FOR_ALL = '*';
 
 const SelectAll = props => {
-    const {onChange: change} = props;
+    const {onChange: change, dropdownRender} = props;
     // 已选中的值
-    const [selectedVal, setSelectedVal] = useState(props?.value?.[0] === SYMBOL_FOR_ALL && props?.value.length === 1
-        ? [SYMBOL_FOR_ALL, ...props.children.map(item => item.props.value)] : props.value);
+    const [selectedVal, setSelectedVal] = useState(props?.value?.[0] === SYMBOL_FOR_ALL && props?.value?.length === 1
+        ? [SYMBOL_FOR_ALL, ...props.children.map(item => item.props.value)] : props.value || []);
     // const [manualChange, setManualChange] = useState(false);
     // 带全选的所有值
     const allValWithAll = useMemo(() => {
@@ -23,6 +23,7 @@ const SelectAll = props => {
     const allVal = useMemo(() => props.children.map(item => item.props?.value), [props.children]);
     const res = props?.value?.[0] === SYMBOL_FOR_ALL && props?.value.length === 1
         ? [SYMBOL_FOR_ALL, ...props.children.map(item => item.props.value)] : props.value || [];
+
     const tagRender = ({label, value, disabled, closable, onClose}) => {
         if (res.length < allVal.length) {
             return (
@@ -34,14 +35,16 @@ const SelectAll = props => {
     };
 
     const onItSelect = val => {
+        console.log(val);
         if (val === SYMBOL_FOR_ALL) {
             setSelectedVal(allValWithAll);
             change(allValWithAll);
         } else {
-            if (selectedVal.length === allVal.length - 1) {
+            if (selectedVal?.length === allVal?.length - 1) {
                 setSelectedVal(allValWithAll);
                 change(allValWithAll);
             } else {
+                console.log(selectedVal, val);
                 setSelectedVal([...selectedVal, val]);
                 change([...selectedVal, val]);
             }
@@ -66,7 +69,7 @@ const SelectAll = props => {
         setSelectedVal([]);
         change([]);
     };
-    const exsistProps = ['mode', 'onSelect', 'onDeselect', 'onClear', 'maxTagPlaceholder', 'tagRender'];
+    const existProps = ['mode', 'onSelect', 'onDeselect', 'onClear', 'maxTagPlaceholder', 'tagRender'];
 
     useEffect(() => {
         if (props?.value) {
@@ -88,6 +91,7 @@ const SelectAll = props => {
             showSearch
             optionFilterProp={'children'}
             onClear={onItClear}
+            getPopupContainer={originNode => originNode.parentNode}
             maxTagCount={props.maxTagCount || allValWithAll.length}
             maxTagPlaceholder={() => {
                 if (res.length < allVal.length) {
@@ -96,19 +100,17 @@ const SelectAll = props => {
                 return (
                     <Tag
                         closable
-                        onClose={() => {
-                            setSelectedVal([]);
-                            change([]);
-                        }}
+                        onClose={onItClear}
                     >全选
                     </Tag>
                 );
             }}
             tagRender={tagRender}
-            {...omit(props, exsistProps)}
+            dropdownRender={dropdownRender}
+            {...omit(props, existProps)}
             value={res}
         >
-            <Select.Option key="*" value="*">
+            <Select.Option key={SYMBOL_FOR_ALL} value={SYMBOL_FOR_ALL}>
                 全选
             </Select.Option>
             {props.children}

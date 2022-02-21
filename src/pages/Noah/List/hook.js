@@ -4,13 +4,13 @@ import {message} from 'antd';
 import {debounce, requestForAgn} from '../../../utils';
 import {LIST_URL} from '../../../utils/api';
 import {DROP_DOWN_MENU} from './constants';
-import {defaultData} from '../../../constant';
-// import {routes} from '../../../routes';
-// import {useHistory} from 'react-router-dom';
+import {DEFAULT_PAGINATION, ROUTE_PREFIX} from '../../../constant';
+import {useNavigate} from 'react-router-dom';
+import {routes} from '../../../routes';
 
 const useNoahList = () => {
-    // const history = useHistory();
-    const [data, setData] = useState(defaultData);
+    const navigate = useNavigate();
+    const [data, setData] = useState(DEFAULT_PAGINATION);
     // 方案名过滤
     const [searchValue, setSearchValue] = useState('');
     // 方案类型过滤
@@ -79,7 +79,15 @@ const useNoahList = () => {
 
     const executeNoah = useCallback(() => {}, []);
     // 编辑作业
-    const editNoah = useCallback(() => {}, []);
+    // TODO id 动态化
+    const editNoah = useCallback((detail = {'id': 1}) => {
+        navigate(routes.NOAH_EDIT.getUrl(detail.id));
+    }, []);
+
+    const addNoah = useCallback(() => {
+        navigate(`${ROUTE_PREFIX}/${routes.NOAH_ADD.url}`);
+    }, []);
+
     // 删除作业
     const removeNoah = useCallback(() => {
 
@@ -180,6 +188,7 @@ const useNoahList = () => {
         noahTypes,
         // 当前选中类型
         noahType,
+        addNoah,
     };
 };
 
