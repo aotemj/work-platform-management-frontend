@@ -8,6 +8,7 @@ import NoahList from '../pages/Noah/List';
 import {useEffect} from 'react';
 import AddOrEdit from '../pages/Noah/AddOrEdit';
 import {getContainerDOM} from '../utils';
+import ExecList from '../pages/Exec/List';
 
 /**
  * 创建通用路由
@@ -32,6 +33,10 @@ export const routes = {
         url: 'noah/:detailId',
         getUrl: id => `${ROUTE_PREFIX}/${routes.NOAH_EDIT.url.replace(':detailId', id)}`,
         component: <AddOrEdit />,
+    },
+    EXEC_LIST: {
+        url: 'exec/list',
+        component: <ExecList />,
     },
 };
 
