@@ -9,7 +9,7 @@ const {PROXY_TARGET, DEV_PORT} = dotenvConfigOutput.parsed;
 
 const cookieFilePath = path.join(__dirname, '../COOKIE');
 
-const COOKIE = fs.readFileSync(cookieFilePath).toString();
+const COOKIE = fs.readFileSync(cookieFilePath, 'utf8').trim();
 
 module.exports = {
     PROXY_TARGET,
