@@ -2,14 +2,17 @@
  * 新增分类 modal
  */
 
-import {Input, Modal} from '@osui/ui';
-import React, {useCallback, useState} from 'react';
+import {Button, Input, Modal} from '@osui/ui';
+import React, {useState} from 'react';
 import * as yup from 'yup';
 import FormikComp from '../../../../components/FormikComp';
+import useCategory from '../hooks/category';
+import cx from './index.less';
 
-const AddCategoryModal = ({visible, setVisible, submitCallback = () => {}}) => {
-    const [initialValues, setInitialValues] = useState({name: ''});
+const AddCategoryModal = ({visible, setVisible}) => {
+    const [initialValues] = useState({name: ''});
     const [disabled, setDisabled] = useState(false);
+    const {handleSubmitAddCategory} = useCategory();
     const formFields = {
         name: {
             label: '分类名称',
@@ -39,10 +42,6 @@ const AddCategoryModal = ({visible, setVisible, submitCallback = () => {}}) => {
         },
     };
 
-    const handleSubmit = useCallback(() => {
-        //    TODO 新增分类接口调用
-    }, []);
-
     const modalProps = {
         title: '新增分类',
         visible,
@@ -53,17 +52,26 @@ const AddCategoryModal = ({visible, setVisible, submitCallback = () => {}}) => {
         okButtonProps: {
             disabled,
         },
-        onOk: () => {
-            handleSubmit();
-            submitCallback();
-            console.log('ok');
-        },
+        // onOk: handleSubmit,
+        footer: null,
     };
     const formikProps = {
-        handleSubmit,
         initialValues,
         formFields,
-        needFooter: false,
+        // needFooter: false,
+        Footer: ({values}) => {
+            return (
+                <div className={cx('footer')}>
+                    <Button
+                        type={'primary'}
+                        disabled={disabled}
+                        onClick={() => handleSubmitAddCategory(values)}
+                        className={cx('submit-button')}
+                    >确定
+                    </Button>
+                </div>
+            );
+        },
         disabled,
         setDisabled,
     };

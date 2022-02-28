@@ -33,14 +33,15 @@ const FormikComp = ({
 }) => {
 
     const validateObj = Object.values(formFields).reduce((prev, curr) => {
-        prev[curr.name] = curr.validate;
+        if (!curr.hide) {
+            prev[curr.name] = curr.validate;
+        }
         return prev;
     }, {});
 
     const refOfValues = useRef();
 
     validateObj.grantGroups = yup.array();
-
     const validateSchema = yup.object().shape(validateObj);
     const handleFinalChange = debounce(250)((values, valid) => {
         setDisabled(!valid);
@@ -61,13 +62,13 @@ const FormikComp = ({
         }
     };
 
-    const DefaultFooter = () => {
+    const DefaultFooter = ({values}) => {
         return (
             <>
                 <Button
                     type={'primary'}
                     disabled={disabled}
-                    onClick={handleSubmit}
+                    onClick={() => handleSubmit(values)}
                     className={cx('submit-button', 'button')}
                 >{okText}
                 </Button>
@@ -80,14 +81,16 @@ const FormikComp = ({
         );
     };
 
-    const FinalFooter = Footer || DefaultFooter;
+    const FinalFooter = props => {
+        return Footer ? <Footer {...props} /> : <DefaultFooter {...props} />;
+    };
 
     return (
         <Formik
+            onSubmit={handleSubmit}
             enableReinitialize
             validate={validate}
             initialValues={initialValues}
-            onSubmit={handleSubmit}
         >
             {({values}) => {
                 const valid = validateSchema.isValidSync(values);
@@ -102,9 +105,10 @@ const FormikComp = ({
                                 name,
                                 label,
                                 children,
+                                hide,
                                 ...rest
                             }) => {
-                                return (
+                                return hide ? null : (
                                     <FormField name={name} label={label} key={label} {...omit('validate', rest)}>
                                         {
                                             children
@@ -113,7 +117,7 @@ const FormikComp = ({
                                 );
                             })
                         }
-                        {needFooter && <FinalFooter />}
+                        {needFooter && <FinalFooter values={values} />}
                     </>
                 );
             }}

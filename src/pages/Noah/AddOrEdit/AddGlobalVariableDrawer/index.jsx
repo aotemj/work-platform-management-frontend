@@ -2,40 +2,51 @@
  * 添加全局变量 drawer
  */
 
-import {Checkbox, Drawer, Input, Select, Tooltip} from '@osui/ui';
+import {omit} from 'ramda';
+import {Button, Checkbox, Drawer, Input, Modal, Select, Tooltip} from '@osui/ui';
+import * as yup from 'yup';
 import {useCallback, useState} from 'react';
+import {EyeInvisibleOutlined, EyeOutlined} from '@ant-design/icons';
 
 import FormikComp from '../../../../components/FormikComp';
-import * as yup from 'yup';
 import cx from './index.less';
-import {GLOBAL_VARIABLE_TYPE} from '../constants';
+import {GLOBAL_VARIABLE_TYPES} from '../constants';
 import {ReactComponent as IconRemark} from '../../../../statics/icons/remark.svg';
-import {omit} from 'ramda';
+import {getContainerDOM} from '../../../../utils';
+
 
 const {TextArea} = Input;
 const {Option} = Select;
 
 const defaultFormikValues = {
+    type: GLOBAL_VARIABLE_TYPES.STRING.value,
     name: '',
-    code: '',
-    content: '',
-    grantGroups: [],
+    value: '',
+    description: '',
+    allowChanged: false,
+    executeRequired: false,
 };
 
 const AddGlobalVariableDrawer = ({onClose, visible}) => {
-    const [formikValues, setFormikValues] = useState(defaultFormikValues);
+    const [formikValues] = useState(defaultFormikValues);
 
     const [disabled, setDisabled] = useState(false);
+
+    const [showCrypto, setShowCrypto] = useState(false);
 
     const handleSubmit = useCallback(() => {}, []);
 
     const handleCancel = useCallback(() => {
-        // Modal.confirm()
-    }, []);
+        Modal.confirm({
+            title: '确定要取消添加变量吗？',
+            getContainer: getContainerDOM,
+            onOk: onClose,
+        });
+    }, [onClose]);
 
-    const defaultField = {
-        layout: 'horizontal',
-    };
+    // const defaultField = {
+    //     layout: 'horizontal',
+    // };
 
     const NameLabel = () => {
         return (
@@ -47,6 +58,15 @@ const AddGlobalVariableDrawer = ({onClose, visible}) => {
             </div>
         );
     };
+
+    const ValueSuffix = ({setShowCrypto, showCrypto}) => {
+        return (
+            <Button onClick={() => setShowCrypto(!showCrypto)} type={'text'}>
+                {showCrypto ? <EyeOutlined /> : <EyeInvisibleOutlined />}
+            </Button>
+        );
+    };
+
     const formFields = {
         type: {
             // ...defaultField,
@@ -63,7 +83,7 @@ const AddGlobalVariableDrawer = ({onClose, visible}) => {
                         suffix={<IconRemark />}
                     >
                         {
-                            Object.values(GLOBAL_VARIABLE_TYPE).map(item => {
+                            Object.values(GLOBAL_VARIABLE_TYPES).map(item => {
                                 return <Option key={item.label} value={item.value}>{item.label}</Option>;
                             })
                         }
@@ -109,7 +129,9 @@ const AddGlobalVariableDrawer = ({onClose, visible}) => {
             children: ({field}) => (
                 <Input
                     {...field}
+                    type={showCrypto ? 'text' : 'password'}
                     className={cx('noah-textarea')}
+                    suffix={<ValueSuffix showCrypto={showCrypto} setShowCrypto={setShowCrypto} />}
                     maxLength={formFields.name.MAX_LENGTH}
                     placeholder="请输入变量值"
                 />
@@ -120,8 +142,7 @@ const AddGlobalVariableDrawer = ({onClose, visible}) => {
                 .trim()
                 .test('code', '以英文字符、下划线开头；只允许英文字符、数字、下划线、和 -', value =>
                     /^[a-zA-Z_][\w-]*$/.test(value),
-                )
-                .required('请输入变量名称'),
+                ).required('请输入变量名称'),
         },
         description: {
             name: 'description',

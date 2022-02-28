@@ -1,17 +1,13 @@
 import service from './service';
-import {getPrefix} from '../utils/getRouteIds';
+import {REQUEST_METHODS} from '../constant';
 
-export const fetch = (url, params, method, type, hasFix) => {
-    let fetchUrl = '';
-    if (hasFix === 'none' || hasFix === 'no') {
-        fetchUrl = url;
-    } else {
-        fetchUrl = getPrefix() + url;
-    }
+export const fetch = (url, params, method, type) => {
+    const {POST, GET, PUT} = REQUEST_METHODS;
+
     const headers = {
         'Access-Control-Allow-Origin': '*',
     };
-    if (method === 'post' || method === 'put') {
+    if (method === POST || method === PUT) {
         if (type === 'formData') {
             headers['Content-Type'] = 'application/x-www-form-urlencoded';
         } else {
@@ -21,13 +17,13 @@ export const fetch = (url, params, method, type, hasFix) => {
     return service({
         method: method,
         headers,
-        url: fetchUrl,
-        data: method === 'post' || method === 'put' ? params : '',
+        url,
+        data: method === POST || method === PUT ? params : '',
         response: type === 'blob' ? 'blob' : 'json',
         responseType: type === 'blob' ? 'blob' : 'json',
         transformRequest: [
             function (data) {
-                if (method === 'post' || method === 'put') {
+                if (method === POST || method === PUT) {
                     if (type === 'formData') {
                         return data;
                     }
@@ -41,14 +37,14 @@ export const fetch = (url, params, method, type, hasFix) => {
                 return ret;
             },
         ],
-        params: method === 'get' ? params : '',
+        params: method === GET ? params : '',
     });
 };
 
-export const request = ({url, params, method, type, hasFix}) => {
+export const request = ({url, params, method = REQUEST_METHODS.GET, type}) => {
     return new Promise((resolve, reject) => {
-        fetch(url, params, method, type, hasFix).then(res => {
-            resolve(res, hasFix);
+        fetch(url, params, method, type).then(res => {
+            resolve(res);
         });
     });
 };

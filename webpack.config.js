@@ -145,12 +145,16 @@ module.exports = (cliEnv = {}, argv) => {
             static: {
                 directory: path.resolve(__dirname, '../dist'),
             },
-            // contentBase: path.resolve(__dirname, '../dist'),
             client: {
                 overlay: {
                     errors: true,
                     warnings: false,
                 },
+            },
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Headers': '*',
+                'Access-Control-Allow-Methods': '*',
             },
             historyApiFallback: {
                 disableDotRule: true,

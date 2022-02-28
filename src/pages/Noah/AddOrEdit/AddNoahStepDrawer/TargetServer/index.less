@@ -1,0 +1,56 @@
+.tree-data-parent {
+    display: flex;
+    justify-content: space-between;
+    padding-right: 6px;
+
+    .left-content {
+        display: flex;
+
+        .content {
+            max-width: 250px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+    }
+
+    .tree-data-parent-show {
+        span {
+            margin-left: 4px;
+            padding: 2px 4px;
+            font-size: 12px;
+            border-radius: 2px;
+        }
+    }
+
+    .type-1 {
+        background: #a5d36b;
+    }
+
+    .type-2 {
+        background: #cfa165;
+    }
+}
+
+:global(.ant-select-selection-item) {
+    .tree-data-parent .tree-data-parent-show {
+        display: none;
+    }
+}
+
+:global {
+    .agent-select-tree{
+        width: 100%;
+    }
+    .dropdown-custom-content {
+        height: 50px;
+        line-height: 50px;
+        padding: 0 25px;
+        box-sizing: border-box;
+    }
+
+    .agent-select-tree-dropdown {
+        box-sizing: border-box !important;
+        max-width: calc(650px - 24px * 2) !important;
+    }
+}

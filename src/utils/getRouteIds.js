@@ -1,12 +1,11 @@
-const getRouteIds = () => {
-    const [, CompanyId, ProjectId] = window.location.pathname.match(/^\/([^/]+)\/([^/]+)\//) || [];
-    return [CompanyId, ProjectId];
+const XLY_PREFIX_REGEXP = /^\/([^/]*)/;
+
+export const getCompanyId = () => {
+    const matches = window.location.pathname.match(XLY_PREFIX_REGEXP);
+    return matches ? matches[1] : '';
 };
 
-export const getCompanyFix = () => getRouteIds()[0];
-
-export const getSpaceFix = () => getRouteIds()[1];
-
-export const getPrefix = () => `/api/cov/${getRouteIds()[0]}/${getRouteIds()[1]}`;
-
-export const getCompanyPrefix = () => `/api/cov/${getRouteIds()[0]}`;
+export const getSpaceId = () => {
+    const pathname = window.location.pathname.replace(/^\//, '').split('/');
+    return pathname && pathname.length > 1 && !pathname[1].startsWith('_') ? pathname[1] : '';
+};

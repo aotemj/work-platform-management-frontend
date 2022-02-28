@@ -1,0 +1,35 @@
+.step-item {
+    height: 48px;
+    border: 1px solid #d4d6d9;
+    border-radius: 3px;
+    margin: 8px 0;
+    display: flex;
+    cursor: pointer;
+    position: relative;
+
+    > .icon {
+        background-color: rgb(233, 234, 236);
+        font-size: 14px;
+        font-weight: 700;
+        width: 48px;
+        text-align: center;
+        line-height: 48px;
+    }
+    >.main{
+        line-height: 48px;
+        padding: 0 8px;
+        box-sizing: border-box;
+    }
+    .close-button {
+        position: absolute;
+        right:0;
+        top:0;
+        transform: translate(50%,-50%);
+        &:hover {
+            color: var(--theme-primary-color) !important;
+        }
+        &:focus{
+            box-shadow: none !important;
+        }
+    }
+}

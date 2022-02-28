@@ -12,3 +12,9 @@ export const DEFAULT_PAGINATION = {
 };
 
 export const CONTAINER_DOM_ID = 'osc-noah';
+
+export const REQUEST_METHODS =  {
+    GET: 'GET',
+    POST: 'post',
+    PUT: 'put',
+};

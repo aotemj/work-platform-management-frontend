@@ -1,8 +1,8 @@
-import {GLOBAL_VARIABLE_TYPE} from '../../constants';
+import {GLOBAL_VARIABLE_TYPES} from '../../constants';
 import IconFont from '../../../../../components/Iconfont';
 
 const VariableIcon = ({type}) => {
-    const {STRING, SECRET_KEY} = GLOBAL_VARIABLE_TYPE;
+    const {STRING, SECRET_KEY} = GLOBAL_VARIABLE_TYPES;
     switch (type) {
         case STRING.value:
             return <div>Str.</div>;

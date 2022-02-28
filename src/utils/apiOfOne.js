@@ -2,17 +2,17 @@
  *  获取所有的项目
  * @returns 所有项目列表
  */
-import {getCompanyfix} from '../../../utils/getRouteIds';
-import {requestForAgn} from './index';
+import {request} from '../request/fetch';
+import {getCompanyId} from './getRouteIds';
 
-const getProjectListUrl = ({name = '', _offset = 0, _limit = 100000}) => {
-    const companyId = getCompanyfix();
+const getProjectListUrl = ({_offset = 0, _limit = 100000}) => {
+    const companyId = getCompanyId();
     // eslint-disable-next-line max-len
     return `/api/facade/${companyId}/rest/v2/companies/${companyId}/projects/v2`;
 };
 export const getAllProjectFromOne = async (name, _offset, _limit) => {
     try {
-        const res = await requestForAgn({
+        const res = await request({
             method: 'post',
             params: {
                 name: '',

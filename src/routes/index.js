@@ -2,21 +2,29 @@ import {BrowserRouter, Route, Routes} from 'react-router-dom';
 import zhCN from 'antd/lib/locale/zh_CN';
 import '../index.global.less';
 import {ConfigProvider, message} from '@osui/ui';
-import {CONTAINER_DOM_ID, ROUTE_PREFIX} from '../constant';
+import {CONTAINER_DOM_ID, PROJECT_ROUTE} from '../constant';
 
 import NoahList from '../pages/Noah/List';
 import {useEffect} from 'react';
 import AddOrEdit from '../pages/Noah/AddOrEdit';
-import {getContainerDOM} from '../utils';
+import {getContainerDOM, getUrlPrefixReal} from '../utils';
+
 
 /**
  * 创建通用路由
  * @param url 路由路径
+ * @param addProjectId
  * @param component 对应组件
  * @returns {JSX.Element}
  */
-const getRoute = (url, component) => {
-    return <Route key={url} path={`${ROUTE_PREFIX}/${url}`} element={component} />;
+// const getRoute = (url, component) => {
+//     return <Route key={url} path={`${ROUTE_PREFIX}/${url}`} element={component} />;
+// };
+
+const getRoute = ({url, addProjectId = false, component}) => {
+    const URL_PREFIX_TEMP = addProjectId ? `/:companyId/:projectId/${PROJECT_ROUTE}` : `/:companyId/${PROJECT_ROUTE}`;
+
+    return <Route key={url} path={`${URL_PREFIX_TEMP}/${url}`} element={component} />;
 };
 
 export const routes = {
@@ -30,7 +38,7 @@ export const routes = {
     },
     NOAH_EDIT: {
         url: 'noah/:detailId',
-        getUrl: id => `${ROUTE_PREFIX}/${routes.NOAH_EDIT.url.replace(':detailId', id)}`,
+        getUrl: id => `${getUrlPrefixReal()}/${routes.NOAH_EDIT.url.replace(':detailId', id)}`,
         component: <AddOrEdit />,
     },
 };
@@ -65,7 +73,14 @@ const App = () => {
                     <Routes>
                         {
                             Object.values(routes).map(item => {
-                                return getRoute(item.url, item.component);
+                                const {url, component} = item;
+                                return getRoute({url, component});
+                            })
+                        }
+                        {
+                            Object.values(routes).map(item => {
+                                const {url, component} = item;
+                                return getRoute({url, component, addProjectId: true});
                             })
                         }
                     </Routes>

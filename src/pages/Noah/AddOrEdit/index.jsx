@@ -9,6 +9,8 @@ import FormikComp from '../../../components/FormikComp';
 import useAddOrEdit from './hook';
 import GlobalVariableItem from './GlobalVariableItem';
 import AddGlobalVariableDrawer from './AddGlobalVariableDrawer';
+import StepItem from './StepItem';
+import AddNoahStepDrawer from './AddNoahStepDrawer';
 
 const {Option} = Select;
 
@@ -48,6 +50,12 @@ const AddOrEdit = () => {
         handleRemoveGlobalVariable,
         globalVariableVisible,
         setGlobalVariableVisible,
+        addStepDrawerVisible,
+        setAddStepDrawerVisible,
+        handleAddStep,
+        handleChangeStep,
+        stageList,
+        handleSubmitAddCategory,
     } = useAddOrEdit();
 
     const defaultField = {
@@ -97,7 +105,7 @@ const AddOrEdit = () => {
                 >
                     {
                         categories.map(item => {
-                            return <Option value={item.value} key={item.label}>{item.label}</Option>;
+                            return <Option value={item.id} key={item.name}>{item.name}</Option>;
                         })
                     }
                 </SelectAll>
@@ -155,9 +163,31 @@ const AddOrEdit = () => {
             required: true,
             // TODO 全局变量自定义
             children: ({field}) => (
-                <Input
-                    {...field}
-                />
+                <div className={cx('step-container')}>
+                    {
+                        stageList.map((stage, index) => {
+                            return (
+                                <div
+                                    className={cx('step-item-container')}
+                                    key={stage.title}
+                                >
+                                    <span className={cx('index')}>{index + 1}</span>
+                                    <StepItem
+                                        handleClose={handleRemoveGlobalVariable}
+                                        {...stage}
+                                        editing={editing}
+                                    />
+                                </div>
+                            );
+                        })
+                    }
+                    <Button
+                        onClick={handleAddStep}
+                        icon={<IconPlusOutlined />}
+                        className={cx('add-variable-button')}
+                    >添加作业步骤
+                    </Button>
+                </div>
             ),
             validate: yup
                 .string()
@@ -176,6 +206,14 @@ const AddOrEdit = () => {
         setVisible: setGlobalVariableVisible,
         onClose: () => setGlobalVariableVisible(false),
     };
+
+    const noahStepProps = {
+        visible: addStepDrawerVisible,
+        setVisible: setAddStepDrawerVisible,
+        onClose: () => setAddStepDrawerVisible(false),
+        handleChangeStep,
+    };
+
     const formikProps = {
         handleSubmit,
         initialValues: formikValues,
@@ -184,6 +222,7 @@ const AddOrEdit = () => {
         formFields,
         handleCancel: handleCancelOperate,
     };
+
     return (
         <div className={cx('add-container')}>
             <PageHeader title={title} onBack={goBack} />
@@ -192,6 +231,7 @@ const AddOrEdit = () => {
             </div>
             <AddCategoryModal {...addCategoryModalProps} />
             <AddGlobalVariableDrawer {...globalVariableVisibleProps} />
+            <AddNoahStepDrawer {...noahStepProps} />
         </div>
     );
 };

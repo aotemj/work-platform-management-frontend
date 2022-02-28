@@ -1,6 +1,6 @@
 import axios from 'axios';
 import {message} from '@osui/ui';
-import {getCompanyFix, getSpaceFix} from '../utils/getRouteIds';
+import {getCompanyId, getSpaceId} from '../utils/getRouteIds';
 
 const service = axios.create({
     timeout: 30000,
@@ -23,14 +23,14 @@ service.interceptors.response.use(
             });
         }
         let {status, statusCode, msg, ...other} = response.data;
-        if (status === 0 || statusCode === 200 || status === 'OK') {
+        if (status === 0 || statusCode === 200 || status === 'OK' || status === undefined) {
             return Promise.resolve({
                 ...other,
                 status: 0,
-                msg: msg || response.data.message,
+                msg: msg || response.data.msg,
             });
         }
-        message.error(msg || response.data.message);
+        message.error(msg || response.data.msg);
         return Promise.resolve({
             ...other,
             status: -1,
@@ -43,7 +43,7 @@ service.interceptors.response.use(
         const localtions = window.location;
         switch (status) {
             case 400:
-                msg = data.message || '错误的请求，请检查确认';
+                msg = data.msg || '错误的请求，请检查确认';
                 break;
             case 401:
                 window.location.href = `${localtions.origin}/login?redirect=${encodeURIComponent(localtions.href)}`;
@@ -52,25 +52,25 @@ service.interceptors.response.use(
                 window.location.href = `${localtions.origin}/login?user_status=FORBIDDENED}`;
                 break;
             case 403:
-                window.location.href = `${localtions.origin}/${getCompanyFix()}/${getSpaceFix()}/403`;
+                window.location.href = `${localtions.origin}/${getCompanyId()}/${getSpaceId()}/403`;
                 break;
             case 404:
-                msg = data.message || '资源为空';
+                msg = data.msg || '资源为空';
                 break;
             case 500:
-                msg = '服务异常，请刷新重试或联系管理员';
+                msg = data.msg || '服务异常，请刷新重试或联系管理员';
                 break;
             case 502:
-                msg = '网关异常，请联系管理员';
+                msg = data.msg || '网关异常，请联系管理员';
                 break;
             case 503:
-                msg = '服务不可用，请联系管理员';
+                msg = data.msg || '服务不可用，请联系管理员';
                 break;
             case 504:
-                msg = '网关请求超时，请刷新重试或联系管理员';
+                msg = data.msg || '网关请求超时，请刷新重试或联系管理员';
                 break;
             default:
-                msg = data.message || '服务器错误';
+                msg = data.msg || '服务器错误';
                 break;
         }
         if (msg) {

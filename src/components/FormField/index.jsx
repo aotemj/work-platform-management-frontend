@@ -21,7 +21,7 @@ const FormField = ({type, name, children, fast, ...rest}) => (name ? (
             // TODO 这里不得不用了handleChange，等formik修复
             // @see https://github.com/jaredpalmer/formik/issues/2130
             const onChange = mixed => {
-                if (mixed.target) {
+                if (mixed?.target) {
                     handleChange(mixed);
                 } else {
                     handleChange(fakeEvent(name, mixed));

@@ -1,12 +1,13 @@
 import {useCallback, useEffect, useState} from 'react';
 import {message} from 'antd';
 
-import {debounce, requestForAgn} from '../../../utils';
+import {debounce, getUrlPrefixReal} from '../../../utils';
 import {LIST_URL} from '../../../utils/api';
 import {DROP_DOWN_MENU} from './constants';
-import {DEFAULT_PAGINATION, ROUTE_PREFIX} from '../../../constant';
+import {DEFAULT_PAGINATION} from '../../../constant';
 import {useNavigate} from 'react-router-dom';
 import {routes} from '../../../routes';
+import {request} from '../../../request/fetch';
 
 const useNoahList = () => {
     const navigate = useNavigate();
@@ -45,7 +46,7 @@ const useNoahList = () => {
         const {pageNum, pageSize} = data;
         setLoading(true);
         try {
-            const res = await requestForAgn({
+            const res = await request({
                 url: LIST_URL, params: {
                     _offset: pageNum,
                     _limit: pageSize,
@@ -85,7 +86,7 @@ const useNoahList = () => {
     }, []);
 
     const addNoah = useCallback(() => {
-        navigate(`${ROUTE_PREFIX}/${routes.NOAH_ADD.url}`);
+        navigate(`${getUrlPrefixReal()}/${routes.NOAH_ADD.url}`);
     }, []);
 
     // 删除作业

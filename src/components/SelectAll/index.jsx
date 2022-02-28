@@ -24,7 +24,7 @@ const SelectAll = props => {
     const res = props?.value?.[0] === SYMBOL_FOR_ALL && props?.value.length === 1
         ? [SYMBOL_FOR_ALL, ...props.children.map(item => item.props.value)] : props.value || [];
 
-    const tagRender = ({label, value, disabled, closable, onClose}) => {
+    const tagRender = ({label, closable, onClose}) => {
         if (res.length < allVal.length) {
             return (
                 <Tag closable={closable} onClose={onClose}>
@@ -35,7 +35,6 @@ const SelectAll = props => {
     };
 
     const onItSelect = val => {
-        console.log(val);
         if (val === SYMBOL_FOR_ALL) {
             setSelectedVal(allValWithAll);
             change(allValWithAll);
@@ -44,7 +43,6 @@ const SelectAll = props => {
                 setSelectedVal(allValWithAll);
                 change(allValWithAll);
             } else {
-                console.log(selectedVal, val);
                 setSelectedVal([...selectedVal, val]);
                 change([...selectedVal, val]);
             }

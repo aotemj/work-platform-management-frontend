@@ -3,16 +3,7 @@ import {useCallback, useState} from 'react';
 import {Modal} from '@osui/ui';
 import {getContainerDOM} from '../../../utils';
 import {clone} from 'ramda';
-
-const mockCategories = [
-    {
-        label: '123',
-        value: '123',
-    }, {
-
-        label: '1231',
-        value: '1231',
-    }];
+import useCategory from './hooks/category';
 
 const mockGlobalVariables = [
     {
@@ -30,10 +21,16 @@ const mockGlobalVariables = [
 ];
 
 const defaultFormikValues = {
+    // 方案名称
     name: '',
-    code: '',
-    content: '',
-    grantGroups: [],
+    // 分类
+    category: '',
+    // 作业描述
+    description: '',
+    // 全局变量
+    variable: [],
+    // 作业步骤
+    step: [],
 };
 
 // 添加
@@ -46,7 +43,6 @@ const handleAdd = () => {
 
 // 编辑
 const handleEdit = detailId => {
-    console.log(detailId);
     const title = '编辑作业';
     return {
         title,
@@ -56,6 +52,12 @@ const handleEdit = detailId => {
 const useAddOrEdit = () => {
     const params = useParams();
     const navigate = useNavigate();
+
+    const {
+        categories,
+        handleSubmitAddCategory,
+    } = useCategory();
+
     const goBack = useCallback(() => {
         navigate(-1);
     }, []);
@@ -70,10 +72,14 @@ const useAddOrEdit = () => {
 
     const [globalVariables, setGlobalsVariables] = useState(mockGlobalVariables);
 
-    const [globalVariableVisible, setGlobalVariableVisible] = useState(true);
+    const [globalVariableVisible, setGlobalVariableVisible] = useState(false);
+
+    const [addStepDrawerVisible, setAddStepDrawerVisible] = useState(true);
 
     // TODO 动态化
-    const [categories, setCategories] = useState(mockCategories);
+    // const [categories, setCategories] = useState(mockCategories);
+
+    const [stageList, setStageList] = useState([]);
 
     const handleSubmit = useCallback(() => {
         console.log('submit');
@@ -94,6 +100,16 @@ const useAddOrEdit = () => {
     const handleAddGlobalVariable = useCallback(() => {
         setGlobalVariableVisible(true);
     }, []);
+
+    const handleAddStep = useCallback(() => {
+        setAddStepDrawerVisible(true);
+    }, []);
+
+    // 新建步骤
+    const handleChangeStep =  useCallback(e => {
+        setStageList([...stageList, e]);
+        setAddStepDrawerVisible(false);
+    }, [stageList]);
 
     const handleRemoveGlobalVariable = useCallback(globalVariable => {
         const {id} = globalVariable;
@@ -128,6 +144,12 @@ const useAddOrEdit = () => {
         editing,
         globalVariableVisible,
         setGlobalVariableVisible,
+        addStepDrawerVisible,
+        setAddStepDrawerVisible,
+        handleAddStep,
+        handleChangeStep,
+        stageList,
+        handleSubmitAddCategory,
     };
 
     if (params?.detailId) {

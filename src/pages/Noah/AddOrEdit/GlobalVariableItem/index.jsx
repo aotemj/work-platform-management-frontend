@@ -8,11 +8,11 @@ import {omit} from 'ramda';
 import IconFont from '../../../../components/Iconfont';
 import cx from './index.less';
 import VariableIcon from './VariableIcon';
-import {GLOBAL_VARIABLE_TYPE} from '../constants';
+import {GLOBAL_VARIABLE_TYPES} from '../constants';
 
 const GlobalVariableItem = props => {
     const {title, type, value, editing, handleClose} = props;
-    const finalValue = type === GLOBAL_VARIABLE_TYPE.STRING.value
+    const finalValue = type === GLOBAL_VARIABLE_TYPES.STRING.value
         ? value
         : '********';
     return (

@@ -43,7 +43,6 @@ const Layout = ({
         },
         [errors],
     );
-    console.log(hideLabel);
     return (
         <div
             className={cx('root', layout, {'no-label': label === undefined || label === null}, className)}

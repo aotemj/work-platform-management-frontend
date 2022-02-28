@@ -1,16 +1,6 @@
-import {request} from '../request/fetch';
 import {ROUTE_PREFIX} from './constant';
-import {getCompanyFix} from './getRouteIds';
-import {CONTAINER_DOM_ID} from '../constant';
-
-// eslint-disable-next-line max-len
-export const requestForAgn = ({url, params, method = 'get', type}) => request({
-    url,
-    params,
-    method,
-    type,
-    hasFix: 'no',
-});
+import {getCompanyId, getSpaceId} from './getRouteIds';
+import {CONTAINER_DOM_ID, PROJECT_ROUTE} from '../constant';
 
 const formatWidthEero = (origin, maxLength, fillString) => {
     return String(origin).padStart(maxLength, fillString);
@@ -34,7 +24,7 @@ export const formatTimeStamp = (timestamp, dateSymbol = '-', timeSymbol = ':') =
 };
 
 export const getRealUrlPrefix = () => {
-    return ROUTE_PREFIX.replace(':companyId', getCompanyFix());
+    return ROUTE_PREFIX.replace(':companyId', getCompanyId());
 };
 
 export function debounce(fn, delay = 1000) {
@@ -53,3 +43,13 @@ export function debounce(fn, delay = 1000) {
 export function getContainerDOM() {
     return document.getElementById(CONTAINER_DOM_ID);
 }
+
+export function getURlWithPrefix(prefix, url) {
+    return `${prefix}${url}`;
+}
+
+export function getUrlPrefixReal() {
+    const companyId = getCompanyId();
+    const projectId = getSpaceId();
+    return projectId ? `/${companyId}/${projectId}/${PROJECT_ROUTE}` : `/${companyId}/${PROJECT_ROUTE}`;
+};
