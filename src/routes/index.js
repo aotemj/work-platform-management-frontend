@@ -3,12 +3,12 @@ import zhCN from 'antd/lib/locale/zh_CN';
 import '../index.global.less';
 import {ConfigProvider, message} from '@osui/ui';
 import {CONTAINER_DOM_ID, PROJECT_ROUTE} from '../constant';
-
-import NoahList from '../pages/Noah/List';
 import {useEffect} from 'react';
-import AddOrEdit from '../pages/Noah/AddOrEdit';
-import {getContainerDOM, getUrlPrefixReal} from '../utils';
 
+import {getContainerDOM, getUrlPrefixReal} from '../utils';
+import NoahList from '../pages/Noah/List';
+import AddOrEdit from '../pages/Noah/AddOrEdit';
+import ExecList from '../pages/Exec/List';
 
 /**
  * 创建通用路由
@@ -40,6 +40,10 @@ export const routes = {
         url: 'noah/:detailId',
         getUrl: id => `${getUrlPrefixReal()}/${routes.NOAH_EDIT.url.replace(':detailId', id)}`,
         component: <AddOrEdit />,
+    },
+    EXEC_LIST: {
+        url: 'exec/list',
+        component: <ExecList />,
     },
 };
 
