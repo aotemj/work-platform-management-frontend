@@ -2,9 +2,9 @@
  * 新增作业步骤 Drawer
  */
 
+import React, {useMemo} from 'react';
 import {Drawer, Input, Select, Tooltip, Radio, InputNumber} from '@osui/ui';
 import * as yup from 'yup';
-import React from 'react';
 
 import FormikComp from '../../../../components/FormikComp';
 import cx from './index.less';
@@ -18,7 +18,7 @@ const {TextArea} = Input;
 const {Option} = Select;
 
 
-const AddNoahStepDrawer = ({onClose, visible, handleChangeStep}) => {
+const AddNoahStepDrawer = ({onClose, visible, handleChangeStep, stepEditingValue}) => {
     const {
         formikValues,
         setFormikValues,
@@ -28,7 +28,14 @@ const AddNoahStepDrawer = ({onClose, visible, handleChangeStep}) => {
         handleCancel,
         handleChangeTargetServer,
         isScriptExecute,
-    } = useAddNoahStep({onClose, handleChangeStep});
+    } = useAddNoahStep({
+        onClose,
+        handleChangeStep,
+    });
+
+    const editing = useMemo(() => {
+        return Boolean(stepEditingValue);
+    }, [stepEditingValue]);
 
     // const defaultField = {
     //     layout: 'horizontal',
@@ -117,18 +124,21 @@ const AddNoahStepDrawer = ({onClose, visible, handleChangeStep}) => {
                 .ensure()
                 .required('请选择脚本'),
         },
-        scriptContent: {
-            name: 'scriptContent',
+        scriptContents: {
+            name: 'scriptContents',
             label: '脚本内容',
             required: true,
             hide: !isScriptExecute,
             children: ({field, form: {values}}) => (
                 <ScriptContent
                     field={field}
+                    scriptLanguage={formikValues.scriptLanguage}
+                    setFormikValues={setFormikValues}
+                    values={values}
                     onChange={e => {
                         setFormikValues({
                             ...values,
-                            scriptContent: e,
+                            scriptContents: e,
                         });
                     }}
                 />
@@ -142,7 +152,7 @@ const AddNoahStepDrawer = ({onClose, visible, handleChangeStep}) => {
             name: 'scriptParams',
             label: '脚本参数',
             MAX_LENGTH: 500,
-            required: true,
+            // required: true,
             hide: !isScriptExecute,
             children: ({field}) => (
                 <TextArea
@@ -154,10 +164,7 @@ const AddNoahStepDrawer = ({onClose, visible, handleChangeStep}) => {
                     placeholder="脚本执行时传入参数，同脚本在终端执行时的传参格式，例：./test.sh XXXX"
                 />
             ),
-            validate: yup
-                .string()
-                .ensure()
-                .required('请输入脚本内容'),
+            validate: null,
         },
         timeoutValue: {
             name: 'timeoutValue',
@@ -180,7 +187,11 @@ const AddNoahStepDrawer = ({onClose, visible, handleChangeStep}) => {
             // 运行环境为 主机运行时 显示
             hide: !isScriptExecute || formikValues.runningEnvironment !== RUNNING_ENVIRONMENT.AGENT.value,
             children: ({field, form: {values}}) => (
-                <TargetServer field={field} handleChange={e => handleChangeTargetServer(e, values)} />
+                <TargetServer
+                    field={field}
+                    handleChange={(agents, agentMap) => handleChangeTargetServer({agents, values, agentMap, editing})}
+                    visible={visible}
+                />
             ),
             validate: yup
                 .array()
@@ -270,12 +281,11 @@ const AddNoahStepDrawer = ({onClose, visible, handleChangeStep}) => {
         // 执行脚本相关
         ...scriptExecuteFields,
 
-
     };
 
     const formikProps = {
-        handleSubmit,
-        initialValues: formikValues,
+        handleSubmit: e => handleSubmit(e, stepEditingValue),
+        initialValues: stepEditingValue || formikValues,
         disabled,
         setDisabled,
         formFields,
@@ -291,7 +301,7 @@ const AddNoahStepDrawer = ({onClose, visible, handleChangeStep}) => {
             onClose={onClose}
             visible={visible}
         >
-            <FormikComp {...formikProps} />
+            {visible && <FormikComp {...formikProps} />}
         </Drawer>
     );
 };

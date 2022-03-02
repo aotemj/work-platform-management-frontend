@@ -1,3 +1,5 @@
+@activeColor: #0C62FF;
+
 .step-item {
     height: 48px;
     border: 1px solid #d4d6d9;
@@ -6,7 +8,15 @@
     display: flex;
     cursor: pointer;
     position: relative;
-
+    width: 100%;
+    &:hover {
+        background: rgb(226, 236, 254);
+        border: 1px solid @activeColor;
+        color: @activeColor;
+        >.icon{
+            background-color: transparent;
+        }
+    }
     > .icon {
         background-color: rgb(233, 234, 236);
         font-size: 14px;
@@ -16,11 +26,17 @@
         line-height: 48px;
     }
     >.main{
+        flex:1;
         line-height: 48px;
         padding: 0 8px;
         box-sizing: border-box;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: calc(500px - 2*8px - 48px - 20px);
     }
-    .close-button {
+    .close-button,
+    .editing-button {
         position: absolute;
         right:0;
         top:0;
@@ -30,6 +46,15 @@
         }
         &:focus{
             box-shadow: none !important;
+        }
+        &.editing-button{
+            top: 50%;
+            right: 0;
+            width: 30px;
+            transform: translate(80%,-50%);
+            height: 30px;
+            display: block;
+            background: url('../../../../assets/edit.png') no-repeat center center/50%;
         }
     }
 }

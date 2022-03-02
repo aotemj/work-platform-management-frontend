@@ -60,7 +60,7 @@ const formatLabels = (agentMap, labels, currentType) => {
         const {id, type} = tempLabel;
         if (currentType !== type) {
             return null;
-        };
+        }
         const tempAgentObj = agentMap[id];
         tempLabel = formatChildNodes(tempLabel, tempAgentObj);
         const {totalCount, activeCount, labelType, displayName} = tempLabel;
@@ -114,7 +114,7 @@ const formatData = (agents, labels, currentType) => {
     };
 };
 
-const TargetServer = ({field, handleChange}) => {
+const TargetServer = ({field, handleChange, visible}) => {
     const companyId = getCompanyId();
     const spaceId = getSpaceId();
 
@@ -190,28 +190,28 @@ const TargetServer = ({field, handleChange}) => {
         });
     }, [groupType, spaceId, labelName]);
 
-    const updateData = useCallback(() => {
+    const updateData = useCallback(debounce(() => {
         if (!needUpdate) {
             return;
         }
         setNeedUpdate(false);
         setLoading(true);
         setTreeData([]);
-        Promise.all([fetchAgents(), fetchLabels()]).then(([agentRes, labelRes]) => {
-            // const {status: agentStatus, entities: {agents = []}} = agentRes;
-            setLoading(false);
+        // Promise.all([fetchAgents(), fetchLabels()]).then(([agentRes, labelRes]) => {
+        // const {status: agentStatus, entities: {agents = []}} = agentRes;
+        setLoading(false);
 
-            // const {status: labelStatus, list: labels} = labelRes;
+        // const {status: labelStatus, list: labels} = labelRes;
 
-            // if (!agentStatus && !labelStatus) {
-            const {labelMap, tempLabels: treeData, agentMap, agentMapByUuid} = formatData(agents, labels, type);
-            setTreeData(treeData.filter(item => item));
-            setAgentMap(agentMap);
-            setLabelMap(labelMap);
-            setAgentMapByUuid(agentMapByUuid);
-            // }
-        });
-    }, [needUpdate, fetchAgents, fetchLabels, type]);
+        // if (!agentStatus && !labelStatus) {
+        const {labelMap, tempLabels: treeData, agentMap, agentMapByUuid} = formatData(agents, labels, type);
+        setTreeData(treeData.filter(item => item));
+        setAgentMap(agentMap);
+        setLabelMap(labelMap);
+        setAgentMapByUuid(agentMapByUuid);
+        // }
+        // });
+    }, 500), [needUpdate, fetchAgents, fetchLabels, type]);
 
     const getActiveAgentInfoByLabel = useCallback(labelId => {
         const label = labelMap[labelId];
@@ -239,8 +239,12 @@ const TargetServer = ({field, handleChange}) => {
                 agents.push(agentMapByUuid[e[i]]);
             }
         }
-        handleChange(agents);
+        handleChange(agents, agentMapByUuid);
     }, [agentMapByUuid, getActiveAgentInfoByLabel, handleChange]);
+
+    useEffect(() => {
+        setNeedUpdate(visible);
+    }, [visible]);
 
     useEffect(() => {
         updateData();

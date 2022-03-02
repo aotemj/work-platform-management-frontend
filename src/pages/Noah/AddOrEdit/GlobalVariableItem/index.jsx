@@ -9,27 +9,51 @@ import IconFont from '../../../../components/Iconfont';
 import cx from './index.less';
 import VariableIcon from './VariableIcon';
 import {GLOBAL_VARIABLE_TYPES} from '../constants';
+import {useCallback, useState} from 'react';
 
 const GlobalVariableItem = props => {
-    const {title, type, value, editing, handleClose} = props;
+    const {name, type, value, editing, handleClose, handleEdit} = props;
+    const [focus, setFocus] = useState(false);
+
+    const handleFocus = useCallback(() => {
+        setFocus(true);
+    }, []);
+
+    const handleBlur = useCallback(() => {
+        setFocus(false);
+    }, []);
+
     const finalValue = type === GLOBAL_VARIABLE_TYPES.STRING.value
         ? value
         : '********';
+
     return (
-        <div className={cx('global-variable-container')}>
+        <div
+            className={cx('global-variable-container')}
+            onMouseEnter={handleFocus}
+            onMouseLeave={handleBlur}
+        >
             <div className={cx('icon')}>
                 <VariableIcon type={type} />
             </div>
             <div className={cx('right')}>
-                <div className={cx('title')}>{title}</div>
+                <div className={cx('title')}>{name}</div>
                 <div className={cx('sub-title')}>{finalValue}</div>
             </div>
-            {editing && <Button
-                onClick={() => handleClose(omit('handleClose', props))}
-                type={'text'}
-                icon={<IconFont type={'icondeleteorerror'} />}
-                className={cx('close-button')}
-            />}
+            {editing && (
+                <Button
+                    onClick={() => handleClose(omit('handleClose', props))}
+                    type={'text'}
+                    icon={<IconFont type={'icondeleteorerror'} />}
+                    className={cx('close-button')}
+                />
+            )}
+            {focus && (
+                <i
+                    className={cx('editing-button')}
+                    onClick={handleEdit}
+                />
+            )}
         </div>
     );
 };

@@ -1,44 +1,39 @@
 import {useCallback, useMemo, useState} from 'react';
 import {Modal} from '@osui/ui';
+
 import {getContainerDOM} from '../../../../utils';
-import {RUNNING_ENVIRONMENT, SCRIPTS_ORIGIN, STEP_TYPES} from '../constants';
+import {RUNNING_ENVIRONMENT, SCRIPT_TYPES, SCRIPTS_ORIGIN, STEP_TYPES} from '../constants';
+
 const defaultFormikValues = {
     type: STEP_TYPES.EXECUTE_SCRIPT.value,
     name: '',
     runningEnvironment: RUNNING_ENVIRONMENT.AGENT.value,
     scriptOrigin: SCRIPTS_ORIGIN.MANUAL_INPUT.value,
     chooseScript: '',
-    scriptContent: '',
+    scriptContents: '',
     targetResourceList: [],
+    // 脚本语言类型
+    scriptLanguage: SCRIPT_TYPES[0].key,
+    scriptParams: '',
+    timeoutValue: 0,
 };
 
 const useAddNoahStep = ({onClose, handleChangeStep}) => {
     const [formikValues, setFormikValues] = useState(defaultFormikValues);
 
     const [disabled, setDisabled] = useState(false);
+    const [agentMapByUuid, setAgentMapByUuid] = useState({});
 
     const isScriptExecute = useMemo(() => {
         return formikValues.type === STEP_TYPES.EXECUTE_SCRIPT.value;
     }, [formikValues.type]);
 
-    const convertAgent = useCallback(() => {
-        return formikValues.targetResourceList.map(item => {
-            const {id, status, name: targetResourceName, uuid: targetUuid} = item;
-            return {
-                id, status, targetResourceName, targetUuid,
-            };
-        });
-    }, [formikValues.targetResourceList]);
+    const handleSubmit = useCallback((e, stepEditingValue) => {
+        // const targetResources = convertAgent();
+        handleChangeStep(e, stepEditingValue);
+        setFormikValues(defaultFormikValues);
 
-    const handleSubmit = useCallback(e => {
-        const targetResources = convertAgent();
-
-        // 提交新增
-        handleChangeStep({
-            ...e,
-            targetResourceList: targetResources,
-        });
-    }, [handleChangeStep, convertAgent]);
+    }, [handleChangeStep]);
 
     const handleCancel = useCallback(() => {
         Modal.confirm({
@@ -52,12 +47,25 @@ const useAddNoahStep = ({onClose, handleChangeStep}) => {
         });
     }, [onClose]);
 
-    const handleChangeTargetServer = useCallback((agents, values) => {
+    const handleEditTargetServer = useCallback(() => {
+
+    }, []);
+
+    const handleAddTargetServer = useCallback((agents, values, agentMap) => {
         setFormikValues({
             ...values,
             targetResourceList: agents,
         });
-    }, [formikValues]);
+        setAgentMapByUuid(agentMap);
+    }, []);
+
+    const handleChangeTargetServer = useCallback(({agents, values, agentMap, editing}) => {
+        if (editing) {
+            handleEditTargetServer(agents, values, agentMap);
+        } else {
+            handleAddTargetServer(agents, values, agentMap);
+        }
+    }, [handleAddTargetServer, handleEditTargetServer]);
 
     return {
         formikValues,

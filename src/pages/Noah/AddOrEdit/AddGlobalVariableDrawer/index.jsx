@@ -3,51 +3,45 @@
  */
 
 import {omit} from 'ramda';
-import {Button, Checkbox, Drawer, Input, Modal, Select, Tooltip} from '@osui/ui';
+import {Button, Checkbox, Drawer, Input, Select, Tooltip} from '@osui/ui';
 import * as yup from 'yup';
-import {useCallback, useState} from 'react';
 import {EyeInvisibleOutlined, EyeOutlined} from '@ant-design/icons';
 
 import FormikComp from '../../../../components/FormikComp';
 import cx from './index.less';
 import {GLOBAL_VARIABLE_TYPES} from '../constants';
 import {ReactComponent as IconRemark} from '../../../../statics/icons/remark.svg';
-import {getContainerDOM} from '../../../../utils';
-
+import useGlobalVariable from '../hooks/globalVariable';
+import {useMemo} from 'react';
 
 const {TextArea} = Input;
 const {Option} = Select;
 
-const defaultFormikValues = {
-    type: GLOBAL_VARIABLE_TYPES.STRING.value,
-    name: '',
-    value: '',
-    description: '',
-    allowChanged: false,
-    executeRequired: false,
-};
-
-const AddGlobalVariableDrawer = ({onClose, visible}) => {
-    const [formikValues] = useState(defaultFormikValues);
-
-    const [disabled, setDisabled] = useState(false);
-
-    const [showCrypto, setShowCrypto] = useState(false);
-
-    const handleSubmit = useCallback(() => {}, []);
-
-    const handleCancel = useCallback(() => {
-        Modal.confirm({
-            title: '确定要取消添加变量吗？',
-            getContainer: getContainerDOM,
-            onOk: onClose,
-        });
-    }, [onClose]);
-
+const AddGlobalVariableDrawer = ({
+    onClose,
+    visible,
+    globalVariableEditingValue,
+    handleChangeGlobalVariable,
+    setVisible,
+}) => {
     // const defaultField = {
     //     layout: 'horizontal',
     // };
-
+    const {
+        formikValues,
+        handleCancel,
+        disabled,
+        setDisabled,
+        showCrypto,
+        setShowCrypto,
+    } = useGlobalVariable({
+        handleChangeGlobalVariable,
+        setVisible,
+        onClose,
+    });
+    const editing = useMemo(() => {
+        return Boolean(globalVariableEditingValue);
+    }, [globalVariableEditingValue]);
     const NameLabel = () => {
         return (
             <div className={cx('name-label')}>
@@ -125,27 +119,23 @@ const AddGlobalVariableDrawer = ({onClose, visible}) => {
             name: 'value',
             label: '值',
             MAX_LENGTH: 1000,
-            required: true,
-            children: ({field}) => (
+            // required: true,
+            children: ({field, form: {values}}) => (
                 <Input
                     {...field}
                     type={showCrypto ? 'text' : 'password'}
                     className={cx('noah-textarea')}
-                    suffix={<ValueSuffix showCrypto={showCrypto} setShowCrypto={setShowCrypto} />}
+                    suffix={values.type === GLOBAL_VARIABLE_TYPES.STRING.value
+                        ? null
+                        : <ValueSuffix showCrypto={showCrypto} setShowCrypto={setShowCrypto} />}
                     maxLength={formFields.name.MAX_LENGTH}
                     placeholder="请输入变量值"
                 />
             ),
-            validate: yup
-                .string()
-                .ensure()
-                .trim()
-                .test('code', '以英文字符、下划线开头；只允许英文字符、数字、下划线、和 -', value =>
-                    /^[a-zA-Z_][\w-]*$/.test(value),
-                ).required('请输入变量名称'),
+            validate: null,
         },
-        description: {
-            name: 'description',
+        describes: {
+            name: 'describes',
             label: '变量描述',
             MAX_LENGTH: 500,
             children: ({field}) => (
@@ -154,17 +144,17 @@ const AddGlobalVariableDrawer = ({onClose, visible}) => {
                     showCount
                     className={cx('noah-textarea')}
                     autoSize={{minRows: 5}}
-                    maxLength={formFields.description.MAX_LENGTH}
+                    maxLength={formFields.describes.MAX_LENGTH}
                     placeholder="请输入变量描述"
                 />
             ),
         },
         // 赋值可变
-        allowChanged: {
+        exeChange: {
             // ...defaultField,
-            name: 'allowChanged',
-            label: null,
+            name: 'exeChange',
             hideLabel: true,
+            label: 'exeChange',
             children: ({field}) => (
                 <Checkbox
                     {...(omit('value', field))}
@@ -175,10 +165,10 @@ const AddGlobalVariableDrawer = ({onClose, visible}) => {
             ),
         },
         // 执行时必填
-        executeRequired: {
-            name: 'executeRequired',
+        exeRequired: {
+            name: 'exeRequired',
             hideLabel: true,
-            label: null,
+            label: 'exeRequired',
             children: ({field}) => (
                 <Checkbox
                     {...(omit('value', field))}
@@ -191,8 +181,8 @@ const AddGlobalVariableDrawer = ({onClose, visible}) => {
     };
 
     const formikProps = {
-        handleSubmit,
-        initialValues: formikValues,
+        handleSubmit: e => handleChangeGlobalVariable(e, editing, globalVariableEditingValue),
+        initialValues: globalVariableEditingValue || formikValues,
         disabled,
         setDisabled,
         formFields,
@@ -209,7 +199,9 @@ const AddGlobalVariableDrawer = ({onClose, visible}) => {
             onClose={onClose}
             visible={visible}
         >
-            <FormikComp {...formikProps} />
+            {
+                visible && <FormikComp {...formikProps} />
+            }
         </Drawer>
     );
 };

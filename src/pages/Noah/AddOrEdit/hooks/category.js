@@ -1,40 +1,20 @@
 import {useCallback, useState} from 'react';
+import {message} from '@osui/ui';
 
 import {URL, URL_PREFIX1} from '../constants';
 import {request} from '../../../../request/fetch';
-import {debounce} from '../../../../utils';
-import {REQUEST_METHODS} from '../../../../constant';
-import {message} from '@osui/ui';
 
-const useCategory = () => {
+const useCategory = addCallback => {
     const [categories, setCategories] = useState([]);
+    const [addCategoryVisible, setAddCategoryVisible] = useState(false);
 
-    const handleSubmitAddCategory = useCallback(debounce(async ({name}) => {
-        const res = await request({
-            url: `${URL_PREFIX1}${URL.ADD_CATEGORIES}`,
-            method: REQUEST_METHODS.POST,
-            params: {
-                // createTime	创建时间		false
-                // id	ID		false
-                // name	名称		false
-                // status	通用状态 0：正常；-1：删除；		false
-                // tenant	租户信息		false
-                // updateTime	修改时间		false
-                // userId	创建人
-                name,
-                // 'status': 0,
-                'tenant': '',
-                // 'updateTime': '',
-                // 'userId': 0,
-            },
-        });
-        const {status, msg} = res;
-        if (!status) {
-            message.success('添加成功');
-        } else {
-            message.error(msg);
-        }
-    }, 500), []);
+    // 新增分类不进行入库操作，只在前端做暂存
+    const handleSubmitAddCategory = useCallback(async ({name}) => {
+        const id = Date.now();
+        setCategories([{name, id}, ...categories]);
+        message.success('添加成功');
+        addCallback({name, id});
+    }, [categories, addCallback]);
 
     const fetchCategory = useCallback(async () => {
         const res = await request({
@@ -59,6 +39,8 @@ const useCategory = () => {
         categories,
         fetchCategory,
         handleSubmitAddCategory,
+        addCategoryVisible,
+        setAddCategoryVisible,
     };
 };
 
