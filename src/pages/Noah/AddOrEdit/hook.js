@@ -1,36 +1,26 @@
 import {useNavigate, useParams} from 'react-router-dom';
-import {useCallback, useState} from 'react';
-import {Modal} from '@osui/ui';
+import {useCallback, useEffect, useState} from 'react';
+import {message, Modal} from '@osui/ui';
 import {getContainerDOM} from '../../../utils';
 import {clone} from 'ramda';
 import useCategory from './hooks/category';
-
-const mockGlobalVariables = [
-    {
-        id: '1',
-        type: 'STRING',
-        title: '变量名AB',
-        value: '123123123',
-    },
-    {
-        id: '2',
-        type: 'SECRET_KEY',
-        title: '变量名A',
-        value: '123123123',
-    },
-];
+import useGlobalVariable from './hooks/globalVariable';
+import {request} from '../../../request/fetch';
+import {URL_PREFIX1, URL, STEP_TYPES} from './constants';
+import {REQUEST_METHODS, SYMBOL_FOR_ALL} from '../../../constant';
 
 const defaultFormikValues = {
     // 方案名称
     name: '',
     // 分类
-    category: '',
+    category: [],
     // 作业描述
-    description: '',
+    describes: '',
     // 全局变量
     variable: [],
     // 作业步骤
-    step: [],
+    stageList: [],
+    // step: [{}],
 };
 
 // 添加
@@ -52,38 +42,183 @@ const handleEdit = detailId => {
 const useAddOrEdit = () => {
     const params = useParams();
     const navigate = useNavigate();
-
-    const {
-        categories,
-        handleSubmitAddCategory,
-    } = useCategory();
-
     const goBack = useCallback(() => {
         navigate(-1);
-    }, []);
-
-    const [addCategoryVisible, setAddCategoryVisible] = useState(false);
-
+    }, [navigate]);
+    // 编辑
     const [editing, setEditing] = useState(true);
 
     const [formikValues, setFormikValues] = useState(defaultFormikValues);
 
     const [disabled, setDisabled] = useState(false);
 
-    const [globalVariables, setGlobalsVariables] = useState(mockGlobalVariables);
-
     const [globalVariableVisible, setGlobalVariableVisible] = useState(false);
 
-    const [addStepDrawerVisible, setAddStepDrawerVisible] = useState(true);
+    const [addStepDrawerVisible, setAddStepDrawerVisible] = useState(false);
 
-    // TODO 动态化
-    // const [categories, setCategories] = useState(mockCategories);
+    // 编辑全局变量数据
+    const [globalVariableEditingValue, setGlobalVariableEditingValue] = useState(null);
 
-    const [stageList, setStageList] = useState([]);
+    const [stepEditingValue, setStepEditingValue] = useState(null);
 
-    const handleSubmit = useCallback(() => {
-        console.log('submit');
+    const addCategoryCallback = useCallback(({name}) => {
+        const {category} = formikValues;
+        setFormikValues({
+            ...formikValues,
+            category: [name, ...category],
+        });
+    }, [setFormikValues, formikValues]);
+    const {
+        categories,
+        handleSubmitAddCategory,
+        addCategoryVisible,
+        setAddCategoryVisible,
+        fetchCategory,
+    } = useCategory(addCategoryCallback);
+
+    const handleChangeVariable = useCallback(variables => {
+        setFormikValues({
+            ...formikValues,
+            variable: variables,
+        });
+
+        setGlobalVariableVisible(false);
+    }, [formikValues]);
+
+    const {
+        globalVariables,
+        handleRemoveGlobalVariable,
+        handleChangeGlobalVariable,
+    } = useGlobalVariable({
+        editing: Boolean(globalVariableEditingValue),
+        handleChangeVariable,
+    });
+
+    const convertCategory = useCallback(category => {
+        const groupRelList = clone(category);
+
+        if (category?.[0] === SYMBOL_FOR_ALL) {
+            groupRelList.shift();
+        }
+
+        return groupRelList.map(item => {
+            if (typeof item === 'number') {
+                return {workGroup: {id: item}};
+            }
+            return {workGroup: {name: item}};
+
+
+        });
     }, []);
+
+    const convertStageList = useCallback(stageList => {
+        return stageList.map((item, index) => {
+            // runtimeEnv	运行环境 1：主机运行，2：容器运行		false   // integer
+            // scriptContents	脚本内容		false   // string
+            // scriptId	脚本管理平台数据ID		false   // integer
+            // scriptLanguage	脚本语言：Groovy、Python、Linux Bash		false   // string
+            // scriptParams	脚本参数,多个参数英文逗号分隔		false   // string
+            // scriptType	脚本类型 1：脚本引用；2：手动录入		false   // integer
+            // timeoutValue	超时时长(单位秒)		false   // integer
+            const {
+                runningEnvironment: runtimeEnv,
+                scriptContents,
+                scriptParams,
+                scriptLanguage,
+                timeoutValue,
+                scriptOrigin: scriptType,
+                name,
+                type,
+                targetResourceList,
+            } = item;
+
+            const tempTargetResourceList = targetResourceList.map(item => {
+                // id	ID		false   // integer
+                // status	通用状态 0：正常；-1：删除；		false   // integer
+                // targetResourceName	目标主机名		false   // string
+                // targetUuid	目标主机标识		false   // string
+                const {
+                    uuid: targetUuid,
+                    name: targetResourceName,
+                    // status,
+                } = item;
+                return {
+                    targetUuid,
+                    targetResourceName,
+                    // status,
+                };
+            });
+
+            const {EXECUTE_SCRIPT, MANUAL_CONFIRM, FILE_DISTRIBUTION} = STEP_TYPES;
+            switch (type) {
+                case EXECUTE_SCRIPT.value:
+                    return {
+                        type,
+                        name,
+                        sortIndex: index,
+                        stageScriptBean: {
+                            runtimeEnv,
+                            scriptContents,
+                            scriptParams,
+                            scriptLanguage,
+                            timeoutValue,
+                            scriptType,
+                        },
+                        targetResourceList: tempTargetResourceList,
+                    };
+                case MANUAL_CONFIRM.value:
+                    break;
+                case FILE_DISTRIBUTION.value:
+                    break;
+            }
+
+        });
+    }, []);
+
+    const convertWorkVariateList = useCallback(variables => {
+        return variables.map(item => {
+            const {exeChange, exeRequired} = item;
+            return {
+                ...item,
+                exeChange: exeChange ? 1 : 0,
+                exeRequired: exeRequired ? 1 : 0,
+            };
+        });
+    }, []);
+
+    const convertParams = useCallback(originParams => {
+        const {stageList: originStageList, category, name, describes, variable} = originParams;
+
+        const groupRelList = convertCategory(category);
+        const stageList = convertStageList(originStageList);
+        const workVariateList = convertWorkVariateList(variable);
+
+        return {
+            stageList,
+            workPlan: {
+                groupRelList,
+                name,
+                describes,
+                workVariateList,
+            },
+        };
+    }, [convertCategory, convertStageList, convertWorkVariateList]);
+
+    const handleSubmit = useCallback(async e => {
+        const params = convertParams(e);
+
+        const res = await request({
+            url: `${URL_PREFIX1}${URL.ADD_NOAH_WORK_PLAN}`,
+            method: REQUEST_METHODS.POST,
+            params,
+        });
+        const {status} = res;
+        if (!status) {
+            message.success('添加成功');
+            // goBack();
+        //     TODO reset form;
+        }
+    }, [convertParams]);
 
     const handleCancelOperate = useCallback(() => {
         Modal.info({
@@ -93,39 +228,89 @@ const useAddOrEdit = () => {
         });
     }, []);
 
-    const handleAddCategory = useCallback(() => {
+    const handleAddCategory = useCallback(values => {
+        setFormikValues({
+            ...formikValues,
+            ...values,
+        });
         setAddCategoryVisible(true);
-    }, []);
+    }, [formikValues, setAddCategoryVisible]);
 
     const handleAddGlobalVariable = useCallback(() => {
+        setGlobalVariableEditingValue(null);
         setGlobalVariableVisible(true);
     }, []);
 
-    const handleAddStep = useCallback(() => {
+    const handleStartAddStep = useCallback(values => {
+        setStepEditingValue(null);
+        setFormikValues({
+            ...formikValues,
+            ...values,
+        });
+        setAddStepDrawerVisible(true);
+    }, [formikValues]);
+
+    // add step
+    const handleAddStep = useCallback(e => {
+        const {stageList} = formikValues;
+        setFormikValues({
+            ...formikValues,
+            stageList: [...stageList, {...e, sortIndex: stageList.length}],
+        });
+
+        setAddStepDrawerVisible(false);
+    }, [formikValues]);
+
+    // edit step
+    const handleEditStep = useCallback((e, originData) => {
+        const {sortIndex} = originData;
+
+        const {stageList} = formikValues;
+        const tempArr = clone(stageList);
+        tempArr[sortIndex] = e;
+        setFormikValues({
+            ...formikValues,
+            stageList: tempArr,
+        });
+
+        setAddStepDrawerVisible(false);
+    }, [formikValues]);
+
+    // 新建步骤
+    const handleChangeStep =  useCallback((e, stepEditingValue) => {
+        if (stepEditingValue) {
+            handleEditStep(e, stepEditingValue);
+        } else {
+            handleAddStep(e);
+        }
+    }, [handleAddStep, handleEditStep]);
+
+    const handleRemoveStageList =  useCallback(e => {
+        const {stageList} = formikValues;
+        const {index} = e;
+        const tempArr = clone(stageList);
+        tempArr.splice(index, 1);
+        setFormikValues({
+            ...formikValues,
+            stageList: tempArr,
+        });
+    }, [formikValues]);
+
+    // 全局变量编辑
+    const handleStartEditVariable = useCallback(e => {
+        setGlobalVariableEditingValue(e);
+        setGlobalVariableVisible(true);
+    }, []);
+
+    // 作业平台 编辑
+    const handleStartEditStep = useCallback(e => {
+        setStepEditingValue(e);
         setAddStepDrawerVisible(true);
     }, []);
 
-    // 新建步骤
-    const handleChangeStep =  useCallback(e => {
-        setStageList([...stageList, e]);
-        setAddStepDrawerVisible(false);
-    }, [stageList]);
-
-    const handleRemoveGlobalVariable = useCallback(globalVariable => {
-        const {id} = globalVariable;
-        const tempArray =  clone(globalVariables);
-        const length = tempArray.length;
-
-        for (let i = 0; i < length; i++) {
-            if (id === tempArray[i].id) {
-                tempArray.splice(i, 1);
-                break;
-            }
-        }
-
-        setGlobalsVariables(tempArray);
-
-    }, [globalVariables]);
+    useEffect(() => {
+        fetchCategory();
+    }, []);
 
     const common = {
         goBack,
@@ -133,26 +318,39 @@ const useAddOrEdit = () => {
         setDisabled,
         handleSubmit,
         disabled,
-        addCategoryVisible,
         formikValues,
         handleCancelOperate,
+        handleRemoveStageList,
+        editing,
+
+        // about category
         handleAddCategory,
         setAddCategoryVisible,
+        addCategoryVisible,
+        handleSubmitAddCategory,
+
+        // about variable
         handleAddGlobalVariable,
         globalVariables,
         handleRemoveGlobalVariable,
-        editing,
         globalVariableVisible,
         setGlobalVariableVisible,
+        handleChangeGlobalVariable,
+        handleStartEditVariable,
+        globalVariableEditingValue,
+
+        // about step
         addStepDrawerVisible,
         setAddStepDrawerVisible,
-        handleAddStep,
+        handleStartAddStep,
         handleChangeStep,
-        stageList,
-        handleSubmitAddCategory,
+        handleStartEditStep,
+        stepEditingValue,
     };
 
     if (params?.detailId) {
+        setEditing(true);
+
         return {
             ...common,
             ...handleEdit(params.detailId),

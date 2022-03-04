@@ -4,8 +4,7 @@
 import {useState, useMemo, useEffect} from 'react';
 import {omit, cloneDeep} from 'lodash';
 import {Select, Tag} from '@osui/ui';
-
-const SYMBOL_FOR_ALL = '*';
+import {SYMBOL_FOR_ALL} from '../../constant';
 
 const SelectAll = props => {
     const {onChange: change, dropdownRender} = props;

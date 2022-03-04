@@ -18,3 +18,5 @@ export const REQUEST_METHODS =  {
     POST: 'post',
     PUT: 'put',
 };
+
+export const SYMBOL_FOR_ALL = '*';

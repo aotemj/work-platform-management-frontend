@@ -55,7 +55,7 @@ const useNoahList = () => {
                     select: noahType,
                 },
             });
-            const {status, result, msg} = res;
+            const {status, result} = res;
             setLoading(false);
             if (!status) {
                 const {content: list = [{}, {}], totalElements: total} = result;
@@ -63,8 +63,6 @@ const useNoahList = () => {
                     list,
                     total,
                 });
-            } else {
-                message.error(msg);
             }
         } catch (e) {
             console.error(e);

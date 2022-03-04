@@ -3,16 +3,17 @@
  */
 
 import {Button, Input, Modal} from '@osui/ui';
-import React, {useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import * as yup from 'yup';
 import FormikComp from '../../../../components/FormikComp';
-import useCategory from '../hooks/category';
 import cx from './index.less';
 
-const AddCategoryModal = ({visible, setVisible}) => {
-    const [initialValues] = useState({name: ''});
+const defaultInitialValues = {
+    name: '',
+};
+const AddCategoryModal = ({visible, setVisible, handleSubmitAddCategory}) => {
+    const [initialValues] = useState(defaultInitialValues);
     const [disabled, setDisabled] = useState(false);
-    const {handleSubmitAddCategory} = useCategory();
     const formFields = {
         name: {
             label: '分类名称',
@@ -23,10 +24,10 @@ const AddCategoryModal = ({visible, setVisible}) => {
                 const maxLength = formFields.name.MAX_LENGTH;
                 return (
                     <Input
+                        {...field}
                         maxLength={maxLength}
                         placeholder="标签名支持：汉字 A-Z a-z 0-9 _ - ! # @ $ & % ^ ~ = + ."
                         suffix={<span>{field.value.length}/{maxLength}</span>}
-                        {...field}
                     />
                 );
             },
@@ -41,6 +42,10 @@ const AddCategoryModal = ({visible, setVisible}) => {
                 .max(20, '分类名称限20个字符'),
         },
     };
+    const handleSubmit = useCallback(values => {
+        handleSubmitAddCategory(values);
+        setVisible(false);
+    }, [handleSubmitAddCategory, setVisible]);
 
     const modalProps = {
         title: '新增分类',
@@ -52,20 +57,18 @@ const AddCategoryModal = ({visible, setVisible}) => {
         okButtonProps: {
             disabled,
         },
-        // onOk: handleSubmit,
         footer: null,
     };
     const formikProps = {
         initialValues,
         formFields,
-        // needFooter: false,
         Footer: ({values}) => {
             return (
                 <div className={cx('footer')}>
                     <Button
                         type={'primary'}
                         disabled={disabled}
-                        onClick={() => handleSubmitAddCategory(values)}
+                        onClick={() => handleSubmit(values)}
                         className={cx('submit-button')}
                     >确定
                     </Button>
@@ -74,10 +77,11 @@ const AddCategoryModal = ({visible, setVisible}) => {
         },
         disabled,
         setDisabled,
+        handleSubmit,
     };
     return (
         <Modal {...modalProps}>
-            <FormikComp {...formikProps} />
+            {visible && <FormikComp {...formikProps} />}
         </Modal>
     );
 };

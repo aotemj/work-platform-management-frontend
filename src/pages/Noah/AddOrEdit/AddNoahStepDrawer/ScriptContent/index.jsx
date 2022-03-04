@@ -9,7 +9,7 @@ const {TextArea} = Input;
 const {TabPane} = Tabs;
 
 const ScriptContent = props => {
-    const {onChange, field} = props;
+    const {onChange, field, scriptLanguage, setFormikValues, values} = props;
     const containerRef = useRef();
     const toggleFullScreen = useCallback(() => {
         if (screenfull.isEnabled) {
@@ -24,11 +24,16 @@ const ScriptContent = props => {
     return (
         <div className={cx('script-content-container')} ref={containerRef}>
             <Tabs
-                defaultActiveKey={SCRIPT_TYPES[0].key}
+                defaultActiveKey={scriptLanguage}
                 tabBarStyle={{
                     padding: '0 10px',
                 }}
-                onChange={() => {}}
+                onChange={e => {
+                    setFormikValues({
+                        ...values,
+                        scriptLanguage: e,
+                    });
+                }}
                 tabBarExtraContent={(
                     <i
                         className={cx('full-screen-button')}

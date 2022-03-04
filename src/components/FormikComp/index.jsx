@@ -3,7 +3,7 @@
  */
 
 import {Formik} from 'formik';
-import React, {useRef} from 'react';
+import React, {createRef} from 'react';
 import {debounce, isEqual, set} from 'lodash/fp';
 import * as yup from 'yup';
 import {omit} from 'ramda';
@@ -31,7 +31,6 @@ const FormikComp = ({
     handleCancel,
     okText = '确定',
 }) => {
-
     const validateObj = Object.values(formFields).reduce((prev, curr) => {
         if (!curr.hide) {
             prev[curr.name] = curr.validate;
@@ -39,7 +38,7 @@ const FormikComp = ({
         return prev;
     }, {});
 
-    const refOfValues = useRef();
+    const refOfValues = createRef();
 
     validateObj.grantGroups = yup.array();
     const validateSchema = yup.object().shape(validateObj);
@@ -118,6 +117,7 @@ const FormikComp = ({
                             })
                         }
                         {needFooter && <FinalFooter values={values} />}
+
                     </>
                 );
             }}
