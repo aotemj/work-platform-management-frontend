@@ -1,0 +1,26 @@
+.exec-viewstep-header {
+    color: #6F7783;
+    font-size: 14px;
+    margin-bottom: 15px;
+    &-content {
+        padding-right: 32px;
+        &-text {
+            font-weight: 600;
+            color: #1E2A3D;
+        }
+    }
+}
+.exec-viewstep-content {
+    :global {
+        .ant-steps-item-title {
+            width: 100%;
+        }
+        .ant-steps-item-tail {
+            left: 16px!important;
+        }
+        .ant-steps-item-tail::after {
+            width: 2px!important;
+            background-color:  #D8D8D8!important;
+        }
+    }
+}

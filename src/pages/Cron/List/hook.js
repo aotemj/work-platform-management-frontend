@@ -7,7 +7,7 @@ import {EXEC_LIST_URL} from '../../../utils/api';
 import {DEFAULT_PAGINATION} from '../../../constant';
 import {useNavigate} from 'react-router-dom';
 
-const useExecList = () => {
+const useCronList = () => {
     const navigate = useNavigate();
     // Table加载状态
     const [loading, setLoading] = useState(false);
@@ -95,4 +95,4 @@ const useExecList = () => {
     };
 };
 
-export default useExecList;
+export default useCronList;

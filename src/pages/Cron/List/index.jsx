@@ -1,41 +1,45 @@
 /**
- * 执行历史 作业任务列表
+ * 定时任务列表
  */
 import React from 'react';
 import cx from './index.less';
-import {Table, Button, PageHeader, Spin} from '@osui/ui';
-import useExecList from './hook';
+import {Table, Button, PageHeader, Spin, Switch} from '@osui/ui';
+import useCronList from './hook';
 import {formatTimeStamp} from '../../../utils';
 import OperationBar from './OperationBar';
 import StatusTag from '../../../components/StatusTag';
-import ExecViewStepDrawer from './ExecViewStepDrawer';
 import {omit} from 'ramda';
 
-const title = '作业任务';
+const title = '定时任务';
 
-const ExecList = () => {
+const CronList = () => {
     const {
         data,
         loading,
         handleChangeInput,
         handleChangeDate,
         handlePaginationChange,
-    } = useExecList();
+    } = useCronList();
     const tableOperations = [
         {
-            label: '重新执行',
+            label: '执行记录',
             execution: null,
         },
         {
 
-            label: '查看',
+            label: '编辑',
+            execution: null,
+        },
+        {
+
+            label: '删除',
             execution: null,
         },
     ];
 
     const columns = [
         {
-            title: 'ID',
+            title: '任务名称',
             dataIndex: 'id',
         },
         {
@@ -43,11 +47,15 @@ const ExecList = () => {
             dataIndex: 'name',
         },
         {
-            title: '发起人',
+            title: '执行策略',
             dataIndex: 'userName',
         },
         {
-            title: '任务状态',
+            title: '更新人',
+            dataIndex: 'userName',
+        },
+        {
+            title: '最新执行结果',
             dataIndex: 'status',
             render(status) {
                 return <StatusTag status={status} />;
@@ -63,24 +71,27 @@ const ExecList = () => {
         {
             title: '操作',
             dataIndex: 'operate',
-            width: 170,
+            width: 220,
             render: (_, record) => {
                 return (
                     <div style={{marginLeft: '-5px'}}>
-                        {
-                            tableOperations.map(item => {
-                                const {label, execution} = item;
-                                return (
-                                    <Button
-                                        key={label}
-                                        type={'link'}
-                                        className={cx('operation-button')}
-                                        onClick={() => execution(record)}
-                                    >{label}
-                                    </Button>
-                                );
-                            })
-                        }
+                        <>
+                            {
+                                tableOperations.map(item => {
+                                    const {label, execution} = item;
+                                    return (
+                                        <Button
+                                            key={label}
+                                            type={'link'}
+                                            className={cx('operation-button')}
+                                            onClick={() => execution(record)}
+                                        >{label}
+                                        </Button>
+                                    );
+                                })
+                            }
+                            <Switch defaultChecked />
+                        </>
                     </div>
                 );
             },
@@ -103,23 +114,15 @@ const ExecList = () => {
         handleChangeDate,
     };
 
-    const viewStepProps = {
-        visible: true,
-        setVisible: () => {},
-        onClose: () => {},
-        handleChangeStep: () => {},
-    };
-
     return (
-        <div className={cx('noah-container')}>
+        <div className={cx('cron-container')}>
             <PageHeader title={title} className={cx('title')} />
             <OperationBar {...operationBarProps} />
             <Spin spinning={loading} size="large">
                 <Table {...tableProps} />
             </Spin>
-            <ExecViewStepDrawer {...viewStepProps} />
         </div>
     );
 };
 
-export default ExecList;
+export default CronList;
