@@ -7,11 +7,13 @@ import React, {createRef} from 'react';
 import {debounce, isEqual, set} from 'lodash/fp';
 import * as yup from 'yup';
 import {omit} from 'ramda';
-import {Button} from '@osui/ui';
+import {Button, Collapse} from '@osui/ui';
+
 
 import FormField from '../FormField';
 import cx from './index.less';
 
+const {Panel} = Collapse;
 /**
  *
  * @param initialValues
@@ -34,10 +36,17 @@ const FormikComp = ({
     const validateObj = Object.values(formFields).reduce((prev, curr) => {
         if (!curr.hide) {
             prev[curr.name] = curr.validate;
+            if (curr.collapseProps) {
+                curr.collapseProps.formFields.reduce((innerPrev, innerCurr) => {
+                    if (!innerCurr.hide) {
+                        innerPrev[innerCurr.name] = innerCurr.validate;
+                    }
+                    return innerPrev;
+                }, prev);
+            }
         }
         return prev;
     }, {});
-
     const refOfValues = createRef();
 
     validateObj.grantGroups = yup.array();
@@ -50,14 +59,13 @@ const FormikComp = ({
             validateSchema.validateSync(values, {abortEarly: false});
             return {};
         } catch (e) {
-            const errors = e.inner.reduce((acc, cur) => set(
+            return e.inner.reduce((acc, cur) => set(
                 cur.path,
                 // 如果希望某些特定的条件下level不是error，而是warning，
                 // 请修改下面的逻辑，根据yup的返回结果进行适配
                 cur.errors.map(v => ({level: 'error', text: v})),
                 acc,
             ), {});
-            return errors;
         }
     };
 
@@ -105,15 +113,56 @@ const FormikComp = ({
                                 label,
                                 children,
                                 hide,
+                                collapseProps,
                                 ...rest
                             }) => {
-                                return hide ? null : (
-                                    <FormField name={name} label={label} key={label} {...omit('validate', rest)}>
+                                if (hide) {
+                                    return;
+                                }
+                                if (collapseProps) {
+                                    const {formFields, title, autoOpen} = collapseProps;
+                                    return (
+                                        <Collapse key={title} defaultActiveKey={autoOpen ? title : ''}>
+                                            <Panel header={title} key={title}>
+                                                {
+                                                    formFields.map(item => {
+                                                        const {name, label, children, hide, ...rest}  = item;
+                                                        if (hide) {
+                                                            return;
+                                                        }
+                                                        return (
+                                                            <FormField
+                                                                name={name}
+                                                                label={label}
+                                                                key={label}
+                                                                {...omit('validate', rest)}
+                                                            >
+                                                                {
+                                                                    children
+                                                                }
+                                                            </FormField>
+                                                        );
+                                                    })
+                                                }
+
+                                            </Panel>
+                                        </Collapse>
+                                    );
+                                }
+                                return (
+                                    <FormField
+                                        name={name}
+                                        label={label}
+                                        key={label}
+                                        {...omit('validate', rest)}
+                                    >
                                         {
                                             children
                                         }
                                     </FormField>
                                 );
+
+
                             })
                         }
                         {needFooter && <FinalFooter values={values} />}

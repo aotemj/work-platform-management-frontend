@@ -3,20 +3,17 @@
  */
 
 import React, {useMemo} from 'react';
-import {Drawer, Input, Select, Tooltip, Radio, InputNumber} from '@osui/ui';
+import {Drawer, Input, Select, Tooltip} from '@osui/ui';
 import * as yup from 'yup';
 
-import FormikComp from '../../../../components/FormikComp';
 import cx from './index.less';
-import {RUNNING_ENVIRONMENT, SCRIPTS_ORIGIN, STEP_TYPES} from '../constants';
+import {STEP_TYPES} from '../constants';
 import {ReactComponent as IconRemark} from '../../../../statics/icons/remark.svg';
-import ScriptContent from './ScriptContent';
-import TargetServer from './TargetServer';
 import useAddNoahStep from './hook';
+import FormikComp from '../../../../components/FormikComp';
+import {getFileDistribution, getScriptExecuteFields} from './util';
 
-const {TextArea} = Input;
 const {Option} = Select;
-
 
 const AddNoahStepDrawer = ({onClose, visible, handleChangeStep, stepEditingValue}) => {
     const {
@@ -28,6 +25,9 @@ const AddNoahStepDrawer = ({onClose, visible, handleChangeStep, stepEditingValue
         handleCancel,
         handleChangeTargetServer,
         isScriptExecute,
+        isFileDistribution,
+        userInputError,
+        setUserInputError,
     } = useAddNoahStep({
         onClose,
         handleChangeStep,
@@ -70,150 +70,28 @@ const AddNoahStepDrawer = ({onClose, visible, handleChangeStep, stepEditingValue
     };
 
     // 执行脚本相关 fields
-    const scriptExecuteFields = {
-        runningEnvironment: {
-            name: 'runningEnvironment',
-            label: '运行环境',
-            required: true,
-            hide: !isScriptExecute,
-            children: ({field, form: {values}}) => (
-                <Radio.Group
-                    {...field}
-                    options={Object.values(RUNNING_ENVIRONMENT)}
-                    onChange={e => {
-                        setFormikValues({
-                            ...values,
-                            runningEnvironment: e.target.value,
-                        });
-                    }}
-                    optionType="button"
-                />
-            ),
-            validate: null,
-        },
-        scriptOrigin: {
-            name: 'scriptOrigin',
-            label: '脚本来源',
-            required: true,
-            hide: !isScriptExecute,
-            children: ({field, form: {values}}) => (
-                <Radio.Group
-                    {...field}
-                    options={Object.values(SCRIPTS_ORIGIN)}
-                    onChange={e => {
-                        setFormikValues({
-                            ...values,
-                            scriptOrigin: e.target.value,
-                        });
-                    }}
-                    optionType="button"
-                />
-            ),
-            validate: null,
-        },
-        // 选择脚本
-        chooseScript: {
-            name: 'chooseScript',
-            label: '选择脚本',
-            // 脚本来源 为 "脚本引入" 时 显示
-            hide: !isScriptExecute || formikValues.scriptOrigin === SCRIPTS_ORIGIN.MANUAL_INPUT.value,
-            required: true,
-            children: ({filed}) => (<Select {...typeSelectProps} {...filed} />),
-            validate: yup
-                .string()
-                .ensure()
-                .required('请选择脚本'),
-        },
-        scriptContents: {
-            name: 'scriptContents',
-            label: '脚本内容',
-            required: true,
-            hide: !isScriptExecute,
-            children: ({field, form: {values}}) => (
-                <ScriptContent
-                    field={field}
-                    scriptLanguage={formikValues.scriptLanguage}
-                    setFormikValues={setFormikValues}
-                    values={values}
-                    onChange={e => {
-                        setFormikValues({
-                            ...values,
-                            scriptContents: e,
-                        });
-                    }}
-                />
-            ),
-            validate: yup
-                .string()
-                .ensure()
-                .required('请输入脚本内容'),
-        },
-        scriptParams: {
-            name: 'scriptParams',
-            label: '脚本参数',
-            MAX_LENGTH: 500,
-            // required: true,
-            hide: !isScriptExecute,
-            children: ({field}) => (
-                <TextArea
-                    {...field}
-                    showCount
-                    className={cx('noah-textarea')}
-                    autoSize={{minRows: 5}}
-                    maxLength={scriptExecuteFields.scriptParams.MAX_LENGTH}
-                    placeholder="脚本执行时传入参数，同脚本在终端执行时的传参格式，例：./test.sh XXXX"
-                />
-            ),
-            validate: null,
-        },
-        timeoutValue: {
-            name: 'timeoutValue',
-            label: '超时时长（秒）',
-            hide: !isScriptExecute,
-            // required: true,
-            children: ({field}) => (
-                <InputNumber
-                    className={cx('time-out-input')}
-                    {...field}
-                    placeholder="请输入超时时长"
-                />
-            ),
-            validate: null,
-        },
-        targetResourceList: {
-            name: 'targetResourceList',
-            label: '目标服务器',
-            required: true,
-            // 运行环境为 主机运行时 显示
-            hide: !isScriptExecute || formikValues.runningEnvironment !== RUNNING_ENVIRONMENT.AGENT.value,
-            children: ({field, form: {values}}) => (
-                <TargetServer
-                    field={field}
-                    handleChange={(agents, agentMap) => handleChangeTargetServer({agents, values, agentMap, editing})}
-                    visible={visible}
-                />
-            ),
-            validate: yup
-                .array()
-                .ensure()
-                .min(1, '请选择目标服务器'),
-        },
-        image: {
-            name: 'image',
-            label: '填写镜像',
-            required: true,
-            // 运行环境为 容器类型 显示
-            hide: !isScriptExecute || formikValues.runningEnvironment !== RUNNING_ENVIRONMENT.CONTAINER.value,
-            children: ({field}) => (
-                <Select
-                    className={cx('time-out-input')}
-                    {...field}
-                    placeholder="请填写镜像"
-                />
-            ),
-            validate: null,
-        },
-    };
+    const scriptExecuteFields = getScriptExecuteFields({
+        isScriptExecute,
+        isFileDistribution,
+        setFormikValues,
+        formikValues,
+        handleChangeTargetServer,
+        visible,
+        typeSelectProps,
+        editing,
+    });
+
+    const fileDistributionFields =  getFileDistribution({
+        isFileDistribution,
+        isScriptExecute,
+        setFormikValues,
+        formikValues,
+        handleChangeTargetServer,
+        visible,
+        editing,
+        userInputError,
+        setUserInputError,
+    });
 
     const formFields = {
         type: {
@@ -280,7 +158,7 @@ const AddNoahStepDrawer = ({onClose, visible, handleChangeStep, stepEditingValue
         },
         // 执行脚本相关
         ...scriptExecuteFields,
-
+        ...fileDistributionFields,
     };
 
     const formikProps = {

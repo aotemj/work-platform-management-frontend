@@ -3,7 +3,7 @@ import {message} from '@osui/ui';
 import {getCompanyId, getSpaceId} from '../utils/getRouteIds';
 
 const service = axios.create({
-    timeout: 30000,
+    // timeout: 30000,
 });
 service.interceptors.request.use(
     config => {

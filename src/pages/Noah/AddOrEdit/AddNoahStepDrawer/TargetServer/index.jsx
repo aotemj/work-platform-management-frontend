@@ -114,7 +114,14 @@ const formatData = (agents, labels, currentType) => {
     };
 };
 
-const TargetServer = ({field, handleChange, visible}) => {
+const TargetServer = ({
+    field,
+    handleChange,
+    visible,
+    multiple = true,
+    allowClear = true,
+    resetUserInputError,
+}) => {
     const companyId = getCompanyId();
     const spaceId = getSpaceId();
 
@@ -230,17 +237,26 @@ const TargetServer = ({field, handleChange, visible}) => {
         return res;
     }, [labelMap]);
 
+    const filterAgent = useCallback(agent => {
+        if (typeof agent === 'number') {
+            return getActiveAgentInfoByLabel(agent);
+        }
+        return [agentMapByUuid[agent]];
+
+    }, [agentMapByUuid, getActiveAgentInfoByLabel]);
+
     const onChange = useCallback(e => {
         const agents = [];
-        for (let i = 0; i < e.length; i++) {
-            if (typeof e[i] === 'number') {
-                agents.push(...getActiveAgentInfoByLabel(e[i]));
-            } else {
-                agents.push(agentMapByUuid[e[i]]);
+        if (multiple) {
+            for (let i = 0; i < e.length; i++) {
+                const item = e[i];
+                agents.push(...filterAgent(item));
             }
+        } else {
+            agents.push(...filterAgent(e));
         }
         handleChange(agents, agentMapByUuid);
-    }, [agentMapByUuid, getActiveAgentInfoByLabel, handleChange]);
+    }, [agentMapByUuid, filterAgent, handleChange, multiple]);
 
     useEffect(() => {
         setNeedUpdate(visible);
@@ -257,7 +273,6 @@ const TargetServer = ({field, handleChange, visible}) => {
     useEffect(() => {
         setNeedUpdate(true);
     }, [type]);
-
     return (
         <TreeSelect
             showSearch
@@ -265,16 +280,16 @@ const TargetServer = ({field, handleChange, visible}) => {
             dropdownStyle={{maxHeight: 400, overflow: 'auto', width: '100%'}}
             placeholder="请选择目标服务器"
             showArrow
-            allowClear
-            multiple
+            allowClear={allowClear}
+            multiple={multiple}
             // open
             onSearch={handleSearch}
             treeData={treeData}
             filterTreeNode={false}
-            onChange={onChange}
             getPopupContainer={triggerNode => triggerNode.parentNode}
             treeDefaultExpandAll
             dropdownClassName={cx('agent-select-tree-dropdown')}
+            onFocus={resetUserInputError}
             dropdownRender={(originNode, props) => {
                 return (
                     <>
@@ -293,6 +308,7 @@ const TargetServer = ({field, handleChange, visible}) => {
                 );
             }}
             {...field}
+            onChange={onChange}
         />
     );
 };

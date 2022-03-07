@@ -1,19 +1,10 @@
 import React, {useMemo} from 'react';
 import {Tooltip} from '@osui/ui';
-import {ReactComponent as IconError} from './icons/error.svg';
 import {ReactComponent as IconInfo} from '../../statics/icons/info.svg';
-import {ReactComponent as IconSuccess} from './icons/success.svg';
-import {ReactComponent as IconWarning} from './icons/warning.svg';
 import {ReactComponent as IconRemark} from '../../statics/icons/remark.svg';
 
 import cx from './index.less';
-
-const LevelIconMap = {
-    success: <IconSuccess className={cx('error-message-icon')} />,
-    error: <IconError className={cx('error-message-icon')} />,
-    info: <IconInfo className={cx('error-message-icon')} />,
-    warning: <IconWarning className={cx('error-message-icon')} />,
-};
+import {LevelIconMap} from '../../constant';
 
 const Layout = ({
     id,
@@ -27,7 +18,7 @@ const Layout = ({
     hints = [],
     style,
     hideLabel = false,
-    ...rest
+    // ...rest
 }) => {
     const hasError = useMemo(
         () => Array.isArray(errors) && errors.some(e => (e && 'text' in e)),
@@ -37,7 +28,20 @@ const Layout = ({
     const printableErrors = useMemo(
         () => {
             if (Array.isArray(errors)) {
-                return errors.filter(e => (e && e.text));
+                const errorMap = {};
+                errors.forEach(e => {
+                    if (e) {
+                        if (!e?.text) {
+                            for (const eElement of Object.values(e)) {
+                                errorMap[eElement[0].text] = eElement[0];
+                            }
+                        } else {
+                            errorMap[e.text] = e;
+                        }
+                    }
+
+                });
+                return Object.values(errorMap);
             }
             return [];
         },

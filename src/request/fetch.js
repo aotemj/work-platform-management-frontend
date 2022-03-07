@@ -1,14 +1,15 @@
 import service from './service';
-import {REQUEST_METHODS} from '../constant';
+import {REQUEST_METHODS, REQUEST_TYPE} from '../constant';
 
 export const fetch = (url, params, method, type) => {
     const {POST, GET, PUT} = REQUEST_METHODS;
+    const {FORM_DATA, BLOB, JSON: JSON_TYPE} = REQUEST_TYPE;
 
     const headers = {
         'Access-Control-Allow-Origin': '*',
     };
     if (method === POST || method === PUT) {
-        if (type === 'formData') {
+        if (type === FORM_DATA) {
             headers['Content-Type'] = 'application/x-www-form-urlencoded';
         } else {
             headers['Content-Type'] = 'application/json';
@@ -19,12 +20,12 @@ export const fetch = (url, params, method, type) => {
         headers,
         url,
         data: method === POST || method === PUT ? params : '',
-        response: type === 'blob' ? 'blob' : 'json',
-        responseType: type === 'blob' ? 'blob' : 'json',
+        response: type === BLOB ? BLOB : JSON_TYPE,
+        responseType: type === BLOB ? BLOB : JSON_TYPE,
         transformRequest: [
             function (data) {
                 if (method === POST || method === PUT) {
-                    if (type === 'formData') {
+                    if (type === FORM_DATA) {
                         return data;
                     }
                     return JSON.stringify(data);

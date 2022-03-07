@@ -99,9 +99,11 @@ export const URL = {
     // 新增分类
     ADD_CATEGORIES: '/rest/v1/work-group',
     // 获取分类
-    CATEGORIES: '/rest/v1/work-group/list',
+    CATEGORIES: '/rest/v1/work-group',
     // 获取全局参数
     GLOBAL_VARIABLES: '/rest/v1/work-variate/type',
+    // 上传本地文件
+    UPLOAD_LOCAL_FILE: '/rest/v1/file/local',
 };
 
 // 主机类型
@@ -113,4 +115,31 @@ export const GROUP_TYPES = {
 
 export const ERROR_MSG = {
     VARIABLE_ALREADY_EXIST: '当前全局变量已存在',
+};
+
+// 文件来源类型
+export const FILE_SOURCE_TYPE = {
+    LOCAL: 1,
+    SERVER: 2,
+};
+
+// 上传文件状态
+export const UPDATE_FILE_STATUS = {
+    ERROR: 'error',
+    SUCCESS: 'SUCCESS',
+    LOADING: 'LOADING',
+};
+
+// 传输模式
+export const TRANSMISSION_MODE = {
+    // 强制模式
+    FORCE: {
+        key: '强制模式',
+        value: 1,
+    },
+    // 严谨模式
+    STRICT: {
+        key: '严谨模式',
+        value: 2,
+    },
 };

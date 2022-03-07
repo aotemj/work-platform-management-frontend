@@ -1,13 +1,14 @@
 import {useNavigate, useParams} from 'react-router-dom';
 import {useCallback, useEffect, useState} from 'react';
 import {message, Modal} from '@osui/ui';
+import {clone, isNil, omit, pickBy} from 'ramda';
+
 import {getContainerDOM} from '../../../utils';
-import {clone} from 'ramda';
 import useCategory from './hooks/category';
 import useGlobalVariable from './hooks/globalVariable';
 import {request} from '../../../request/fetch';
 import {URL_PREFIX1, URL, STEP_TYPES} from './constants';
-import {REQUEST_METHODS, SYMBOL_FOR_ALL} from '../../../constant';
+import {DEFAULT_STRING_VALUE, REQUEST_METHODS, SYMBOL_FOR_ALL} from '../../../constant';
 
 const defaultFormikValues = {
     // 方案名称
@@ -32,7 +33,7 @@ const handleAdd = () => {
 };
 
 // 编辑
-const handleEdit = detailId => {
+const handleEdit = () => {
     const title = '编辑作业';
     return {
         title,
@@ -54,7 +55,8 @@ const useAddOrEdit = () => {
 
     const [globalVariableVisible, setGlobalVariableVisible] = useState(false);
 
-    const [addStepDrawerVisible, setAddStepDrawerVisible] = useState(false);
+    // const [addStepDrawerVisible, setAddStepDrawerVisible] = useState(false);
+    const [addStepDrawerVisible, setAddStepDrawerVisible] = useState(true);
 
     // 编辑全局变量数据
     const [globalVariableEditingValue, setGlobalVariableEditingValue] = useState(null);
@@ -111,6 +113,16 @@ const useAddOrEdit = () => {
         });
     }, []);
 
+    const coverStorageFileList = useCallback(originList => {
+        return originList.map(item => {
+            let tempObj = pickBy(
+                property => property !== DEFAULT_STRING_VALUE,
+                pickBy(property => !isNil(property), item),
+            );
+            return omit(['status'], tempObj);
+        });
+    }, []);
+
     const convertStageList = useCallback(stageList => {
         return stageList.map((item, index) => {
             // runtimeEnv	运行环境 1：主机运行，2：容器运行		false   // integer
@@ -121,6 +133,7 @@ const useAddOrEdit = () => {
             // scriptType	脚本类型 1：脚本引用；2：手动录入		false   // integer
             // timeoutValue	超时时长(单位秒)		false   // integer
             const {
+                // about script execution
                 runningEnvironment: runtimeEnv,
                 scriptContents,
                 scriptParams,
@@ -130,8 +143,16 @@ const useAddOrEdit = () => {
                 name,
                 type,
                 targetResourceList,
+
+
+                downloadLimit,
+                targetPath,
+                uploadLimit,
+                transmissionMode,
+                storageFileList,
             } = item;
 
+            const tempStorageFileList = coverStorageFileList(storageFileList);
             const tempTargetResourceList = targetResourceList.map(item => {
                 // id	ID		false   // integer
                 // status	通用状态 0：正常；-1：删除；		false   // integer
@@ -150,6 +171,7 @@ const useAddOrEdit = () => {
             });
 
             const {EXECUTE_SCRIPT, MANUAL_CONFIRM, FILE_DISTRIBUTION} = STEP_TYPES;
+
             switch (type) {
                 case EXECUTE_SCRIPT.value:
                     return {
@@ -169,11 +191,28 @@ const useAddOrEdit = () => {
                 case MANUAL_CONFIRM.value:
                     break;
                 case FILE_DISTRIBUTION.value:
-                    break;
+                    // downloadLimit	下载限速(单位为kb)		false   // integer
+                    // targetPath	文件的绝对路径		false   // string
+                    // timeoutValue	超时时长(单位为秒)		false   // integer
+                    // uploadLimit	上传限速(单位为kb)		false   // integer
+                    return {
+                        type,
+                        name,
+                        sortIndex: index,
+                        stageFileBean: {
+                            targetPath,
+                            downloadLimit,
+                            timeoutValue,
+                            uploadLimit,
+                            transmissionMode,
+                        },
+                        storageFileList: tempStorageFileList,
+                        targetResourceList: tempTargetResourceList,
+                    };
             }
 
         });
-    }, []);
+    }, [coverStorageFileList]);
 
     const convertWorkVariateList = useCallback(variables => {
         return variables.map(item => {
@@ -226,7 +265,7 @@ const useAddOrEdit = () => {
             onOk: goBack,
             getContainer: getContainerDOM,
         });
-    }, []);
+    }, [goBack]);
 
     const handleAddCategory = useCallback(values => {
         setFormikValues({
