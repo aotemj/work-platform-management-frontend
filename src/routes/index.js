@@ -9,6 +9,7 @@ import {getContainerDOM, getUrlPrefixReal} from '../utils';
 import NoahList from '../pages/Noah/List';
 import AddOrEdit from '../pages/Noah/AddOrEdit';
 import ExecList from '../pages/Exec/List';
+import CronList from '../pages/Cron/List';
 
 /**
  * 创建通用路由
@@ -44,6 +45,10 @@ export const routes = {
     EXEC_LIST: {
         url: 'exec/list',
         component: <ExecList />,
+    },
+    CRON_LIST: {
+        url: 'cron/list',
+        component: <CronList />,
     },
 };
 

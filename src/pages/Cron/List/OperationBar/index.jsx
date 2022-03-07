@@ -1,8 +1,9 @@
 import React from 'react';
 import cx from '../index.less';
-import {Input} from '@osui/ui';
+import {Input, Button} from '@osui/ui';
 import DateRangePicker from '../../../../components/DateRangePicker';
 import {ReactComponent as IconSearch} from '../../../../statics/icons/search.svg';
+import {PlusOutlined} from '@ant-design/icons';
 
 const OperationBar = ({handleChangeInput, handleChangeDate}) => {
 
@@ -22,6 +23,9 @@ const OperationBar = ({handleChangeInput, handleChangeDate}) => {
                 <DateRangePicker
                     handleChangeDate={handleChangeDate}
                 />
+            </div>
+            <div className={cx('right')}>
+                <Button type="primary" icon={<PlusOutlined />} className={cx('create-button')}>新建任务</Button>
             </div>
         </div>
     );

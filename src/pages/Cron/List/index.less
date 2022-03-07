@@ -1,0 +1,47 @@
+.cron-container {
+    box-sizing: border-box;
+    padding: 24px;
+
+    :global {
+        .title {
+            span {
+                font-weight: normal;
+            }
+        }
+    }
+
+    .search {
+        max-width: 200px;
+        margin-right: 10px;
+    }
+
+    .operation-bar {
+        display: flex;
+        justify-content: space-between;
+        box-sizing: border-box;
+        margin-bottom: 20px;
+
+        > .left,
+        > .right {
+            display: flex;
+
+            > .create-button {
+                margin: 0 10px;
+            }
+        }
+    }
+
+    .operation-button {
+        margin: 0 5px;
+        margin-right: 10px!important;
+    }
+}
+
+:global {
+    .noah-list-select{
+        min-width: 160px;
+    }
+
+}
+
+
