@@ -1,21 +1,20 @@
 import {useCallback, useEffect, useState} from 'react';
-import {message} from 'antd';
+import {message, Modal} from 'antd';
 
-import {debounce, getUrlPrefixReal} from '../../../utils';
-import {LIST_URL} from '../../../utils/api';
-import {DROP_DOWN_MENU} from './constants';
-import {DEFAULT_PAGINATION} from '../../../constant';
+import {debounce, getContainerDOM, getUrlPrefixReal} from '../../../utils';
+import {DROP_DOWN_MENU, URLS} from './constants';
+import {DEFAULT_PAGINATION, REQUEST_CODE, REQUEST_METHODS, SPLIT_SYMBOL, URL_PREFIX1} from '../../../constant';
 import {useNavigate} from 'react-router-dom';
 import {routes} from '../../../routes';
 import {request} from '../../../request/fetch';
 
-const useNoahList = () => {
+const useNoahList = getUsersFromOne => {
     const navigate = useNavigate();
     const [data, setData] = useState(DEFAULT_PAGINATION);
     // 方案名过滤
     const [searchValue, setSearchValue] = useState('');
     // 方案类型过滤
-    const [noahType, setNoahType] = useState('all');
+    const [noahType, setNoahType] = useState(null);
     const [loading, setLoading] = useState(false);
     // 批量选择 key
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
@@ -24,7 +23,7 @@ const useNoahList = () => {
 
     const [shouldUpdate, setShouldUpdate] = useState(false);
 
-    const [noahTypes, setNoahTypes] = useState([{name: '全部', id: 'all', tag: 'all'}]);
+    const [noahTypes, setNoahTypes] = useState([]);
 
     const updateData = useCallback(newData => {
         setData({
@@ -47,20 +46,28 @@ const useNoahList = () => {
         setLoading(true);
         try {
             const res = await request({
-                url: LIST_URL, params: {
-                    _offset: pageNum,
-                    _limit: pageSize,
+                // currentPage	当前页	query	false   integer(int32)
+                // name	方案名称	query	false   string
+                // pageSize	每页数据条数	query	false   integer(int32)
+                // typeId	方案分类ID	query	false   integer(int32)
+                // useTemp	是否为临时方案	query	false   integer(int32)
+                // userName	创建人用户名	query	false   string
+                url: `${URL_PREFIX1}${URLS.LIST}`,
+                params: {
+                    currentPage: pageNum,
+                    pageSize,
                     // TODO 作业类型字段
-                    keyword: searchValue,
-                    select: noahType,
+                    name: searchValue,
+                    // typeId: noahType === allType.id ? '' : noahType,
+                    typeId: noahType,
                 },
             });
-            const {status, result} = res;
+            const {code, data: result} = res;
             setLoading(false);
-            if (!status) {
-                const {content: list = [{}, {}], totalElements: total} = result;
+            if (code === REQUEST_CODE.SUCCESS) {
+                const {list = [], total} = result;
                 updateData({
-                    list,
+                    list: list.map(item => ({...item, key: item.id})),
                     total,
                 });
             }
@@ -69,11 +76,22 @@ const useNoahList = () => {
         } finally {
             setShouldUpdate(false);
         }
-    }, [data, searchValue, noahType, shouldUpdate]);
+    }, [shouldUpdate, data, searchValue, noahType, updateData]);
 
     // 获取类型列表
     const getNoahTypes = useCallback(async () => {
-
+        const res = await request({
+            url: `${URL_PREFIX1}${URLS.CATEGORY}`,
+            params: {
+                currentPage: 1,
+                name: '',
+                pageSize: 1000,
+            },
+        });
+        const {code, data: {list}} = res;
+        if (code === REQUEST_CODE.SUCCESS) {
+            setNoahTypes(list);
+        }
     }, []);
 
     const executeNoah = useCallback(() => {}, []);
@@ -81,16 +99,44 @@ const useNoahList = () => {
     // TODO id 动态化
     const editNoah = useCallback((detail = {'id': 1}) => {
         navigate(routes.NOAH_EDIT.getUrl(detail.id));
-    }, []);
+    }, [navigate]);
 
     const addNoah = useCallback(() => {
         navigate(`${getUrlPrefixReal()}/${routes.NOAH_ADD.url}`);
+    }, [navigate]);
+
+    const individualDelete = useCallback(async noahId => {
+        const res = await request({
+            url: `${URL_PREFIX1}${URLS.INDIVIDUAL_DELETE}${noahId}`,
+            method: REQUEST_METHODS.DELETE,
+        });
+        const {code} = res;
+        if (code === REQUEST_CODE.SUCCESS) {
+            message.success('操作成功');
+            setShouldUpdate(true);
+        }
     }, []);
 
+    const deleteByPatch = useCallback(async idList => {
+        const res = await request({
+            url: `${URL_PREFIX1}${URLS.DELETE_BY_BATCH}${idList.join(SPLIT_SYMBOL)}`,
+            method: REQUEST_METHODS.DELETE,
+        });
+        const {code} = res;
+        if (code === REQUEST_CODE.SUCCESS) {
+            message.success('操作成功');
+            setShouldUpdate(true);
+        }
+    }, []);
     // 删除作业
-    const removeNoah = useCallback(() => {
-
-    }, []);
+    const removeNoah = useCallback(e => {
+        const {name, id} = e;
+        Modal.confirm({
+            title: `确定要删除作业${name}吗？`,
+            getContainer: getContainerDOM,
+            onOk: () => individualDelete(id),
+        });
+    }, [individualDelete]);
 
     const checkIfBatchesOperationIsValid = useCallback(() => {
         const length = selectedRowKeys.length;
@@ -103,7 +149,7 @@ const useNoahList = () => {
 
     // 批量执行
     const executeInBatches = useCallback(() => {
-        if (checkIfBatchesOperationIsValid()) {
+        if (!checkIfBatchesOperationIsValid()) {
             return false;
         }
         // TODO 批量执行
@@ -111,11 +157,15 @@ const useNoahList = () => {
 
     // 批量删除
     const removeInBatches = useCallback(() => {
-        if (checkIfBatchesOperationIsValid()) {
+        if (!checkIfBatchesOperationIsValid()) {
             return false;
         }
-        // TODO 批量删除
-    }, [checkIfBatchesOperationIsValid]);
+        Modal.confirm({
+            title: '确定要删除多个作业吗？',
+            getContainer: getContainerDOM,
+            onOk: () => deleteByPatch(selectedRowKeys),
+        });
+    }, [checkIfBatchesOperationIsValid, deleteByPatch, selectedRowKeys]);
 
     // 菜单点击
     const handleMenuClick = useCallback(e => {
@@ -164,6 +214,7 @@ const useNoahList = () => {
     // initialize
     useEffect(() => {
         getNoahTypes();
+        getUsersFromOne();
     }, []);
 
     return {
@@ -188,6 +239,7 @@ const useNoahList = () => {
         // 当前选中类型
         noahType,
         addNoah,
+        setNoahType,
     };
 };
 

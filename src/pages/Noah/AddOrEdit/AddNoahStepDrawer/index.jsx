@@ -2,7 +2,7 @@
  * 新增作业步骤 Drawer
  */
 
-import React, {useMemo} from 'react';
+import React, {useCallback, useMemo} from 'react';
 import {Drawer, Input, Select, Tooltip} from '@osui/ui';
 import * as yup from 'yup';
 
@@ -11,11 +11,18 @@ import {STEP_TYPES} from '../constants';
 import {ReactComponent as IconRemark} from '../../../../statics/icons/remark.svg';
 import useAddNoahStep from './hook';
 import FormikComp from '../../../../components/FormikComp';
-import {getFileDistribution, getScriptExecuteFields} from './util';
+import {getFileDistribution, getManualConfirmFields, getScriptExecuteFields} from './util';
 
 const {Option} = Select;
 
-const AddNoahStepDrawer = ({onClose, visible, handleChangeStep, stepEditingValue}) => {
+const AddNoahStepDrawer = ({
+    onClose,
+    visible,
+    handleChangeStep,
+    stepEditingValue,
+    setStepEditingValue,
+    // editing
+}) => {
     const {
         formikValues,
         setFormikValues,
@@ -24,10 +31,9 @@ const AddNoahStepDrawer = ({onClose, visible, handleChangeStep, stepEditingValue
         setDisabled,
         handleCancel,
         handleChangeTargetServer,
-        isScriptExecute,
-        isFileDistribution,
         userInputError,
         setUserInputError,
+        usersFromOne,
     } = useAddNoahStep({
         onClose,
         handleChangeStep,
@@ -37,9 +43,13 @@ const AddNoahStepDrawer = ({onClose, visible, handleChangeStep, stepEditingValue
         return Boolean(stepEditingValue);
     }, [stepEditingValue]);
 
-    // const defaultField = {
-    //     layout: 'horizontal',
-    // };
+    const title = useMemo(() => {
+        return editing ? '编辑作业步骤' : '新建作业步骤';
+    }, [editing]);
+
+    const setFormValues = useCallback(e => {
+        return editing ? setStepEditingValue(e) : setFormikValues(e);
+    }, [editing, setFormikValues, setStepEditingValue]);
 
     const NameLabel = () => {
         return (
@@ -52,48 +62,7 @@ const AddNoahStepDrawer = ({onClose, visible, handleChangeStep, stepEditingValue
         );
     };
 
-    const typeSelectProps = {
-        options: [].map(project => {
-            const {name, id, tags} = project;
-            return {label: name, value: id, key: id, tags};
-        }),
-        getPopupContainer: triggerNode => triggerNode.parentNode,
-        className: cx('noah-list-select'),
-        placeholder: '请选择脚本',
-        showSearch: true,
-        allowClear: true,
-        // optionFilterProp: isFilterFromTags ? 'tags' : 'label',
-        // optionFilterProp: 'label',
-        // mode: 'multiple',
-        onChange: () => {},
-        value: '',
-    };
-
-    // 执行脚本相关 fields
-    const scriptExecuteFields = getScriptExecuteFields({
-        isScriptExecute,
-        isFileDistribution,
-        setFormikValues,
-        formikValues,
-        handleChangeTargetServer,
-        visible,
-        typeSelectProps,
-        editing,
-    });
-
-    const fileDistributionFields =  getFileDistribution({
-        isFileDistribution,
-        isScriptExecute,
-        setFormikValues,
-        formikValues,
-        handleChangeTargetServer,
-        visible,
-        editing,
-        userInputError,
-        setUserInputError,
-    });
-
-    const formFields = {
+    const defaultFormField = {
         type: {
             // ...defaultField,
             name: 'type',
@@ -106,7 +75,7 @@ const AddNoahStepDrawer = ({onClose, visible, handleChangeStep, stepEditingValue
                         className={cx('variable-type-list-select')}
                         {...field}
                         onChange={e => {
-                            setFormikValues({
+                            setFormValues({
                                 ...values,
                                 type: e,
                             });
@@ -135,7 +104,7 @@ const AddNoahStepDrawer = ({onClose, visible, handleChangeStep, stepEditingValue
             MAX_LENGTH: 60,
             required: true,
             children: ({field}) => {
-                const {MAX_LENGTH} = formFields.name;
+                const {MAX_LENGTH} = defaultFormField.name;
                 return (
                     <Input
                         {...field}
@@ -156,24 +125,109 @@ const AddNoahStepDrawer = ({onClose, visible, handleChangeStep, stepEditingValue
                 .required('请输入步骤名称')
                 .max(60, '步骤名称限60个字符'),
         },
-        // 执行脚本相关
-        ...scriptExecuteFields,
-        ...fileDistributionFields,
     };
+
+    const updateFormFields = useCallback(() => {
+        const formData = editing ? stepEditingValue : formikValues;
+        const {type} = formData;
+        const isScriptExecute = type === STEP_TYPES.EXECUTE_SCRIPT.value;
+
+        const isFileDistribution = type === STEP_TYPES.FILE_DISTRIBUTION.value;
+
+        const typeSelectProps = {
+            options: [].map(project => {
+                const {name, id, tags} = project;
+                return {label: name, value: id, key: id, tags};
+            }),
+            getPopupContainer: triggerNode => triggerNode.parentNode,
+            className: cx('noah-list-select'),
+            placeholder: '请选择脚本',
+            showSearch: true,
+            allowClear: true,
+            // optionFilterProp: isFilterFromTags ? 'tags' : 'label',
+            // optionFilterProp: 'label',
+            // mode: 'multiple',
+            onChange: () => {},
+            value: '',
+        };
+
+        // 执行脚本相关 fields
+        const scriptExecuteFields = getScriptExecuteFields({
+            isScriptExecute,
+            isFileDistribution,
+            setFormValues,
+            formikValues: formData,
+            handleChangeTargetServer,
+            visible,
+            typeSelectProps,
+            editing,
+        });
+
+        const fileDistributionFields =  getFileDistribution({
+            isFileDistribution,
+            isScriptExecute,
+            setFormValues,
+            formikValues: formData,
+            handleChangeTargetServer,
+            visible,
+            editing,
+            userInputError,
+            setUserInputError,
+        });
+
+        const manualConfirmFields = getManualConfirmFields({
+            isFileDistribution,
+            isScriptExecute,
+            setFormValues,
+            formikValues: formData,
+            handleChangeTargetServer,
+            visible,
+            editing,
+            usersFromOne,
+        });
+        switch (type) {
+            case STEP_TYPES.EXECUTE_SCRIPT.value:
+                return {
+                    ...defaultFormField,
+                    ...scriptExecuteFields,
+                };
+            case STEP_TYPES.FILE_DISTRIBUTION.value:
+                return {
+                    ...defaultFormField,
+                    ...fileDistributionFields,
+                };
+            case STEP_TYPES.MANUAL_CONFIRM.value:
+                return {
+                    ...defaultFormField,
+                    ...manualConfirmFields,
+                };
+        }
+    }, [
+        defaultFormField,
+        editing,
+        formikValues,
+        handleChangeTargetServer,
+        setFormValues,
+        setUserInputError,
+        stepEditingValue,
+        userInputError,
+        usersFromOne,
+        visible,
+    ]);
 
     const formikProps = {
         handleSubmit: e => handleSubmit(e, stepEditingValue),
         initialValues: stepEditingValue || formikValues,
         disabled,
         setDisabled,
-        formFields,
+        formFields: updateFormFields(),
         handleCancel,
         okText: '保存',
     };
 
     return (
         <Drawer
-            title="新建作业步骤"
+            title={title}
             width={650}
             placement="right"
             onClose={onClose}

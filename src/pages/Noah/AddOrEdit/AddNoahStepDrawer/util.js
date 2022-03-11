@@ -1,26 +1,31 @@
 // 执行脚本相关 fields
-import {InputNumber, Radio, Select, Input, Switch, Tooltip} from '@osui/ui';
+import {InputNumber, Radio, Select, Input, Switch, Tooltip, Checkbox} from '@osui/ui';
 import * as yup from 'yup';
 import React from 'react';
 
 import ScriptContent from './ScriptContent';
 import cx from './index.less';
-import {RUNNING_ENVIRONMENT, SCRIPTS_ORIGIN, TRANSMISSION_MODE} from '../constants';
+import {NOTICE_APPROACHES, RUNNING_ENVIRONMENT, SCRIPTS_ORIGIN, TRANSMISSION_MODE} from '../constants';
 import FileSource from '../FileSource';
 import TargetServer from './TargetServer';
 import {ReactComponent as IconRemark} from '../../../../statics/icons/remark.svg';
+import SelectAll from '../../../../components/SelectAll';
 
+const {Option} = Select;
 const {TextArea} = Input;
 
 export const getScriptExecuteFields = ({
     isScriptExecute,
-    setFormikValues,
+    isFileDistribution,
+    setFormValues,
     formikValues,
     typeSelectProps,
     handleChangeTargetServer,
     editing,
     visible,
 }) => {
+    const isManualConfirm = !isFileDistribution && !isScriptExecute;
+
     const scriptExecuteFields = {
         runningEnvironment: {
             name: 'runningEnvironment',
@@ -32,7 +37,7 @@ export const getScriptExecuteFields = ({
                     {...field}
                     options={Object.values(RUNNING_ENVIRONMENT)}
                     onChange={e => {
-                        setFormikValues({
+                        setFormValues({
                             ...values,
                             runningEnvironment: e.target.value,
                         });
@@ -52,7 +57,7 @@ export const getScriptExecuteFields = ({
                     {...field}
                     options={Object.values(SCRIPTS_ORIGIN)}
                     onChange={e => {
-                        setFormikValues({
+                        setFormValues({
                             ...values,
                             scriptOrigin: e.target.value,
                         });
@@ -84,10 +89,10 @@ export const getScriptExecuteFields = ({
                 <ScriptContent
                     field={field}
                     scriptLanguage={formikValues.scriptLanguage}
-                    setFormikValues={setFormikValues}
+                    setFormValues={setFormValues}
                     values={values}
                     onChange={e => {
-                        setFormikValues({
+                        setFormValues({
                             ...values,
                             scriptContents: e,
                         });
@@ -120,7 +125,7 @@ export const getScriptExecuteFields = ({
         timeoutValue: {
             name: 'timeoutValue',
             label: '超时时长（秒）',
-            hide: !isScriptExecute,
+            hide: !isScriptExecute || isManualConfirm,
             // required: true,
             children: ({field}) => (
                 <InputNumber
@@ -186,7 +191,8 @@ const TransmissionModeTitle = () => {
 
 export const getFileDistribution = ({
     isFileDistribution,
-    setFormikValues,
+    isScriptExecute,
+    setFormValues,
     formikValues,
     handleChangeTargetServer,
     editing,
@@ -194,12 +200,13 @@ export const getFileDistribution = ({
     userInputError,
     setUserInputError,
 }) => {
+    const isManualConfirm = !isFileDistribution && !isScriptExecute;
 
-    const fileDistributionFields = {
+    return {
         timeoutValue: {
             name: 'timeoutValue',
             label: '超时时长(秒)',
-            hide: !isFileDistribution,
+            hide: !isFileDistribution || isManualConfirm,
             children: ({field}) => (
                 <InputNumber
                     className={cx('time-out-input')}
@@ -221,9 +228,9 @@ export const getFileDistribution = ({
                             className={cx('time-out-switch')}
                             checked={!uploadLimitDisabled}
                             onChange={e => {
-                                setFormikValues({
+                                setFormValues({
                                     ...values,
-                                    uploadLimitDisabled: !uploadLimitDisabled,
+                                    uploadLimitDisabled: !e,
                                 });
                             }}
                         />
@@ -251,7 +258,7 @@ export const getFileDistribution = ({
                             className={cx('time-out-switch')}
                             checked={!downloadLimitDisabled}
                             onChange={e => {
-                                setFormikValues({
+                                setFormValues({
                                     ...values,
                                     downloadLimitDisabled: !downloadLimitDisabled,
                                 });
@@ -286,10 +293,10 @@ export const getFileDistribution = ({
                                 <FileSource
                                     field={field}
                                     values={values}
-                                    setFormikValues={setFormikValues}
+                                    setFormValues={setFormValues}
                                     storageFileList={formikValues.storageFileList}
                                     changeCallback={storageFileList => {
-                                        setFormikValues({
+                                        setFormValues({
                                             ...values,
                                             storageFileList,
                                         });
@@ -372,5 +379,133 @@ export const getFileDistribution = ({
             },
         },
     };
-    return fileDistributionFields;
+};
+
+export const getManualConfirmFields = ({
+    isFileDistribution,
+    isScriptExecute,
+    setFormValues,
+    formikValues,
+    handleChangeTargetServer,
+    editing,
+    visible,
+    usersFromOne = [],
+}) => {
+    const isManualConfirm = !isFileDistribution && !isScriptExecute;
+
+    const timeoutValueProps = {
+        options: (new Array(24).fill(0)).map((item, index) => {
+            return {label: index + 1, value: index + 1};
+        }),
+        getPopupContainer: triggerNode => triggerNode.parentNode,
+        className: cx('noah-list-select'),
+        placeholder: '请选择超时时间',
+        defaultValue: 3,
+        showSearch: true,
+        // allowClear: true,
+        optionFilterProp: 'label',
+        // mode: 'multiple',
+        // onChange: () => {},
+        value: [],
+    };
+
+    // const informUserIdProps = {
+    //
+    //     options: usersFromOne.map(item => {
+    //         return {
+    //             label: item.enterpriseCard,
+    //             value: Number(item.userId),
+    //         };
+    //     }),
+    //     getPopupContainer: triggerNode => triggerNode.parentNode,
+    //     className: cx('noah-list-select'),
+    //     placeholder: '请选择通知人员',
+    //     defaultValue: 3,
+    //     showSearch: true,
+    //     allowClear: true,
+    //     optionFilterProp: 'label',
+    //     // mode: 'multiple',
+    //     value: '',
+    // };
+
+    const fields = {
+        // 通知方式
+        informWay: {
+            name: 'informWay',
+            label: '通知方式',
+            required: true,
+            // 运行环境为 人工确认时 显示
+            hide: !isManualConfirm,
+            children: ({field}) => (
+                <Checkbox.Group
+                    {...field}
+                    options={Object.values(NOTICE_APPROACHES).filter(item => item.visible)}
+                />
+            ),
+            validate: yup
+                .array()
+                .ensure()
+                .min(1, '请选择通知方式'),
+        },
+        // 通知人员
+        informUserId: {
+            name: 'informUserId',
+            label: '通知人员',
+            required: true,
+            // 运行环境为 人工确认时 显示
+            hide: !isManualConfirm,
+            children: ({field}) => (
+                <SelectAll
+                    className={cx('category-dropdown')}
+                    placeholder="请选择通知人员"
+                    maxTagCount={3}
+                    {...field}
+                >
+                    {
+                        usersFromOne.map(item => {
+                            return (
+                                <Option
+                                    // value={Number(item.userId)}
+                                    value={item.userId}
+                                    key={item.enterpriseCard}
+                                >{item.enterpriseCard}
+                                </Option>
+                            );
+                        })
+                    }
+                </SelectAll>
+            ),
+            validate: yup
+                .array()
+                .ensure()
+                .min(1, '请选择通知人员'),
+        },
+        describes: {
+            name: 'describes',
+            label: '通知描述',
+            MAX_LENGTH: 60,
+            hide: !isManualConfirm,
+            children: ({field}) => (
+                <TextArea
+                    {...field}
+                    showCount
+                    className={cx('noah-textarea')}
+                    autoSize={{minRows: 3}}
+                    maxLength={fields.describes.MAX_LENGTH}
+                    placeholder="请输入变量描述"
+                />
+            ),
+        },
+        timeoutValue: {
+            name: 'timeoutValue',
+            label: '超时时间（小时）',
+            hide: !isManualConfirm,
+            children: ({field}) => (
+                <>
+                    <Select {...timeoutValueProps} {...field} />
+                </>
+            ),
+        },
+    };
+    return fields;
 };

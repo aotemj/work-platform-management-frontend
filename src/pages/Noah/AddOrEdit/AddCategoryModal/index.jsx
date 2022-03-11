@@ -43,8 +43,9 @@ const AddCategoryModal = ({visible, setVisible, handleSubmitAddCategory}) => {
         },
     };
     const handleSubmit = useCallback(values => {
-        handleSubmitAddCategory(values);
-        setVisible(false);
+        if (handleSubmitAddCategory(values)) {
+            setVisible(false);
+        }
     }, [handleSubmitAddCategory, setVisible]);
 
     const modalProps = {

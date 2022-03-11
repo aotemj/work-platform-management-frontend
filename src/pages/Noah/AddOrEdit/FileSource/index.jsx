@@ -15,7 +15,7 @@ const FileSource = ({
     changeCallback,
     storageFileList,
     values,
-    setFormikValues,
+    setFormValues,
     userInputError,
     setUserInputError,
 }) => {
@@ -39,7 +39,7 @@ const FileSource = ({
         localFiles,
         handleRemoveLocalFile,
         chooseLocalTips,
-    } = useFileSource({changeCallback, storageFileList, values, setFormikValues});
+    } = useFileSource({changeCallback, storageFileList, values, setFormValues});
 
     const resetUserInputError = useCallback(() => {
         if (userInputError) {

@@ -4,7 +4,15 @@ import {DROP_DOWN_MENU} from '../constants';
 import {ReactComponent as IconSearch} from '../../../../statics/icons/search.svg';
 import React from 'react';
 
-const OperationBar = ({handleChange, noahTypes = [], handleMenuClick, handleChangeInput, noahType, addNoah}) => {
+const OperationBar = ({
+    handleChange,
+    noahTypes = [],
+    handleMenuClick,
+    handleChangeInput,
+    noahType,
+    addNoah,
+    setNoahType,
+}) => {
 
     const typeSelectProps = {
         options: noahTypes.map(project => {
@@ -16,6 +24,9 @@ const OperationBar = ({handleChange, noahTypes = [], handleMenuClick, handleChan
         placeholder: '搜索作业类型',
         showSearch: true,
         allowClear: true,
+        onClear: () => {
+            setNoahType(null);
+        },
         // optionFilterProp: isFilterFromTags ? 'tags' : 'label',
         // optionFilterProp: 'label',
         // mode: 'multiple',

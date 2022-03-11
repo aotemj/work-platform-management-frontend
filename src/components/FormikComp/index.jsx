@@ -108,7 +108,7 @@ const FormikComp = ({
                 return (
                     <>
                         {
-                            Object.values(formFields).map(({
+                            Object.values(formFields).filter(item => !item.hide).map(({
                                 name,
                                 label,
                                 children,
@@ -116,20 +116,14 @@ const FormikComp = ({
                                 collapseProps,
                                 ...rest
                             }) => {
-                                if (hide) {
-                                    return;
-                                }
                                 if (collapseProps) {
                                     const {formFields, title, autoOpen} = collapseProps;
                                     return (
                                         <Collapse key={title} defaultActiveKey={autoOpen ? title : ''}>
                                             <Panel header={title} key={title}>
                                                 {
-                                                    formFields.map(item => {
-                                                        const {name, label, children, hide, ...rest}  = item;
-                                                        if (hide) {
-                                                            return;
-                                                        }
+                                                    formFields.filter(item => !item.hide).map(item => {
+                                                        const {name, label, children, ...rest}  = item;
                                                         return (
                                                             <FormField
                                                                 name={name}

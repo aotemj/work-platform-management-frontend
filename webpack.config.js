@@ -146,6 +146,7 @@ module.exports = (cliEnv = {}, argv) => {
                 directory: path.resolve(__dirname, '../dist'),
             },
             client: {
+                progress: true,
                 overlay: {
                     errors: true,
                     warnings: false,

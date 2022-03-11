@@ -1,15 +1,17 @@
 import {BrowserRouter, Route, Routes} from 'react-router-dom';
 import zhCN from 'antd/lib/locale/zh_CN';
-import '../index.global.less';
 import {ConfigProvider, message} from '@osui/ui';
-import {CONTAINER_DOM_ID, PROJECT_ROUTE} from '../constant';
 import {useEffect} from 'react';
+import {Provider} from 'react-redux';
 
+import '../index.global.less';
+import {CONTAINER_DOM_ID, PROJECT_ROUTE} from '../constant';
 import {getContainerDOM, getUrlPrefixReal} from '../utils';
-import NoahList from '../pages/Noah/List';
+import NoahList from '../pages/Noah/List/index';
 import AddOrEdit from '../pages/Noah/AddOrEdit';
 import ExecList from '../pages/Exec/List';
 import CronList from '../pages/Cron/List';
+import store from '../store';
 
 /**
  * 创建通用路由
@@ -18,9 +20,6 @@ import CronList from '../pages/Cron/List';
  * @param component 对应组件
  * @returns {JSX.Element}
  */
-// const getRoute = (url, component) => {
-//     return <Route key={url} path={`${ROUTE_PREFIX}/${url}`} element={component} />;
-// };
 
 const getRoute = ({url, addProjectId = false, component}) => {
     const URL_PREFIX_TEMP = addProjectId ? `/:companyId/:projectId/${PROJECT_ROUTE}` : `/:companyId/${PROJECT_ROUTE}`;
@@ -62,40 +61,42 @@ const App = () => {
         };
     }, []);
     return (
-        <ConfigProvider
-            getPopupContainer={() => {
-                const node = getContainerDOM();
-                if (node) {
-                    return node;
-                }
-                return document.body;
-            }}
-            locale={zhCN}
-        >
-            <div
-                data-theme="osui"
-                id={CONTAINER_DOM_ID}
-                className="osc-noah"
-                style={{height: '100%', maxHeight: '100vh', overflow: 'auto'}}
+        <Provider store={store}>
+            <ConfigProvider
+                getPopupContainer={() => {
+                    const node = getContainerDOM();
+                    if (node) {
+                        return node;
+                    }
+                    return document.body;
+                }}
+                locale={zhCN}
             >
-                <BrowserRouter>
-                    <Routes>
-                        {
-                            Object.values(routes).map(item => {
-                                const {url, component} = item;
-                                return getRoute({url, component});
-                            })
-                        }
-                        {
-                            Object.values(routes).map(item => {
-                                const {url, component} = item;
-                                return getRoute({url, component, addProjectId: true});
-                            })
-                        }
-                    </Routes>
-                </BrowserRouter>
-            </div>
-        </ConfigProvider>
+                <div
+                    data-theme="osui"
+                    id={CONTAINER_DOM_ID}
+                    className="osc-noah"
+                    style={{height: '100%', maxHeight: '100vh', overflow: 'auto'}}
+                >
+                    <BrowserRouter>
+                        <Routes>
+                            {
+                                Object.values(routes).map(item => {
+                                    const {url, component} = item;
+                                    return getRoute({url, component});
+                                })
+                            }
+                            {
+                                Object.values(routes).map(item => {
+                                    const {url, component} = item;
+                                    return getRoute({url, component, addProjectId: true});
+                                })
+                            }
+                        </Routes>
+                    </BrowserRouter>
+                </div>
+            </ConfigProvider>
+        </Provider>
     );
 };
 export default App;

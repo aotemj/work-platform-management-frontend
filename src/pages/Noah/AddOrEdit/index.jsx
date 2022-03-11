@@ -66,6 +66,7 @@ const AddOrEdit = () => {
         handleChangeStep,
         handleStartEditStep,
         stepEditingValue,
+        setStepEditingValue,
         handleStartAddStep,
     } = useAddOrEdit();
 
@@ -105,7 +106,7 @@ const AddOrEdit = () => {
             ...defaultField,
             name: 'category',
             label: '分类',
-            DEFAULT_TAG_MAX_COUNT: 3,
+            DEFAULT_TAG_MAX_COUNT: Math.min(categories.length, 3),
             children: ({field, form: {values}}) => (
                 <SelectAll
                     className={cx('category-dropdown')}
@@ -123,9 +124,9 @@ const AddOrEdit = () => {
             ),
             validate: null,
         },
-        describes: {
+        noahDescribes: {
             ...defaultField,
-            name: 'describes',
+            name: 'noahDescribes',
             label: '作业描述',
             MAX_LENGTH: 500,
             validate: null,
@@ -135,7 +136,7 @@ const AddOrEdit = () => {
                     showCount
                     className={cx('noah-textarea')}
                     autoSize={{minRows: 5}}
-                    maxLength={formFields.describes.MAX_LENGTH}
+                    maxLength={formFields.noahDescribes.MAX_LENGTH}
                     placeholder="请输入作业描述"
                     {...field}
                 />
@@ -188,7 +189,7 @@ const AddOrEdit = () => {
                                     <span className={cx('index')}>{index + 1}</span>
                                     <StepItem
                                         handleClose={handleRemoveStageList}
-                                        handleEdit={() => handleStartEditStep(stage)}
+                                        handleEdit={e => handleStartEditStep(e, stage)}
                                         index={index}
                                         {...stage}
                                         editing={editing}
@@ -232,8 +233,9 @@ const AddOrEdit = () => {
         onClose: () => setAddStepDrawerVisible(false),
         handleChangeStep,
         stepEditingValue,
+        setStepEditingValue,
+        editing,
     };
-
     const formikProps = {
         handleSubmit,
         initialValues: formikValues,

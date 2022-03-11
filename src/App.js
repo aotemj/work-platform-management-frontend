@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM, {render} from 'react-dom';
 import singleSpaReact from 'single-spa-react';
 import App from './routes';
+// import store from './store';
 // ⻚⾯挂载点, 写死是这个id
 const rootElementId = 'spa-mount-point';
 // 获取挂载元素的⽅法
@@ -19,6 +20,7 @@ function domElementGetter() {
 function renderDOM() {
     render(<App />, domElementGetter());
 }
+
 // 通过⼯具库辅助⽣成的spa⽣命周期
 const reactLifecycles = singleSpaReact({
     React,
@@ -33,6 +35,7 @@ const reactLifecycles = singleSpaReact({
 // 在没有spa环境的环境下渲染DOM
 if (!window.singleSpaNavigate) {
     renderDOM();
+    // store.subscribe(renderDOM);
 }
 // 暴露spa⽣命周期
 export const {bootstrap, mount, unmount} = reactLifecycles;

@@ -1,17 +1,19 @@
 /**
  * 作业平台 作业管理 列表
  */
-import React from 'react';
+import React, {useEffect} from 'react';
 import cx from './index.less';
-import {Table, Button, PageHeader, Spin} from '@osui/ui';
+import {Table, Button, PageHeader, Spin, Tooltip} from '@osui/ui';
 import useNoahList from './hook';
 import {formatTimeStamp} from '../../../utils';
 import OperationBar from './OperationBar';
 import {omit} from 'ramda';
+import { MAX_DISPLAY_LENGTH, SPLIT_SYMBOL } from '../../../constant'
 
 const title = '作业管理';
 
-const NoahList = () => {
+const NoahList = props => {
+    const {getUsersFromOne, users} = props;
     const {
         data,
         handlePaginationChange,
@@ -31,7 +33,11 @@ const NoahList = () => {
         noahType,
         // onNoahSelectClear,
         addNoah,
-    } = useNoahList();
+        setNoahType,
+    } = useNoahList(getUsersFromOne);
+
+    // const {users} = props
+    // props.getUserById(123123);
     const tableOperations = [
         {
             label: '执行',
@@ -57,12 +63,23 @@ const NoahList = () => {
         {
             title: '分类',
             align: 'center',
-            dataIndex: 'affiliated',
+            dataIndex: 'typeNames',
+            render: (val)=>{
+                const types = val.split(SPLIT_SYMBOL);
+                if(types.length>MAX_DISPLAY_LENGTH){
+                    return <Tooltip title={val}>{types.slice(0,MAX_DISPLAY_LENGTH).join(SPLIT_SYMBOL)}</Tooltip>
+                }else {
+                    return val
+                }
+            }
         },
         {
             title: '创建人',
             align: 'center',
-            dataIndex: 'type',
+            dataIndex: 'userId',
+            render(text) {
+                return users.map.get(`${text}`)?.enterpriseCard;
+            },
         },
         {
             title: '创建时间',
@@ -108,24 +125,16 @@ const NoahList = () => {
         onChange: onSelectChange,
     };
     const tableProps = {
-        // dataSource: list,
-        dataSource: [{
-            id: '1',
-            key: '1',
-            name: 'test1',
-            affiliated: 'test2',
-            type: 'test1',
-            createTime: new Date().getTime(),
-            updateTime: new Date().getTime(),
-        }, {
-            id: '2',
-            key: '2',
-            name: 'test1',
-            type: 'test2',
-            affiliated: 'test2',
-            createTime: new Date().getTime(),
-            updateTime: new Date().getTime(),
-        }],
+        dataSource: data.list,
+        // dataSource: [{
+        //     id: '1',
+        //     key: '1',
+        //     name: 'test1',
+        //     affiliated: 'test2',
+        //     type: 'test1',
+        //     createTime: new Date().getTime(),
+        //     updateTime: new Date().getTime(),
+        // }],
         columns,
         pagination: {
             ...omit('list', data),
@@ -140,6 +149,7 @@ const NoahList = () => {
         handleChangeInput,
         handleMenuClick,
         addNoah,
+        setNoahType,
     };
     return (
         <div className={cx('noah-container')}>

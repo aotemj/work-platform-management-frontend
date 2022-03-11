@@ -1,4 +1,6 @@
 // 全局变量类型
+import {getCompanyId} from '../../../utils/getRouteIds';
+
 export const GLOBAL_VARIABLE_TYPES = {
     STRING: {
         label: '字符串',
@@ -90,20 +92,19 @@ export const AGENT_TERMINAL_TYPE = {
     },
 };
 
-export const URL_PREFIX1 = '/api';
-
-export const URL = {
+export const URLS = {
     LABELS: '/sa_server/sa/rest/v3/labels',
     AGENTS: '/sa_server/sa/rest/v1/agents',
     ADD_NOAH_WORK_PLAN: '/rest/v1/work-plan/',
     // 新增分类
     ADD_CATEGORIES: '/rest/v1/work-group',
     // 获取分类
-    CATEGORIES: '/rest/v1/work-group',
+    CATEGORIES: '/rest/v1/work-group/list',
     // 获取全局参数
     GLOBAL_VARIABLES: '/rest/v1/work-variate/type',
     // 上传本地文件
     UPLOAD_LOCAL_FILE: '/rest/v1/file/local',
+    // NOAH_DETAIL: id => `/rest/v1/work-plan`,
 };
 
 // 主机类型
@@ -115,6 +116,7 @@ export const GROUP_TYPES = {
 
 export const ERROR_MSG = {
     VARIABLE_ALREADY_EXIST: '当前全局变量已存在',
+    CATEGORY_ALREADY_EXIST: '当前分类已存在',
 };
 
 // 文件来源类型
@@ -143,3 +145,30 @@ export const TRANSMISSION_MODE = {
         value: 2,
     },
 };
+
+// 人工确认，通知方法
+export const NOTICE_APPROACHES = {
+    // 通知方式 1：邮件；2：短信；3：微信；4：站内通知
+    EMAIL: {
+        label: '邮件',
+        value: 1,
+        visible: true,
+    },
+    MESSAGE: {
+        label: '短信',
+        value: 2,
+        visible: false,
+        // visible: true,
+    },
+    WECHAT: {
+        label: '微信',
+        value: 3,
+        visible: false,
+    },
+    STAND_INSIDE_LETTER: {
+        label: '站内信',
+        value: 4,
+        visible: false,
+    },
+};
+

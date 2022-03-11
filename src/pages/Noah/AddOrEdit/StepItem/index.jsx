@@ -34,7 +34,7 @@ const StepItem  = props => {
             <span className={cx('main')}>{name}</span>
             {editing && (
                 <Button
-                    onClick={() => handleClose(omit('handleClose', props))}
+                    onClick={handleClose}
                     type={'text'}
                     icon={<IconFont type={'icondeleteorerror'} />}
                     className={cx('close-button')}

@@ -9,7 +9,7 @@ const {TextArea} = Input;
 const {TabPane} = Tabs;
 
 const ScriptContent = props => {
-    const {onChange, field, scriptLanguage, setFormikValues, values} = props;
+    const {onChange, field, scriptLanguage, setFormValues, values} = props;
     const containerRef = useRef();
     const toggleFullScreen = useCallback(() => {
         if (screenfull.isEnabled) {
@@ -29,7 +29,7 @@ const ScriptContent = props => {
                     padding: '0 10px',
                 }}
                 onChange={e => {
-                    setFormikValues({
+                    setFormValues({
                         ...values,
                         scriptLanguage: e,
                     });

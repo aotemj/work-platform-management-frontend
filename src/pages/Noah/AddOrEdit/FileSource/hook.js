@@ -1,8 +1,8 @@
 import {useCallback, useEffect, useMemo, useState} from 'react';
 import {clone, omit} from 'ramda';
 import {request} from '../../../../request/fetch';
-import {URL_PREFIX1, URL, FILE_SOURCE_TYPE, UPDATE_FILE_STATUS} from '../constants';
-import {DEFAULT_STRING_VALUE, REQUEST_METHODS, REQUEST_TYPE} from '../../../../constant';
+import {URLS, FILE_SOURCE_TYPE, UPDATE_FILE_STATUS} from '../constants';
+import {DEFAULT_STRING_VALUE, REQUEST_METHODS, REQUEST_TYPE, URL_PREFIX1} from '../../../../constant';
 
 let tempFileMap = {};
 
@@ -10,7 +10,7 @@ const useFileSource = ({
     // changeCallback,
     storageFileList,
     values,
-    setFormikValues,
+    setFormValues,
 }) => {
 
     const [serverFiles, setServerFiles] = useState([]);
@@ -30,12 +30,12 @@ const useFileSource = ({
     }, [localFiles.length]);
 
     const handleUpdateStorageFileList = useCallback(storageFileList => {
-        setFormikValues({
+        setFormValues({
             ...values,
             storageFileList,
         });
         setNeedUpdateFileMap(false);
-    }, [setFormikValues, values]);
+    }, [setFormValues, values]);
     const handleChangeSourcePath = useCallback(({value, key}) => {
         const tempFileMap = clone(fileMap);
         tempFileMap[key].sourcePath = value;
@@ -135,7 +135,7 @@ const useFileSource = ({
         params.append('file', e.target.files[0]);
         try {
             const res = await request({
-                url: `${URL_PREFIX1}${URL.UPLOAD_LOCAL_FILE}`,
+                url: `${URL_PREFIX1}${URLS.UPLOAD_LOCAL_FILE}`,
                 params,
                 method: REQUEST_METHODS.POST,
                 type: REQUEST_TYPE.FORM_DATA,

@@ -1,4 +1,4 @@
-import {useCallback, useMemo, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import {message, Modal} from '@osui/ui';
 
 import {getContainerDOM} from '../../../../utils';
@@ -8,12 +8,15 @@ import {
     SCRIPTS_ORIGIN,
     STEP_TYPES,
     UPDATE_FILE_STATUS,
+    URLS,
+    NOTICE_APPROACHES,
 } from '../constants';
-import {DEFAULT_STRING_VALUE} from '../../../../constant';
+import {DEFAULT_STRING_VALUE, URL_PREFIX1} from '../../../../constant';
+import {request} from '../../../../request/fetch';
+import {users} from '../../../../temp/users';
 
 const defaultFormikValues = {
-    // type: STEP_TYPES.EXECUTE_SCRIPT.value,
-    type: STEP_TYPES.FILE_DISTRIBUTION.value,
+    type: STEP_TYPES.EXECUTE_SCRIPT.value,
     name: '',
     // about execute script
     runningEnvironment: RUNNING_ENVIRONMENT.AGENT.value,
@@ -42,9 +45,19 @@ const defaultFormikValues = {
     ],
     transmissionMode: 1,
     targetPath: '',
+
+    // 人工确认 相关
+    // 通知方式
+    informWay: [NOTICE_APPROACHES.EMAIL.value],
+    // 通知描述
+    describes: '',
+    // 通知人员
+    informUserId: [],
 };
 
 const useAddNoahStep = ({onClose, handleChangeStep}) => {
+
+    const [usersFromOne, setUsersFromOne] = useState(users);
     const [formikValues, setFormikValues] = useState(defaultFormikValues);
 
     const [disabled, setDisabled] = useState(false);
@@ -53,19 +66,10 @@ const useAddNoahStep = ({onClose, handleChangeStep}) => {
 
     const [userInputError, setUserInputError] = useState(false);
 
-    const isScriptExecute = useMemo(() => {
-        return formikValues.type === STEP_TYPES.EXECUTE_SCRIPT.value;
-    }, [formikValues.type]);
-
-    const isFileDistribution = useMemo(() => {
-        return formikValues.type === STEP_TYPES.FILE_DISTRIBUTION.value;
-    }, [formikValues.type]);
-
-    // 文件路径禁止重复， 同一台主机下
     // 本地文件如果还处于上传中，则禁止保存
     const checkStorageListAvailable = useCallback(e => {
-        const {storageFileList} = e;
-        const length = storageFileList.length;
+        const {storageFileList = []} = e;
+        const length = storageFileList?.length;
 
         let tempMap = {};
         for (let i = 0; i < length; i++) {
@@ -91,7 +95,6 @@ const useAddNoahStep = ({onClose, handleChangeStep}) => {
 
     }, []);
 
-
     const handleSubmit = useCallback((e, stepEditingValue) => {
         const available = checkStorageListAvailable(e);
 
@@ -101,7 +104,6 @@ const useAddNoahStep = ({onClose, handleChangeStep}) => {
         }
 
         setUserInputError(false);
-
         handleChangeStep(e, stepEditingValue);
         setFormikValues(defaultFormikValues);
 
@@ -139,6 +141,30 @@ const useAddNoahStep = ({onClose, handleChangeStep}) => {
         }
     }, [handleAddTargetServer, handleEditTargetServer]);
 
+    const getALlUsersFromOne = useCallback(async () => {
+        const res = await request({
+            url: `${URL_PREFIX1}${URLS.GET_USERS}`,
+            params: {
+                applyStatus: 'SUCCESS',
+                userType: 'USER',
+            },
+        });
+        setUsersFromOne(res);
+    }, []);
+
+    useEffect(() => {
+        // getALlUsersFromOne();
+    }, []);
+
+    useEffect(() => {
+        // getALlUsersFromOne();
+        if (formikValues.type === STEP_TYPES.MANUAL_CONFIRM.value) {
+            setFormikValues({
+                ...formikValues,
+                timeoutValue: 3,
+            });
+        }
+    }, [formikValues.type]);
     return {
         formikValues,
         setFormikValues,
@@ -147,10 +173,9 @@ const useAddNoahStep = ({onClose, handleChangeStep}) => {
         handleSubmit,
         handleCancel,
         handleChangeTargetServer,
-        isScriptExecute,
-        isFileDistribution,
         userInputError,
         setUserInputError,
+        usersFromOne,
     };
 };
 export default useAddNoahStep;

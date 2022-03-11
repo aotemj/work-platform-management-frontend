@@ -4,6 +4,9 @@ module.exports = {
         '@ecomfe/eslint-config',
         '@ecomfe/eslint-config/react',
     ],
+    'parserOptions': {
+        'ecmaVersion': 2020,
+    },
     plugins: [
         'react-hooks',
     ],

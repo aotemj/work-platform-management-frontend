@@ -2,12 +2,13 @@ import {Radio, Spin, TreeSelect} from '@osui/ui';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {clone} from 'ramda';
 
-import {AGENT_STATUS, AGENT_TERMINAL_TYPE, LABEL_TYPE, URL_PREFIX1, URL, GROUP_TYPES} from '../../constants';
+import {AGENT_STATUS, AGENT_TERMINAL_TYPE, LABEL_TYPE, URLS, GROUP_TYPES} from '../../constants';
 import {debounce, getURlWithPrefix} from '../../../../../utils';
 import {getCompanyId, getSpaceId} from '../../../../../utils/getRouteIds';
 import {request} from '../../../../../request/fetch';
 import cx from './index.less';
 import {agents, labels} from '../../../../../temp/agents';
+import {URL_PREFIX1} from '../../../../../constant';
 
 const getAgentMap = agents => {
     const tempMap = {};
@@ -156,7 +157,7 @@ const TargetServer = ({
     const fetchAgents = useCallback(async () => {
         // setOriginDataUpdated(true);
         return request({
-            url: getURlWithPrefix(URL_PREFIX1, URL.AGENTS),
+            url: getURlWithPrefix(URL_PREFIX1, URLS.AGENTS),
             params: {
                 // companyId: 'xly-poc',
                 companyId,
@@ -181,7 +182,7 @@ const TargetServer = ({
     // pageSize     页大小
     const fetchLabels = useCallback(async () => {
         return request({
-            url: getURlWithPrefix(URL_PREFIX1, URL.LABELS),
+            url: getURlWithPrefix(URL_PREFIX1, URLS.LABELS),
             params: {
                 // groupName: 'xly-poc',
                 // groupName: spaceId,

@@ -6,9 +6,12 @@ module.exports = {
         changeOrigin: true,
         pathRewrite: {'^/api': ''},
         headers: {
-            Cookie,
+            // Cookie,
             'HEADER-USERINFO': 'eyJ1U05DcmVhdGVkIjoiMSIsInNBTUFjY291bnROYW1lIjoiemhhbmdzYW4ifQ==',
-            'Company-Uuid': 'default',
+            // 生产环境需要去掉
+            'Company-Uuid': 'osc',
+            'Group-Name': 'osc',
+            'Group-Type': 1,
         },
     },
 };
