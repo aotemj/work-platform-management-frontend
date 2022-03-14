@@ -6,7 +6,6 @@
 
 import {useCallback, useState} from 'react';
 import {Button} from '@osui/ui';
-import {omit} from 'ramda';
 
 import IconFont from '../../../../components/Iconfont';
 import cx from './index.less';

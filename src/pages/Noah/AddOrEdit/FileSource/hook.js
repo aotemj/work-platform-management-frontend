@@ -118,7 +118,7 @@ const useFileSource = ({
             fileName,
             fileSize,
             fileSource: FILE_SOURCE_TYPE.LOCAL,
-            status: UPDATE_FILE_STATUS.LOADING,
+            status: UPDATE_FILE_STATUS.LOADING.value,
             sourcePath: DEFAULT_STRING_VALUE,
             sourceResourceName: DEFAULT_STRING_VALUE,
         };
@@ -149,7 +149,7 @@ const useFileSource = ({
                     ...tempData,
                     ...omit(['url', 'sourcePath', 'sourceResourceName'], data),
                     storageFileUrl,
-                    status: UPDATE_FILE_STATUS.SUCCESS,
+                    status: UPDATE_FILE_STATUS.SUCCESS.value,
                 };
                 tempFileMap = {
                     ...fileMap,
@@ -162,7 +162,7 @@ const useFileSource = ({
                 const {key} = tempData;
                 const newTempData = {
                     ...tempData,
-                    status: UPDATE_FILE_STATUS.ERROR,
+                    status: UPDATE_FILE_STATUS.ERROR.value,
                 };
 
                 tempFileMap = {

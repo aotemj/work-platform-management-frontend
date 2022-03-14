@@ -7,15 +7,17 @@ import {getContainerDOM} from '../../../utils';
 import useCategory from './hooks/category';
 import useGlobalVariable from './hooks/globalVariable';
 import {request} from '../../../request/fetch';
-import {URLS, STEP_TYPES} from './constants';
+import {URLS, STEP_TYPES, UPDATE_FILE_STATUS, BOOLEAN_FROM_SERVER} from './constants';
 import {
     DEFAULT_STRING_VALUE,
+    DELETE_SYMBOL,
     REQUEST_CODE,
     REQUEST_METHODS,
     SPLIT_SYMBOL,
     SYMBOL_FOR_ALL,
     URL_PREFIX1,
 } from '../../../constant';
+import {values} from 'lodash';
 // import {omitBy} from 'lodash';
 
 const defaultFormikValues = {
@@ -35,9 +37,7 @@ const defaultFormikValues = {
 const useAddOrEdit = () => {
     const params = useParams();
     const navigate = useNavigate();
-    const goBack = useCallback(() => {
-        navigate(-1);
-    }, [navigate]);
+
     // 编辑
     const [editing, setEditing] = useState(!!params?.detailId);
 
@@ -55,7 +55,8 @@ const useAddOrEdit = () => {
 
     const [stepEditingValue, setStepEditingValue] = useState(null);
 
-    // const [sourceCategory,] = useState([])
+    // 已经删除的stageList, 需要在编辑作业的时候传递给server
+    const [deletedStageList, setDeletedStageList] = useState([]);
 
     const [detailFromServer, setDetailFromServer] = useState({});
 
@@ -74,6 +75,15 @@ const useAddOrEdit = () => {
             category: [name, ...category],
         });
     }, [setFormikValues, formikValues]);
+
+    const reset = useCallback(() => {
+        setDeletedStageList([]);
+    }, []);
+
+    const goBack = useCallback(() => {
+        reset();
+        navigate(-1);
+    }, [navigate, reset]);
 
     const {
         categories,
@@ -97,12 +107,18 @@ const useAddOrEdit = () => {
         globalVariables,
         handleRemoveGlobalVariable,
         handleChangeGlobalVariable,
+        setGlobalsVariables,
+        setVariableMap,
+        deletedGlobalVariables,
     } = useGlobalVariable({
-        editing: Boolean(globalVariableEditingValue),
         handleChangeVariable,
+        setVisible: setGlobalVariableVisible,
+        onClose: () => setGlobalVariableVisible(false),
+        visible: globalVariableVisible,
+        globalVariableEditingValue,
     });
 
-    // 转换123
+    // 转换类型
     const convertAdditionCategories = useCallback(list => {
         const listMap = {};
         const tempList = list.map(item => {
@@ -144,7 +160,7 @@ const useAddOrEdit = () => {
                         ...item,
                         workGroup: {
                             ...item.workGroup,
-                            status: -1,
+                            status: DELETE_SYMBOL,
                         },
                     });
                 }
@@ -165,7 +181,7 @@ const useAddOrEdit = () => {
             return convertEditCategories(groupRelList);
         }
         return convertAdditionCategories(groupRelList).tempList;
-    }, [convertAdditionCategories, convertEditCategories, detailFromServer.sourceCategoryMap, editing]);
+    }, [convertAdditionCategories, convertEditCategories, editing]);
 
     const coverStorageFileList = useCallback((originList = []) => {
         return originList.map(item => {
@@ -175,6 +191,13 @@ const useAddOrEdit = () => {
             );
             return omit(['status'], tempObj);
         });
+    }, []);
+
+    const convertedStageListStatus = useCallback(status => {
+        if (status) {
+            return UPDATE_FILE_STATUS.get(status).value;
+        }
+        return status;
     }, []);
 
     const convertStageList = useCallback(stageList => {
@@ -188,6 +211,7 @@ const useAddOrEdit = () => {
             // timeoutValue	超时时长(单位秒)		false   // integer
             const {
                 id = null,
+                status,
                 // about script execution
                 runningEnvironment: runtimeEnv,
                 scriptContents,
@@ -195,6 +219,8 @@ const useAddOrEdit = () => {
                 scriptLanguage,
                 timeoutValue,
                 scriptOrigin: scriptType,
+                // 脚本管理平台ID
+                chooseScript: scriptId,
                 name,
                 type,
                 targetResourceList = [],
@@ -211,6 +237,7 @@ const useAddOrEdit = () => {
                 informUserId,
                 informWay,
             } = item;
+
             const tempStorageFileList = coverStorageFileList(storageFileList);
             const tempTargetResourceList = targetResourceList.map(item => {
                 // id	ID		false   // integer
@@ -236,6 +263,7 @@ const useAddOrEdit = () => {
                 type,
                 name,
                 sortIndex: index,
+                status: convertedStageListStatus(status),
             });
 
             switch (type) {
@@ -249,6 +277,7 @@ const useAddOrEdit = () => {
                             scriptLanguage,
                             timeoutValue,
                             scriptType,
+                            scriptId,
                         },
                         targetResourceList: tempTargetResourceList,
                     };
@@ -286,25 +315,27 @@ const useAddOrEdit = () => {
             }
 
         });
-    }, [coverStorageFileList]);
+    }, [convertedStageListStatus, coverStorageFileList]);
 
     const convertWorkVariateList = useCallback(variables => {
+        const {POSITIVE, NEGATIVE} = BOOLEAN_FROM_SERVER;
         return variables.map(item => {
             const {exeChange, exeRequired} = item;
             return {
                 ...item,
-                exeChange: exeChange ? 1 : 0,
-                exeRequired: exeRequired ? 1 : 0,
+                exeChange: exeChange ? POSITIVE : NEGATIVE,
+                exeRequired: exeRequired ? POSITIVE : NEGATIVE,
             };
         });
     }, []);
 
     const convertParams = useCallback(originParams => {
         const {stageList: originStageList, category, name, noahDescribes, variable, id} = originParams;
-
         const groupRelList = convertCategory(category);
-        const stageList = convertStageList(originStageList);
-        const workVariateList = convertWorkVariateList(variable);
+        // 这里需要把用户删掉的stageList 也传递到server
+        const stageList = convertStageList([...originStageList, ...deletedStageList]);
+        // 删除逻辑同上 stageList
+        const workVariateList = convertWorkVariateList([...globalVariables, ...deletedGlobalVariables]);
 
         return {
             stageList,
@@ -316,7 +347,14 @@ const useAddOrEdit = () => {
                 workVariateList,
             },
         };
-    }, [convertCategory, convertStageList, convertWorkVariateList]);
+    }, [
+        convertCategory,
+        convertStageList,
+        convertWorkVariateList,
+        deletedGlobalVariables,
+        deletedStageList,
+        globalVariables,
+    ]);
 
     const handleSubmit = useCallback(async e => {
         const params = convertParams(e);
@@ -352,10 +390,14 @@ const useAddOrEdit = () => {
         setAddCategoryVisible(true);
     }, [formikValues, setAddCategoryVisible]);
 
-    const handleAddGlobalVariable = useCallback(() => {
+    const handleAddGlobalVariable = useCallback(values => {
+        setFormikValues({
+            ...formikValues,
+            ...values,
+        });
         setGlobalVariableEditingValue(null);
         setGlobalVariableVisible(true);
-    }, []);
+    }, [formikValues]);
 
     const handleStartAddStep = useCallback(values => {
         setStepEditingValue(null);
@@ -383,7 +425,8 @@ const useAddOrEdit = () => {
 
         const {stageList} = formikValues;
         const tempArr = clone(stageList);
-        tempArr[index] = e;
+        // server端传来的 index 是从 1 开始的
+        tempArr[index - 1] = e;
         setFormikValues({
             ...formikValues,
             stageList: tempArr,
@@ -392,7 +435,7 @@ const useAddOrEdit = () => {
         setAddStepDrawerVisible(false);
     }, [formikValues]);
 
-    // 新建步骤
+    // 更新步骤
     const handleChangeStep =  useCallback((e, stepEditingValue) => {
         if (stepEditingValue) {
             handleEditStep(e, stepEditingValue);
@@ -401,17 +444,26 @@ const useAddOrEdit = () => {
         }
     }, [handleAddStep, handleEditStep]);
 
-    const handleRemoveStageList =  useCallback(e => {
+    const handleRemoveStageList =  useCallback((e, stage) => {
         e.stopPropagation();
         const {stageList} = formikValues;
-        const {index} = e;
+        const {index} = stage;
         const tempArr = clone(stageList);
-        tempArr.splice(index, 1);
+        tempArr.splice(index - 1, 1);
+
+        const tempDeleteList = clone(deletedStageList);
+
+        tempDeleteList.push({
+            ...stage,
+            status: DELETE_SYMBOL,
+        });
+
         setFormikValues({
             ...formikValues,
             stageList: tempArr,
         });
-    }, [formikValues]);
+        setDeletedStageList(tempDeleteList);
+    }, [deletedStageList, formikValues]);
 
     // 全局变量编辑
     const handleStartEditVariable = useCallback(e => {
@@ -452,13 +504,13 @@ const useAddOrEdit = () => {
 
     const deConvertedStorageFileList = useCallback(list => {
         return list.map((item, index) => {
-            // const {
+            const {
             //     id,
             //     stageId,
             //     fileSource,
             //     sourceUuid,
-            //     sourceResourceName,
-            //     sourcePath,
+                sourceResourceName = DEFAULT_STRING_VALUE,
+                sourcePath = DEFAULT_STRING_VALUE,
             //     fileName,
             //     storageFilePath,
             //     storageFileUrl,
@@ -472,14 +524,14 @@ const useAddOrEdit = () => {
             //     groupType,
             //     tenant,
             //     status,
-            // } = item;
+            } = item;
             return {
                 ...item,
                 // id,
                 key: index,
-                // sourcePath,
+                sourcePath,
                 // fileSource,
-                // sourceResourceName,
+                sourceResourceName,
             };
         });
     }, []);
@@ -494,6 +546,10 @@ const useAddOrEdit = () => {
         } = tempObj;
 
         return tempObj;
+    }, []);
+
+    const deConvertedStageListStatus = useCallback(status => {
+        return UPDATE_FILE_STATUS.get(status).label;
     }, []);
 
     const deConvertStageList = useCallback(list => {
@@ -537,7 +593,8 @@ const useAddOrEdit = () => {
                 type,
                 name,
                 describes,
-                index: sortIndex - 1,
+                // index: sortIndex - 1,
+                index: sortIndex,
             };
 
             switch (type) {
@@ -560,8 +617,7 @@ const useAddOrEdit = () => {
                         scriptLanguage,
                         timeoutValue,
                         scriptType,
-                        // TODO 选择脚本
-                        chooseScript: '',
+                        chooseScript: scriptId,
                         targetResourceList: convertedTargetResourceList,
                     };
                 case MANUAL_CONFIRM.value:
@@ -570,6 +626,7 @@ const useAddOrEdit = () => {
                         timeoutValue,
                         informUserId,
                         informWay,
+                        describes,
                     } = stageConfirmBean;
                     return {
                         ...commonParams,
@@ -577,6 +634,7 @@ const useAddOrEdit = () => {
                         informUserId: informUserId?.split(SPLIT_SYMBOL),
                         informWay: informWay?.split(SPLIT_SYMBOL).map(item => Number(item)),
                         timeoutValue,
+                        status: deConvertedStageListStatus(status),
                     };
                 }
                 case FILE_DISTRIBUTION.value:
@@ -600,11 +658,17 @@ const useAddOrEdit = () => {
                         downloadLimit,
                         targetPath,
                         storageFileList: convertedStorageFileList,
+                        targetResourceList: convertedTargetResourceList,
                     };
                 }
             }
         });
-    }, [deConvertedStageFileBean, deConvertedStorageFileList, deConvertedTargetResourceList]);
+    }, [
+        deConvertedStageFileBean,
+        deConvertedStageListStatus,
+        deConvertedStorageFileList,
+        deConvertedTargetResourceList,
+    ]);
 
     // 作业分类列表
     const deConvertedGroupRelList = useCallback(list => {
@@ -627,23 +691,32 @@ const useAddOrEdit = () => {
         // exeChange
         // exeRequired
         // index
-        return list.map((item, index) => {
-            // const {
+        const tempMap = {};
+        const tempList = list.map((item, index) => {
+            const {
             //     id,
-            //     name,
+                name,
             //     value,
             //     type,
             //     exeChange,
             //     exeRequired,
             //     describes,
             //     status,
-            // } = item;
-            return {
+            } = item;
+            const tempItem = {
                 ...item,
                 index,
             };
+            tempMap[name] = tempItem;
+            return tempItem;
         });
-    }, []);
+
+        setGlobalsVariables(tempList);
+
+        setVariableMap(tempMap);
+        return tempList;
+    }, [setGlobalsVariables, setVariableMap]);
+
     const deConvertWorkPlan = useCallback(workPlan => {
         const {
             id,
@@ -657,6 +730,7 @@ const useAddOrEdit = () => {
         } = workPlan;
         const convertedGroupRelList = deConvertedGroupRelList(groupRelList);
         const convertedWorkVariateList = deConvertWorkVariateList(workVariateList);
+
         return {
             name,
             id,

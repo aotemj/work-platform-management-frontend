@@ -1,14 +1,12 @@
 // 全局变量类型
-import {getCompanyId} from '../../../utils/getRouteIds';
-
 export const GLOBAL_VARIABLE_TYPES = {
     STRING: {
         label: '字符串',
-        value: '1',
+        value: 1,
     },
     SECRET_KEY: {
         label: '秘钥',
-        value: '2',
+        value: 2,
     },
 };
 
@@ -34,7 +32,9 @@ export const RUNNING_ENVIRONMENT = {
         label: '主机运行',
         value: 1,
     },
+    // 一期暂时不做
     CONTAINER: {
+        disabled: true,
         label: '容器运行',
         value: 2,
     },
@@ -126,11 +126,30 @@ export const FILE_SOURCE_TYPE = {
 };
 
 // 上传文件状态
-export const UPDATE_FILE_STATUS = {
-    ERROR: 'error',
-    SUCCESS: 'SUCCESS',
-    LOADING: 'LOADING',
+const SUCCESS = {
+    label: 'SUCCESS',
+    value: 0,
 };
+const ERROR = {
+    label: 'error',
+    value: 1,
+};
+const LOADING = {
+    label: 'LOADING',
+    value: 2,
+};
+const DELETED = {
+    label: 'DELETED',
+    value: -1,
+};
+
+export const UPDATE_FILE_STATUS = new Map([
+    [SUCCESS.value, SUCCESS], [SUCCESS.label, SUCCESS],
+    [ERROR.value, ERROR], [ERROR.label, ERROR],
+    [LOADING.value, LOADING], [LOADING.label, LOADING],
+    [DELETED.value, DELETED], [DELETED.label, DELETED],
+]);
+
 
 // 传输模式
 export const TRANSMISSION_MODE = {
@@ -172,3 +191,9 @@ export const NOTICE_APPROACHES = {
     },
 };
 
+// exeChange	是否赋值可变 0：否；1：是		false   // integer
+// exeRequired	是否执行时必填 0：否；1：是		false   // integer
+export const BOOLEAN_FROM_SERVER = {
+    POSITIVE: 1,
+    NEGATIVE: 0,
+};

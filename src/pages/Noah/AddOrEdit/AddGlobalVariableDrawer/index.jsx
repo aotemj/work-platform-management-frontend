@@ -23,6 +23,7 @@ const AddGlobalVariableDrawer = ({
     globalVariableEditingValue,
     handleChangeGlobalVariable,
     setVisible,
+    globalVariablesFromServer,
 }) => {
     // const defaultField = {
     //     layout: 'horizontal',
@@ -34,14 +35,22 @@ const AddGlobalVariableDrawer = ({
         setDisabled,
         showCrypto,
         setShowCrypto,
+        setFormikValues,
     } = useGlobalVariable({
         handleChangeGlobalVariable,
         setVisible,
         onClose,
+        globalVariablesFromServer,
+        visible,
     });
     const editing = useMemo(() => {
         return Boolean(globalVariableEditingValue);
     }, [globalVariableEditingValue]);
+
+    const title = useMemo(() => {
+        return editing ? '编辑全局变量' : '新建全局变量';
+    }, [editing]);
+
     const NameLabel = () => {
         return (
             <div className={cx('name-label')}>
@@ -68,12 +77,21 @@ const AddGlobalVariableDrawer = ({
             label: <NameLabel />,
             required: true,
             MAX_LENGTH: 80,
-            children: ({field}) => {
+            children: ({field, form: {values}}) => {
                 return (
                     <Select
                         className={cx('variable-type-list-select')}
                         {...field}
                         placeholder="请选择变量类型"
+                        onChange={type => {
+
+                            setShowCrypto(type === GLOBAL_VARIABLE_TYPES.STRING.value);
+
+                            setFormikValues({
+                                ...values,
+                                type,
+                            });
+                        }}
                         suffix={<IconRemark />}
                     >
                         {
@@ -85,9 +103,7 @@ const AddGlobalVariableDrawer = ({
                 );
             },
             validate: yup
-                .string()
-                .ensure()
-                .trim()
+                .number()
                 .required('请选择变量类型'),
         },
         name: {
@@ -119,7 +135,7 @@ const AddGlobalVariableDrawer = ({
             name: 'value',
             label: '值',
             MAX_LENGTH: 1000,
-            // required: true,
+            required: formikValues.exeRequired,
             children: ({field, form: {values}}) => (
                 <Input
                     {...field}
@@ -132,7 +148,11 @@ const AddGlobalVariableDrawer = ({
                     placeholder="请输入变量值"
                 />
             ),
-            validate: null,
+            validate: formikValues.exeRequired ? yup
+                .string()
+                .ensure()
+                .trim()
+                .required('请输入变量值') : null,
         },
         describes: {
             name: 'describes',
@@ -164,24 +184,30 @@ const AddGlobalVariableDrawer = ({
                 </Checkbox>
             ),
         },
-        // 执行时必填
+        // 必填 当当前选项值为 true 时， 当前表单的 `value` 开启必填校验
         exeRequired: {
             name: 'exeRequired',
             hideLabel: true,
             label: 'exeRequired',
-            children: ({field}) => (
+            children: ({field, form: {values}}) => (
                 <Checkbox
                     {...(omit('value', field))}
                     checked={field.value}
+                    onChange={e => {
+                        setFormikValues({
+                            ...values,
+                            exeRequired: e.target.checked,
+                        });
+                    }}
                     className={cx('noah-textarea')}
-                >执行时必填
+                >必填
                 </Checkbox>
             ),
         },
     };
 
     const formikProps = {
-        handleSubmit: e => handleChangeGlobalVariable(e, editing, globalVariableEditingValue),
+        handleSubmit: e => handleChangeGlobalVariable(e, editing, globalVariableEditingValue, formikValues),
         initialValues: globalVariableEditingValue || formikValues,
         disabled,
         setDisabled,
@@ -193,7 +219,7 @@ const AddGlobalVariableDrawer = ({
 
     return (
         <Drawer
-            title="新建全局变量"
+            title={title}
             width={550}
             placement="right"
             onClose={onClose}

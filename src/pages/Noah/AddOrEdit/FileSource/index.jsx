@@ -149,18 +149,18 @@ const FileSource = ({
                 render: (_, record) => {
                     const {status} = record;
                     switch (status) {
-                        case UPDATE_FILE_STATUS.SUCCESS:
+                        case UPDATE_FILE_STATUS.SUCCESS.value:
                             return (
                                 <RemoveButton />
                             );
-                        case UPDATE_FILE_STATUS.ERROR:
+                        case UPDATE_FILE_STATUS.ERROR.value:
                             return (
                                 <>
                                     <RetryButton />
                                     <RemoveButton />
                                 </>
                             );
-                        case UPDATE_FILE_STATUS.LOADING:
+                        case UPDATE_FILE_STATUS.LOADING.value:
                             return <LoadingButton />;
                     }
 

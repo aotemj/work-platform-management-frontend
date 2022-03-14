@@ -14,6 +14,8 @@ import {
 import {DEFAULT_STRING_VALUE, URL_PREFIX1} from '../../../../constant';
 import {request} from '../../../../request/fetch';
 import {users} from '../../../../temp/users';
+import {GLOBAL_URLS} from '../../../../constant/index';
+import {TEMP_SCRIPTS} from '../../../../temp/scripts';
 
 const defaultFormikValues = {
     type: STEP_TYPES.EXECUTE_SCRIPT.value,
@@ -21,7 +23,7 @@ const defaultFormikValues = {
     // about execute script
     runningEnvironment: RUNNING_ENVIRONMENT.AGENT.value,
     scriptOrigin: SCRIPTS_ORIGIN.MANUAL_INPUT.value,
-    chooseScript: '',
+    chooseScript: null, // number 类型
     scriptContents: '',
     targetResourceList: [],
     scriptLanguage: SCRIPT_TYPES[0].key,
@@ -55,9 +57,10 @@ const defaultFormikValues = {
     informUserId: [],
 };
 
-const useAddNoahStep = ({onClose, handleChangeStep}) => {
+const useAddNoahStep = ({onClose, handleChangeStep, stepEditingValue, setStepEditingValue}) => {
 
     const [usersFromOne, setUsersFromOne] = useState(users);
+
     const [formikValues, setFormikValues] = useState(defaultFormikValues);
 
     const [disabled, setDisabled] = useState(false);
@@ -65,6 +68,10 @@ const useAddNoahStep = ({onClose, handleChangeStep}) => {
     const [agentMapByUuid, setAgentMapByUuid] = useState({});
 
     const [userInputError, setUserInputError] = useState(false);
+
+    const [scripts, setScripts] = useState([]);
+
+    const [scriptsMap, setScriptsMap] = useState({});
 
     // 本地文件如果还处于上传中，则禁止保存
     const checkStorageListAvailable = useCallback(e => {
@@ -76,7 +83,7 @@ const useAddNoahStep = ({onClose, handleChangeStep}) => {
             const {sourcePath, sourceResourceName, status} = storageFileList[i];
             // 本地上传文件
             if (sourcePath === DEFAULT_STRING_VALUE) {
-                if (status === UPDATE_FILE_STATUS.LOADING) {
+                if (status === UPDATE_FILE_STATUS.LOADING.value) {
                     message.error('当前有本地文件未上传完成，请等待上传成功后保存');
                     return false;
                 }
@@ -152,6 +159,45 @@ const useAddNoahStep = ({onClose, handleChangeStep}) => {
         setUsersFromOne(res);
     }, []);
 
+    const getScriptsFromPipe = useCallback(async () => {
+        // const res = await request({
+        //     url: `${URL_PREFIX1}${GLOBAL_URLS.GET_SCRIPTS}`,
+        //     params: {
+        //         _offset: 0,
+        //         _limit: 10,
+        //         keyword: '',
+        //     },
+        // });
+        // console.log(res);
+        setScripts(TEMP_SCRIPTS);
+        const tempMap = {};
+        TEMP_SCRIPTS.forEach(item => {
+            tempMap[item.id] = item;
+        });
+        setScriptsMap(tempMap);
+    }, []);
+
+    const handleChangeImportScript = useCallback(e => {
+        const currentScript = scriptsMap[e];
+        const updatedData = {
+            chooseScript: e,
+            scriptContents: currentScript?.script,
+        };
+
+        if (stepEditingValue) {
+            setStepEditingValue({
+                ...stepEditingValue,
+                ...updatedData,
+            });
+        } else {
+            setFormikValues({
+                ...formikValues,
+                ...updatedData,
+            });
+        }
+
+    }, [formikValues, scriptsMap, setStepEditingValue, stepEditingValue]);
+
     useEffect(() => {
         // getALlUsersFromOne();
     }, []);
@@ -165,6 +211,14 @@ const useAddNoahStep = ({onClose, handleChangeStep}) => {
             });
         }
     }, [formikValues.type]);
+
+    // 切换脚本使用类型(兼容编辑和新建)
+    useEffect(() => {
+        const {value} = SCRIPTS_ORIGIN.IMPORT_SCRIPTS;
+        if (formikValues.scriptOrigin === value || stepEditingValue?.scriptOrigin === value) {
+            getScriptsFromPipe();
+        }
+    }, [formikValues.scriptOrigin, stepEditingValue?.scriptOrigin]);
     return {
         formikValues,
         setFormikValues,
@@ -176,6 +230,9 @@ const useAddNoahStep = ({onClose, handleChangeStep}) => {
         userInputError,
         setUserInputError,
         usersFromOne,
+        scripts,
+        scriptsMap,
+        handleChangeImportScript,
     };
 };
 export default useAddNoahStep;

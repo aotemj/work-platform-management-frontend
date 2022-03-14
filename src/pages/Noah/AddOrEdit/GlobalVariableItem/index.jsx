@@ -12,7 +12,7 @@ import {GLOBAL_VARIABLE_TYPES} from '../constants';
 import {useCallback, useState} from 'react';
 
 const GlobalVariableItem = props => {
-    const {name, type, value, editing, handleClose, handleEdit} = props;
+    const {name, type, value, handleClose, handleEdit} = props;
     const [focus, setFocus] = useState(false);
 
     const handleFocus = useCallback(() => {
@@ -32,6 +32,7 @@ const GlobalVariableItem = props => {
             className={cx('global-variable-container')}
             onMouseEnter={handleFocus}
             onMouseLeave={handleBlur}
+            onClick={handleEdit}
         >
             <div className={cx('icon')}>
                 <VariableIcon type={type} />
@@ -40,9 +41,12 @@ const GlobalVariableItem = props => {
                 <div className={cx('title')}>{name}</div>
                 <div className={cx('sub-title')}>{finalValue}</div>
             </div>
-            {editing && (
+            {(
                 <Button
-                    onClick={() => handleClose(omit('handleClose', props))}
+                    onClick={e => {
+                        e.stopPropagation();
+                        handleClose(omit('handleClose', props));
+                    }}
                     type={'text'}
                     icon={<IconFont type={'icondeleteorerror'} />}
                     className={cx('close-button')}

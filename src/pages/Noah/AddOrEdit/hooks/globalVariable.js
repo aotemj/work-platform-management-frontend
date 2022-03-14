@@ -1,12 +1,13 @@
-import {useCallback, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import {clone, omit} from 'ramda';
 import {message, Modal} from '@osui/ui';
 import {getContainerDOM} from '../../../../utils';
 import {ERROR_MSG, GLOBAL_VARIABLE_TYPES} from '../constants';
+import {DELETE_SYMBOL} from '../../../../constant';
 
 // describes	变量描述		false   string
 // exeChange	是否赋值可变 0：否；1：是		false    integer
-// exeRequired	是否执行时必填 0：否；1：是		false   integer
+// exeRequired	是否必填 0：否；1：是		false   integer
 // id	ID		false   integer
 // name	变量名		false   string
 // status	通用状态 0：正常；-1：删除；		false   integer
@@ -25,14 +26,19 @@ const useGlobalVariable = ({
     handleChangeVariable,
     setVisible,
     onClose,
+    visible,
 }) => {
     const [globalVariables, setGlobalsVariables] = useState([]);
+
     const [variableMap, setVariableMap] = useState({});
+
     const [formikValues, setFormikValues] = useState(defaultFormikValues);
 
     const [disabled, setDisabled] = useState(false);
 
-    const [showCrypto, setShowCrypto] = useState(false);
+    const [showCrypto, setShowCrypto] = useState(true);
+    // 已删除的全局变量
+    const [deletedGlobalVariables, setDeletedGlobalVariables] = useState([]);
 
     const handleCancel = useCallback(() => {
         Modal.confirm({
@@ -48,7 +54,17 @@ const useGlobalVariable = ({
 
     const resetForm = useCallback(() => {
         setFormikValues(defaultFormikValues);
+        // setDeletedGlobalVariables([]);
     }, [setFormikValues]);
+
+    const updateDeleteGlobalVariables = useCallback(deleteItem => {
+        const tempList = clone(deletedGlobalVariables);
+        tempList.push({
+            ...deleteItem,
+            status: DELETE_SYMBOL,
+        });
+        setDeletedGlobalVariables(tempList);
+    }, [deletedGlobalVariables]);
 
     // 删除全局变量
     const handleRemoveGlobalVariable = useCallback(globalVariable => {
@@ -63,9 +79,12 @@ const useGlobalVariable = ({
         const tempArray =  clone(globalVariables);
         tempArray.splice(index, 1);
         setGlobalsVariables(tempArray);
+
+        // update deleted list
+        updateDeleteGlobalVariables(origin);
         // reset
         resetForm();
-    }, [globalVariables, resetForm, variableMap]);
+    }, [globalVariables, resetForm, updateDeleteGlobalVariables, variableMap]);
 
     // 编辑全局变量
     const handleEditGlobalVariable = useCallback((e, originData) => {
@@ -73,11 +92,10 @@ const useGlobalVariable = ({
             return message.error(ERROR_MSG.VARIABLE_ALREADY_EXIST);
         }
 
-        const {name} = originData;
+        const {name, index} = originData;
         const origin = variableMap[name];
 
         // update array
-        const {index} = origin;
         const tempArr = clone(globalVariables);
         tempArr[index] = {...origin, ...e};
         setGlobalsVariables(tempArr);
@@ -117,13 +135,18 @@ const useGlobalVariable = ({
     }, [globalVariables, handleChangeVariable, variableMap, resetForm]);
 
     // 更新全局变量
-    const handleChangeGlobalVariable = useCallback((e, editing, originData) => {
+    const handleChangeGlobalVariable = useCallback((e, editing, originData, data) => {
         if (editing) {
             handleEditGlobalVariable(e, originData);
         } else {
             handleAddGlobalVariable(e);
         }
     }, [handleEditGlobalVariable, handleAddGlobalVariable]);
+
+    useEffect(() => {
+        resetForm();
+        setDeletedGlobalVariables([]);
+    }, [visible]);
 
     return {
         globalVariables,
@@ -136,6 +159,10 @@ const useGlobalVariable = ({
         disabled,
         setShowCrypto,
         handleCancel,
+        setFormikValues,
+        setGlobalsVariables,
+        setVariableMap,
+        deletedGlobalVariables,
     };
 };
 

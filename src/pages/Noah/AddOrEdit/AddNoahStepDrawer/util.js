@@ -26,6 +26,8 @@ export const getScriptExecuteFields = ({
 }) => {
     const isManualConfirm = !isFileDistribution && !isScriptExecute;
 
+    const isHideChooseScript = !isScriptExecute || formikValues.scriptOrigin === SCRIPTS_ORIGIN.MANUAL_INPUT.value;
+
     const scriptExecuteFields = {
         runningEnvironment: {
             name: 'runningEnvironment',
@@ -35,7 +37,7 @@ export const getScriptExecuteFields = ({
             children: ({field, form: {values}}) => (
                 <Radio.Group
                     {...field}
-                    options={Object.values(RUNNING_ENVIRONMENT)}
+                    options={Object.values(RUNNING_ENVIRONMENT).filter(item => !item.disabled)}
                     onChange={e => {
                         setFormValues({
                             ...values,
@@ -72,10 +74,10 @@ export const getScriptExecuteFields = ({
             name: 'chooseScript',
             label: '选择脚本',
             // 脚本来源 为 "脚本引入" 时 显示
-            hide: !isScriptExecute || formikValues.scriptOrigin === SCRIPTS_ORIGIN.MANUAL_INPUT.value,
-            required: true,
+            hide: isHideChooseScript,
+            required: !isHideChooseScript,
             children: ({filed}) => (<Select {...typeSelectProps} {...filed} />),
-            validate: yup
+            validate: isHideChooseScript ? null : yup
                 .string()
                 .ensure()
                 .required('请选择脚本'),
@@ -408,25 +410,6 @@ export const getManualConfirmFields = ({
         // onChange: () => {},
         value: [],
     };
-
-    // const informUserIdProps = {
-    //
-    //     options: usersFromOne.map(item => {
-    //         return {
-    //             label: item.enterpriseCard,
-    //             value: Number(item.userId),
-    //         };
-    //     }),
-    //     getPopupContainer: triggerNode => triggerNode.parentNode,
-    //     className: cx('noah-list-select'),
-    //     placeholder: '请选择通知人员',
-    //     defaultValue: 3,
-    //     showSearch: true,
-    //     allowClear: true,
-    //     optionFilterProp: 'label',
-    //     // mode: 'multiple',
-    //     value: '',
-    // };
 
     const fields = {
         // 通知方式

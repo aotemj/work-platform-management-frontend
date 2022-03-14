@@ -146,8 +146,7 @@ const AddOrEdit = () => {
             ...defaultField,
             name: 'variable',
             label: '全局变量',
-            // TODO 全局变量自定义
-            children: ({field}) => (
+            children: ({field, form: {values}}) => (
                 <div className={cx('variable-container')}>
                     {
                         globalVariables.map(globalVariable => {
@@ -157,13 +156,12 @@ const AddOrEdit = () => {
                                     handleEdit={() => handleStartEditVariable(globalVariable)}
                                     key={globalVariable.title}
                                     {...globalVariable}
-                                    editing={editing}
                                 />
                             );
                         })
                     }
                     <Button
-                        onClick={handleAddGlobalVariable}
+                        onClick={() => handleAddGlobalVariable(values)}
                         icon={<IconPlusOutlined />}
                         className={cx('add-variable-button')}
                     >添加全局变量
@@ -188,7 +186,7 @@ const AddOrEdit = () => {
                                 >
                                     <span className={cx('index')}>{index + 1}</span>
                                     <StepItem
-                                        handleClose={handleRemoveStageList}
+                                        handleClose={e => handleRemoveStageList(e, stage)}
                                         handleEdit={e => handleStartEditStep(e, stage)}
                                         index={index}
                                         {...stage}

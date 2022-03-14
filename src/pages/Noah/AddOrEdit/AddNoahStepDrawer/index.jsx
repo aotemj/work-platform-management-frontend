@@ -34,9 +34,13 @@ const AddNoahStepDrawer = ({
         userInputError,
         setUserInputError,
         usersFromOne,
+        scripts,
+        handleChangeImportScript,
     } = useAddNoahStep({
         onClose,
         handleChangeStep,
+        stepEditingValue,
+        setStepEditingValue,
     });
 
     const editing = useMemo(() => {
@@ -135,7 +139,7 @@ const AddNoahStepDrawer = ({
         const isFileDistribution = type === STEP_TYPES.FILE_DISTRIBUTION.value;
 
         const typeSelectProps = {
-            options: [].map(project => {
+            options: scripts.map(project => {
                 const {name, id, tags} = project;
                 return {label: name, value: id, key: id, tags};
             }),
@@ -144,11 +148,8 @@ const AddNoahStepDrawer = ({
             placeholder: '请选择脚本',
             showSearch: true,
             allowClear: true,
-            // optionFilterProp: isFilterFromTags ? 'tags' : 'label',
-            // optionFilterProp: 'label',
-            // mode: 'multiple',
-            onChange: () => {},
-            value: '',
+            onChange: handleChangeImportScript,
+            value: formData.chooseScript,
         };
 
         // 执行脚本相关 fields
@@ -206,7 +207,9 @@ const AddNoahStepDrawer = ({
         defaultFormField,
         editing,
         formikValues,
+        handleChangeImportScript,
         handleChangeTargetServer,
+        scripts,
         setFormValues,
         setUserInputError,
         stepEditingValue,

@@ -54,8 +54,12 @@ export const REQUEST_CODE = {
 export const GLOBAL_URLS = {
     GET_USERS: (() =>
         `/facade/${getCompanyId()}/rest/v2/companies/${getCompanyId()}/users`)(),
+    GET_SCRIPTS: '/ipipe/script-tasks/rest/v1/script-tasks',
 };
 
 export const SPLIT_SYMBOL = ',';
 
 export const MAX_DISPLAY_LENGTH = 3;
+
+// 服务端删除标识
+export const DELETE_SYMBOL = -1;
