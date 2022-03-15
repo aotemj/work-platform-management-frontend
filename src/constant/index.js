@@ -14,7 +14,7 @@ export const ROUTE_PREFIX = `/:companyId/${PROJECT_ROUTE}`;
 export const DEFAULT_PAGINATION = {
     list: [],
     pageSize: 10,
-    pageNum: 1,
+    current: 1,
     total: 0,
     pageSizeOptions: [10, 20, 30, 50],
 };

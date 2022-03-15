@@ -96,11 +96,8 @@ const AddOrEdit = () => {
                 .string()
                 .ensure()
                 .trim()
-                .test('code', '集群名称仅支持输入中文、字母、数字、下划线、短横线，且必须以中文、字母或数字开头', value =>
-                    /^[a-zA-Z0-9\u4e00-\u9fa5][\w-_\u4e00-\u9fa5]*$/.test(value),
-                )
-                .required('请输入集群名称')
-                .max(50, '集群名称限50个字符'),
+                .required('请输入作业名称')
+                .max(80, '作业名称限80个字符'),
         },
         category: {
             ...defaultField,
@@ -146,7 +143,7 @@ const AddOrEdit = () => {
             ...defaultField,
             name: 'variable',
             label: '全局变量',
-            children: ({field, form: {values}}) => (
+            children: ({form: {values}}) => (
                 <div className={cx('variable-container')}>
                     {
                         globalVariables.map(globalVariable => {
@@ -175,14 +172,15 @@ const AddOrEdit = () => {
             name: 'stageList',
             label: '作业步骤',
             required: true,
-            children: ({field, form: {values}}) => (
+            children: ({form: {values}}) => (
                 <div className={cx('step-container')}>
                     {
                         formikValues.stageList.map((stage, index) => {
+                            const key = stage?.id || stage?.key;
                             return (
                                 <div
+                                    key={key}
                                     className={cx('step-item-container')}
-                                    key={stage.title}
                                 >
                                     <span className={cx('index')}>{index + 1}</span>
                                     <StepItem

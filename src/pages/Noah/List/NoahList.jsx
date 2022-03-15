@@ -1,14 +1,15 @@
 /**
  * 作业平台 作业管理 列表
  */
-import React, {useEffect} from 'react';
+import React from 'react';
+import {Table, PageHeader, Button, Spin, Tooltip, Tag} from '@osui/ui';
+import {omit} from 'ramda';
+
 import cx from './index.less';
-import {Table, Button, PageHeader, Spin, Tooltip} from '@osui/ui';
 import useNoahList from './hook';
 import {formatTimeStamp} from '../../../utils';
 import OperationBar from './OperationBar';
-import {omit} from 'ramda';
-import { MAX_DISPLAY_LENGTH, SPLIT_SYMBOL } from '../../../constant'
+import {MAX_DISPLAY_LENGTH, SPLIT_SYMBOL} from '../../../constant';
 
 const title = '作业管理';
 
@@ -59,19 +60,39 @@ const NoahList = props => {
         {
             title: '作业名',
             dataIndex: 'name',
+            width: '10%',
+            render: val => {
+              return (
+                  <Tooltip title={val}>
+                      <span className={cx('noah-name')}>
+                          {val}
+                      </span>
+                  </Tooltip>
+                );
+            },
         },
         {
             title: '分类',
             align: 'center',
             dataIndex: 'typeNames',
-            render: (val)=>{
-                const types = val.split(SPLIT_SYMBOL);
-                if(types.length>MAX_DISPLAY_LENGTH){
-                    return <Tooltip title={val}>{types.slice(0,MAX_DISPLAY_LENGTH).join(SPLIT_SYMBOL)}</Tooltip>
-                }else {
-                    return val
+            render: val => {
+                const types = val?.split(SPLIT_SYMBOL) || [];
+                const renderTag = type => {
+                    return <Tag key={type} title={type}>{type}</Tag>;
+                };
+                if (types.length > MAX_DISPLAY_LENGTH) {
+                    return (
+                        <Tooltip title={val}>
+                            {types.slice(0, MAX_DISPLAY_LENGTH).map(renderTag)}
+                            <Tag>...</Tag>
+                        </Tooltip>
+                    );
+                } else if (types.length > 0) {
+                    return types.map(renderTag);
                 }
-            }
+
+                return '未分类';
+            },
         },
         {
             title: '创建人',

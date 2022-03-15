@@ -15,7 +15,7 @@ const useCronList = () => {
     const [data, setData] = useState(DEFAULT_PAGINATION);
     // 搜索及列表请求参数
     const [searchValue, setSearchValue] = useState({
-        currentPage: DEFAULT_PAGINATION.pageNum,
+        currentPage: DEFAULT_PAGINATION.current,
         pageSize: DEFAULT_PAGINATION.pageSize,
         userName: '',
         beginTime: '',

@@ -1,7 +1,7 @@
 import {useCallback, useEffect, useMemo, useState} from 'react';
 import {clone, omit} from 'ramda';
 import {request} from '../../../../request/fetch';
-import {URLS, FILE_SOURCE_TYPE, UPDATE_FILE_STATUS} from '../constants';
+import {URLS, FILE_SOURCE_TYPE, LOADING, SUCCESS, ERROR} from '../constants';
 import {DEFAULT_STRING_VALUE, REQUEST_METHODS, REQUEST_TYPE, URL_PREFIX1} from '../../../../constant';
 
 let tempFileMap = {};
@@ -118,7 +118,7 @@ const useFileSource = ({
             fileName,
             fileSize,
             fileSource: FILE_SOURCE_TYPE.LOCAL,
-            status: UPDATE_FILE_STATUS.LOADING.value,
+            status: LOADING.value,
             sourcePath: DEFAULT_STRING_VALUE,
             sourceResourceName: DEFAULT_STRING_VALUE,
         };
@@ -149,7 +149,7 @@ const useFileSource = ({
                     ...tempData,
                     ...omit(['url', 'sourcePath', 'sourceResourceName'], data),
                     storageFileUrl,
-                    status: UPDATE_FILE_STATUS.SUCCESS.value,
+                    status: SUCCESS.value,
                 };
                 tempFileMap = {
                     ...fileMap,
@@ -162,7 +162,7 @@ const useFileSource = ({
                 const {key} = tempData;
                 const newTempData = {
                     ...tempData,
-                    status: UPDATE_FILE_STATUS.ERROR.value,
+                    status: ERROR.value,
                 };
 
                 tempFileMap = {

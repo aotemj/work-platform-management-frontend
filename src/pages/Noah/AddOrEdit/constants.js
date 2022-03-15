@@ -126,19 +126,19 @@ export const FILE_SOURCE_TYPE = {
 };
 
 // 上传文件状态
-const SUCCESS = {
+export const SUCCESS = {
     label: 'SUCCESS',
     value: 0,
 };
-const ERROR = {
+export const ERROR = {
     label: 'error',
     value: 1,
 };
-const LOADING = {
+export const LOADING = {
     label: 'LOADING',
     value: 2,
 };
-const DELETED = {
+export const DELETED = {
     label: 'DELETED',
     value: -1,
 };

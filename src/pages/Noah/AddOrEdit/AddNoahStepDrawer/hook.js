@@ -7,9 +7,8 @@ import {
     SCRIPT_TYPES,
     SCRIPTS_ORIGIN,
     STEP_TYPES,
-    UPDATE_FILE_STATUS,
     URLS,
-    NOTICE_APPROACHES,
+    NOTICE_APPROACHES, LOADING,
 } from '../constants';
 import {DEFAULT_STRING_VALUE, URL_PREFIX1} from '../../../../constant';
 import {request} from '../../../../request/fetch';
@@ -83,7 +82,7 @@ const useAddNoahStep = ({onClose, handleChangeStep, stepEditingValue, setStepEdi
             const {sourcePath, sourceResourceName, status} = storageFileList[i];
             // 本地上传文件
             if (sourcePath === DEFAULT_STRING_VALUE) {
-                if (status === UPDATE_FILE_STATUS.LOADING.value) {
+                if (status === LOADING.value) {
                     message.error('当前有本地文件未上传完成，请等待上传成功后保存');
                     return false;
                 }

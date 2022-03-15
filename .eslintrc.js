@@ -11,6 +11,8 @@ module.exports = {
         'react-hooks',
     ],
     rules: {
+        'template-curly-spacing': 'off',
+        'indent': 'off',
         'brace-style': [1, '1tbs'],
         'max-params': 0,
         'comma-dangle': [2, {

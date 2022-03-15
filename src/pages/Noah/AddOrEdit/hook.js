@@ -17,7 +17,6 @@ import {
     SYMBOL_FOR_ALL,
     URL_PREFIX1,
 } from '../../../constant';
-import {values} from 'lodash';
 // import {omitBy} from 'lodash';
 
 const defaultFormikValues = {
@@ -81,9 +80,15 @@ const useAddOrEdit = () => {
     }, []);
 
     const goBack = useCallback(() => {
-        reset();
-        navigate(-1);
-    }, [navigate, reset]);
+        Modal.confirm({
+            title: `确定要取消${editing ? '编辑' : '添加'}作业吗？`,
+            getContainer: getContainerDOM,
+            onOk: () => {
+                reset();
+                navigate(-1);
+            },
+        });
+    }, [editing, navigate, reset]);
 
     const {
         categories,
@@ -437,10 +442,15 @@ const useAddOrEdit = () => {
 
     // 更新步骤
     const handleChangeStep =  useCallback((e, stepEditingValue) => {
+        const key = Date.now();
+        const tempValue = {
+            ...e,
+            key, // react 循环  key
+        };
         if (stepEditingValue) {
             handleEditStep(e, stepEditingValue);
         } else {
-            handleAddStep(e);
+            handleAddStep(tempValue);
         }
     }, [handleAddStep, handleEditStep]);
 

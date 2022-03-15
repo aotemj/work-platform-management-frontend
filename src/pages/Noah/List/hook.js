@@ -42,7 +42,7 @@ const useNoahList = getUsersFromOne => {
         if (!shouldUpdate) {
             return false;
         }
-        const {pageNum, pageSize} = data;
+        const {current, pageSize} = data;
         setLoading(true);
         try {
             const res = await request({
@@ -54,7 +54,7 @@ const useNoahList = getUsersFromOne => {
                 // userName	创建人用户名	query	false   string
                 url: `${URL_PREFIX1}${URLS.LIST}`,
                 params: {
-                    currentPage: pageNum,
+                    currentPage: current,
                     pageSize,
                     // TODO 作业类型字段
                     name: searchValue,
@@ -195,9 +195,9 @@ const useNoahList = getUsersFromOne => {
     }, []);
 
     // 更新页码
-    const handlePaginationChange = useCallback(debounce((pageNum = 1) => {
+    const handlePaginationChange = useCallback(debounce((current = 1) => {
         updateData({
-            pageNum,
+            current,
         });
         setShouldUpdate(true);
     }, 500), []);

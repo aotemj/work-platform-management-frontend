@@ -8,7 +8,7 @@ import {IconPlusOutlined} from '@osui/icons';
 import TargetServer from '../AddNoahStepDrawer/TargetServer';
 import {omit} from 'ramda';
 import {convertFileSize} from '../../../../utils';
-import {UPDATE_FILE_STATUS} from '../constants';
+import {ERROR, LOADING, SUCCESS} from '../constants';
 
 const FileSource = ({
     field,
@@ -149,18 +149,18 @@ const FileSource = ({
                 render: (_, record) => {
                     const {status} = record;
                     switch (status) {
-                        case UPDATE_FILE_STATUS.SUCCESS.value:
+                        case SUCCESS.value:
                             return (
                                 <RemoveButton />
                             );
-                        case UPDATE_FILE_STATUS.ERROR.value:
+                        case ERROR.value:
                             return (
                                 <>
                                     <RetryButton />
                                     <RemoveButton />
                                 </>
                             );
-                        case UPDATE_FILE_STATUS.LOADING.value:
+                        case LOADING.value:
                             return <LoadingButton />;
                     }
 
