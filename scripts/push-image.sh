@@ -19,4 +19,4 @@ kubectl --kubeconfig=/Users/milo/Documents/20020.conf set image deployment/gitee
 
 # kubectl --kubeconfig=/Users/milo/Documents/webideUI/20020.conf set image deployment/gitee-scan-front-new  gitee-scan-front-new=registry.baidubce.com/gitee-poc/gitee-scan-fe2:release-$time -n dev
 
-kubectl --kubeconfig=/Users/milo/Documents/20020.conf set image deployment/gitee-scan-front-new  gitee-scan-front-new=registry.baidubce.com/gitee-poc/gitee-scan-fe2:release-$time -n scan-test
+#kubectl --kubeconfig=/Users/milo/Documents/20020.conf set image deployment/gitee-scan-front-new  gitee-scan-front-new=registry.baidubce.com/gitee-poc/gitee-scan-fe2:release-$time -n scan-test
