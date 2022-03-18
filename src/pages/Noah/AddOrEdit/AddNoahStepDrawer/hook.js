@@ -6,11 +6,10 @@ import {
     RUNNING_ENVIRONMENT,
     SCRIPT_TYPES,
     SCRIPTS_ORIGIN,
-    STEP_TYPES,
     URLS,
     NOTICE_APPROACHES, LOADING,
 } from '../constants';
-import {DEFAULT_STRING_VALUE, URL_PREFIX1} from '../../../../constant';
+import {DEFAULT_STRING_VALUE, STEP_TYPES, URL_PREFIX1} from '../../../../constant';
 import {request} from '../../../../request/fetch';
 import {users} from '../../../../temp/users';
 import {GLOBAL_URLS} from '../../../../constant/index';

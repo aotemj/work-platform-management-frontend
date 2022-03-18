@@ -17,6 +17,8 @@ export const DEFAULT_PAGINATION = {
     current: 1,
     total: 0,
     pageSizeOptions: [10, 20, 30, 50],
+    showSizeChanger: true,
+    showQuickJumper: true,
 };
 
 export const CONTAINER_DOM_ID = 'osc-noah';
@@ -63,3 +65,19 @@ export const MAX_DISPLAY_LENGTH = 3;
 
 // 服务端删除标识
 export const DELETE_SYMBOL = -1;
+
+// 作业步骤类型
+export const STEP_TYPES = {
+    EXECUTE_SCRIPT: {
+        label: '执行脚本',
+        value: 1,
+    },
+    FILE_DISTRIBUTION: {
+        label: '文件分发',
+        value: 2,
+    },
+    MANUAL_CONFIRM: {
+        label: '人工确认',
+        value: 3,
+    },
+};

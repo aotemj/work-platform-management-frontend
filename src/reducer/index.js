@@ -3,7 +3,7 @@ import {GET_USERS_FROM_ONE} from '../actions/actionTypes';
 const initialState = {
     users: {
         list: [],
-        map: {},
+        map: new Map(),
     },
 };
 

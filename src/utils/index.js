@@ -22,6 +22,46 @@ export const formatTimeStamp = (timestamp, dateSymbol = '-', timeSymbol = ':') =
     const second = formatTime(date.getSeconds());
     return `${year}${dateSymbol}${month}${dateSymbol}${day} ${hour}${timeSymbol}${minute}${timeSymbol}${second}`;
 };
+/**
+ * @param dateTimeStamp
+ * @returns {{hourTime: number, secondTime: number, minuteTime: number, dayTime: number}}
+ */
+export const getDateTime = dateTimeStamp => {
+    const HOUR_STEP = 24;
+    const MINUTE_STEP = 60;
+    const MILLI_SECOND_STEP = 1000;
+    const parseIntForDecimal = str => parseInt(str, 10);
+    // 获取总秒数
+    let secondTime = parseIntForDecimal(dateTimeStamp / MILLI_SECOND_STEP);
+    let dayTime = 0; // 天
+    let minuteTime = 0; // 分
+    let hourTime = 0; // 小时
+
+    // 如果秒数大于60，将秒数转换成整数
+    if (secondTime >= MINUTE_STEP) {
+        // 获取分钟，除以60取整数，得到整数分钟
+        minuteTime = parseIntForDecimal(secondTime / MINUTE_STEP);
+        // 获取秒数，秒数取佘，得到整数秒数
+        secondTime = parseIntForDecimal(secondTime % MINUTE_STEP);
+        // 如果分钟大于60，将分钟转换成小时
+        if (minuteTime >= MINUTE_STEP) {
+            // 获取小时，获取分钟除以60，得到整数小时
+            hourTime = parseIntForDecimal(minuteTime / MINUTE_STEP);
+            // 获取小时后取佘的分，获取分钟除以60取佘的分
+            minuteTime = parseIntForDecimal(minuteTime % MINUTE_STEP);
+        }
+        if (hourTime >= HOUR_STEP) {
+            dayTime = parseIntForDecimal(hourTime / HOUR_STEP);
+            hourTime = parseIntForDecimal(hourTime % HOUR_STEP);
+        }
+    }
+    return {
+        dayTime,
+        hourTime,
+        minuteTime,
+        secondTime,
+    };
+};
 
 export const getRealUrlPrefix = () => {
     return ROUTE_PREFIX.replace(':companyId', getCompanyId());

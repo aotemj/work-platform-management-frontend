@@ -7,11 +7,12 @@ import {Provider} from 'react-redux';
 import '../index.global.less';
 import {CONTAINER_DOM_ID, PROJECT_ROUTE} from '../constant';
 import {getContainerDOM, getUrlPrefixReal} from '../utils';
+import store from '../store';
 import NoahList from '../pages/Noah/List/index';
 import AddOrEdit from '../pages/Noah/AddOrEdit';
 import ExecList from '../pages/Exec/List';
 import CronList from '../pages/Cron/List';
-import store from '../store';
+import ExecLog from '../pages/Exec/Log';
 
 /**
  * 创建通用路由
@@ -41,9 +42,20 @@ export const routes = {
         getUrl: id => `${getUrlPrefixReal()}/${routes.NOAH_EDIT.url.replace(':detailId', id)}`,
         component: <AddOrEdit />,
     },
+    // 预执行
+    NOAH_PRE_EXECUTING: {
+        url: 'noah/exec/:detailId',
+        getUrl: id => `${getUrlPrefixReal()}/${routes.NOAH_PRE_EXECUTING.url.replace(':detailId', id)}`,
+        component: <AddOrEdit />,
+    },
     EXEC_LIST: {
         url: 'exec/list',
         component: <ExecList />,
+    },
+    EXEC_LOG: {
+        url: 'exec/log/:detailId',
+        getUrl: id => `${getUrlPrefixReal()}/${routes.EXEC_LOG.url.replace(':detailId', id)}`,
+        component: <ExecLog />,
     },
     CRON_LIST: {
         url: 'cron/list',
@@ -92,6 +104,7 @@ const App = () => {
                                     return getRoute({url, component, addProjectId: true});
                                 })
                             }
+                            <Route path="/" element={<NoahList />} />
                         </Routes>
                     </BrowserRouter>
                 </div>

@@ -1,22 +1,24 @@
 import {useNavigate, useParams} from 'react-router-dom';
-import {useCallback, useEffect, useState} from 'react';
+import {useCallback, useEffect, useMemo, useState} from 'react';
 import {message, Modal} from '@osui/ui';
 import {clone, isNil, omit, pickBy} from 'ramda';
 
-import {getContainerDOM} from '../../../utils';
+import {getContainerDOM, getUrlPrefixReal} from '../../../utils';
 import useCategory from './hooks/category';
 import useGlobalVariable from './hooks/globalVariable';
 import {request} from '../../../request/fetch';
-import {URLS, STEP_TYPES, UPDATE_FILE_STATUS, BOOLEAN_FROM_SERVER} from './constants';
+import {URLS, UPDATE_FILE_STATUS, BOOLEAN_FROM_SERVER} from './constants';
 import {
     DEFAULT_STRING_VALUE,
     DELETE_SYMBOL,
     REQUEST_CODE,
     REQUEST_METHODS,
     SPLIT_SYMBOL,
+    STEP_TYPES,
     SYMBOL_FOR_ALL,
     URL_PREFIX1,
 } from '../../../constant';
+import {routes} from '../../../routes';
 // import {omitBy} from 'lodash';
 
 const defaultFormikValues = {
@@ -34,11 +36,17 @@ const defaultFormikValues = {
 };
 
 const useAddOrEdit = () => {
+
     const params = useParams();
     const navigate = useNavigate();
-
+    const urlParams = new URL(window.location.href);
+    const {pathname} = urlParams;
+    // 预执行
+    const isExecuting = useMemo(() => {
+        return pathname === routes.NOAH_PRE_EXECUTING.getUrl(params?.detailId);
+    }, [params?.detailId, pathname]);
     // 编辑
-    const [editing, setEditing] = useState(!!params?.detailId);
+    const [editing, setEditing] = useState(!isExecuting && !!params?.detailId);
 
     const [formikValues, setFormikValues] = useState(defaultFormikValues);
 
@@ -54,11 +62,19 @@ const useAddOrEdit = () => {
 
     const [stepEditingValue, setStepEditingValue] = useState(null);
 
-    // 已经删除的stageList, 需要在编辑作业的时候传递给server
-    const [deletedStageList, setDeletedStageList] = useState([]);
-
+    // 编辑或执行时拿到的单条数据
     const [detailFromServer, setDetailFromServer] = useState({});
 
+    const title = useMemo(() => {
+        if (isExecuting) {
+            return `执行作业方案${detailFromServer?.sourceData?.workPlan?.name || DEFAULT_STRING_VALUE}`;
+        } else if (editing) {
+            return '编辑作业';
+
+        }
+        return '新建作业';
+
+    }, [detailFromServer, editing, isExecuting]);
     /**
      * 分类更新逻辑
      *  新增：
@@ -76,19 +92,20 @@ const useAddOrEdit = () => {
     }, [setFormikValues, formikValues]);
 
     const reset = useCallback(() => {
-        setDeletedStageList([]);
     }, []);
 
     const goBack = useCallback(() => {
+        reset();
+        navigate(`${getUrlPrefixReal()}/${routes.NOAH_LIST.url}`);
+    }, [navigate, reset]);
+
+    const goBackWithConfirm = useCallback(() => {
         Modal.confirm({
-            title: `确定要取消${editing ? '编辑' : '添加'}作业吗？`,
+            title: `确定要取消${isExecuting ? '执行' : (editing ? '编辑' : '添加')}作业吗？`,
             getContainer: getContainerDOM,
-            onOk: () => {
-                reset();
-                navigate(-1);
-            },
+            onOk: goBack,
         });
-    }, [editing, navigate, reset]);
+    }, [editing, goBack, isExecuting]);
 
     const {
         categories,
@@ -114,7 +131,6 @@ const useAddOrEdit = () => {
         handleChangeGlobalVariable,
         setGlobalsVariables,
         setVariableMap,
-        deletedGlobalVariables,
     } = useGlobalVariable({
         handleChangeVariable,
         setVisible: setGlobalVariableVisible,
@@ -335,12 +351,11 @@ const useAddOrEdit = () => {
     }, []);
 
     const convertParams = useCallback(originParams => {
-        const {stageList: originStageList, category, name, noahDescribes, variable, id} = originParams;
+        const {stageList: originStageList, category, name, noahDescribes, id} = originParams;
         const groupRelList = convertCategory(category);
         // 这里需要把用户删掉的stageList 也传递到server
-        const stageList = convertStageList([...originStageList, ...deletedStageList]);
-        // 删除逻辑同上 stageList
-        const workVariateList = convertWorkVariateList([...globalVariables, ...deletedGlobalVariables]);
+        const stageList = convertStageList(originStageList);
+        const workVariateList = convertWorkVariateList(globalVariables);
 
         return {
             stageList,
@@ -352,14 +367,7 @@ const useAddOrEdit = () => {
                 workVariateList,
             },
         };
-    }, [
-        convertCategory,
-        convertStageList,
-        convertWorkVariateList,
-        deletedGlobalVariables,
-        deletedStageList,
-        globalVariables,
-    ]);
+    }, [convertCategory, convertStageList, convertWorkVariateList, globalVariables]);
 
     const handleSubmit = useCallback(async e => {
         const params = convertParams(e);
@@ -373,10 +381,9 @@ const useAddOrEdit = () => {
         const {status} = res;
         if (!status) {
             message.success('操作成功');
-            goBack();
-        //     TODO reset form;
+            navigate(`${getUrlPrefixReal()}/${routes.NOAH_LIST.url}`);
         }
-    }, [convertParams, editing, goBack]);
+    }, [convertParams, editing, navigate]);
 
     const handleCancelOperate = useCallback(() => {
         Modal.info({
@@ -430,8 +437,7 @@ const useAddOrEdit = () => {
 
         const {stageList} = formikValues;
         const tempArr = clone(stageList);
-        // server端传来的 index 是从 1 开始的
-        tempArr[index - 1] = e;
+        tempArr[index] = e;
         setFormikValues({
             ...formikValues,
             stageList: tempArr,
@@ -446,34 +452,30 @@ const useAddOrEdit = () => {
         const tempValue = {
             ...e,
             key, // react 循环  key
+            index: formikValues.stageList.length,
         };
         if (stepEditingValue) {
             handleEditStep(e, stepEditingValue);
         } else {
             handleAddStep(tempValue);
         }
-    }, [handleAddStep, handleEditStep]);
+    }, [formikValues.stageList.length, handleAddStep, handleEditStep]);
 
     const handleRemoveStageList =  useCallback((e, stage) => {
         e.stopPropagation();
         const {stageList} = formikValues;
         const {index} = stage;
         const tempArr = clone(stageList);
-        tempArr.splice(index - 1, 1);
-
-        const tempDeleteList = clone(deletedStageList);
-
-        tempDeleteList.push({
+        tempArr[index] = {
             ...stage,
             status: DELETE_SYMBOL,
-        });
+        };
 
         setFormikValues({
             ...formikValues,
             stageList: tempArr,
         });
-        setDeletedStageList(tempDeleteList);
-    }, [deletedStageList, formikValues]);
+    }, [formikValues]);
 
     // 全局变量编辑
     const handleStartEditVariable = useCallback(e => {
@@ -585,6 +587,7 @@ const useAddOrEdit = () => {
                 name,
                 type,
                 sortIndex,
+                openStatus,
                 stageFileBean,
                 stageConfirmBean,
                 status,
@@ -603,8 +606,9 @@ const useAddOrEdit = () => {
                 type,
                 name,
                 describes,
-                // index: sortIndex - 1,
-                index: sortIndex,
+                index: sortIndex - 1,
+                openStatus,
+                // index: sortIndex,
             };
 
             switch (type) {
@@ -776,6 +780,7 @@ const useAddOrEdit = () => {
         }
         return tempMap;
     }, []);
+
     const getNoahDetail = useCallback(async () => {
         const {detailId} = params;
         const res = await request({
@@ -794,6 +799,19 @@ const useAddOrEdit = () => {
         }
     }, [deConvertParams, handleSourceCategoryMap, params]);
 
+    // 执行相关
+    const handleExecute = useCallback(async () => {
+        const res = await request({
+            url: `${URL_PREFIX1}${URLS.INDIVIDUAL_EXECUTE}${params?.detailId}`,
+            method: REQUEST_METHODS.POST,
+        });
+        const {code, data} = res;
+        if (code === REQUEST_CODE.SUCCESS) {
+            message.success('操作成功');
+
+            navigate(`${getUrlPrefixReal()}/${routes.EXEC_LIST.url}?id=${data?.id}`);
+        }
+    }, [navigate, params?.detailId]);
 
     useEffect(() => {
         fetchCategory();
@@ -808,8 +826,9 @@ const useAddOrEdit = () => {
     }, [params?.detailId]);
 
     return {
-        title: editing ? '编辑作业' : '新建作业',
+        title,
         goBack,
+        goBackWithConfirm,
         categories,
         setDisabled,
         handleSubmit,
@@ -818,6 +837,7 @@ const useAddOrEdit = () => {
         handleCancelOperate,
         handleRemoveStageList,
         editing,
+        isExecuting,
 
         // about category
         handleAddCategory,
@@ -843,6 +863,9 @@ const useAddOrEdit = () => {
         handleStartEditStep,
         stepEditingValue,
         setStepEditingValue,
+
+        // about execution
+        handleExecute,
     };
 };
 

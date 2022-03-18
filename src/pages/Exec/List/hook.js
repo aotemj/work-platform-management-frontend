@@ -1,14 +1,18 @@
 import {useCallback, useEffect, useState} from 'react';
-import {message} from 'antd';
-import {debounce} from '../../../utils';
+import {message} from '@osui/ui';
 import {reject, anyPass, isEmpty, isNil} from 'ramda';
+// import {useNavigate} from 'react-router-dom';
+
+import {debounce} from '../../../utils';
 import {request} from '../../../request/fetch';
 import {EXEC_LIST_URL} from '../../../utils/api';
-import {DEFAULT_PAGINATION} from '../../../constant';
-import {useNavigate} from 'react-router-dom';
+import {DEFAULT_PAGINATION, REQUEST_CODE, REQUEST_METHODS, URL_PREFIX1} from '../../../constant';
+import {URLS} from './constant';
 
 const useExecList = () => {
-    const navigate = useNavigate();
+    let loopTimer = null;
+
+    // const navigate = useNavigate();
     // Table加载状态
     const [loading, setLoading] = useState(false);
     // Table显示数据
@@ -21,6 +25,14 @@ const useExecList = () => {
         beginTime: '',
         endTime: '',
     });
+    // 当前选中查看详情 执行 id
+    const [currentExecutionId, setCurrentExecutionId] = useState(null);
+    // 执行详情
+    const [executionDetail, setExecutionDetail] = useState(null);
+
+    const [executeDetailVisible, setExecuteDetailVisible] = useState(false);
+
+    const [needLoopDetail, setNeedLoopDetail] = useState(false);
 
     // 表格请求参数
     const getList = useCallback(async () => {
@@ -80,11 +92,88 @@ const useExecList = () => {
             }));
         }, 500), []);
 
+    const getDetailId = useCallback(() => {
+        const search = new URL(window.location.href).search;
+        const searchParams = new URLSearchParams(search);
+        const detailId = searchParams.has('id') ? searchParams.get('id') : null;
+        if (detailId) {
+            setCurrentExecutionId(detailId);
+        }
+    }, []);
+    // 查看执行详情
+    const handleViewDetail = useCallback(e => {
+        const {id} = e;
+        setCurrentExecutionId(id);
+    }, []);
 
+    const getDetailInfo = useCallback(async () => {
+        if (!currentExecutionId) {
+            return;
+        }
+        const res = await request({
+            url: `${URL_PREFIX1}${URLS.GET_EXECUTION_DETAIL}${currentExecutionId}`,
+        });
+        const {code, data} = res;
+        if (code === REQUEST_CODE.SUCCESS) {
+            setExecutionDetail(data);
+            setNeedLoopDetail(false);
+        } else {
+            clearTimeout(loopTimer);
+            setExecuteDetailVisible(false);
+            message.error('获取详情失败');
+        }
+    }, [currentExecutionId, loopTimer]);
+
+    // 重新执行
+    const reExecution = useCallback(async () => {
+        const res = await request({
+            url: `${URL_PREFIX1}${URLS.RE_EXECUTE}${currentExecutionId}`,
+            method: REQUEST_METHODS.POST,
+        });
+        const {code} = res;
+        if (code === REQUEST_CODE.SUCCESS) {
+            message.success('操作成功');
+        }
+    }, [currentExecutionId]);
     // Initialize 初始化
     useEffect(() => {
         getList();
-    }, [getList]);
+    }, [searchValue]);
+
+    useEffect(() => {
+        if (currentExecutionId) {
+            setExecuteDetailVisible(true);
+            getDetailInfo();
+        }
+
+    }, [currentExecutionId]);
+
+    useEffect(() => {
+        getDetailId();
+    }, []);
+
+    // 轮询当前详情接口 start
+    useEffect(() => {
+        if (executeDetailVisible) {
+            if (!needLoopDetail) {
+                setTimeout(() => {
+                    clearTimeout(loopTimer);
+                    setNeedLoopDetail(true);
+                }, 5000);
+            }
+        } else {
+            setCurrentExecutionId(null);
+            clearTimeout(loopTimer);
+            setNeedLoopDetail(false);
+        }
+    }, [executeDetailVisible, needLoopDetail]);
+
+    useEffect(() => {
+        if (needLoopDetail) {
+            getDetailInfo();
+        }
+    }, [needLoopDetail]);
+    // 轮询当前详情接口 end
 
     return {
         data,
@@ -92,6 +181,12 @@ const useExecList = () => {
         handleChangeInput,
         handleChangeDate,
         handlePaginationChange,
+        handleViewDetail,
+        executeDetailVisible,
+        setExecuteDetailVisible,
+        executionDetail,
+        reExecution,
+        submitCallback: getDetailInfo,
     };
 };
 

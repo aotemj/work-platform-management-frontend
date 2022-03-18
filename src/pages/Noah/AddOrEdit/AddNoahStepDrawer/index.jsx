@@ -7,11 +7,11 @@ import {Drawer, Input, Select, Tooltip} from '@osui/ui';
 import * as yup from 'yup';
 
 import cx from './index.less';
-import {STEP_TYPES} from '../constants';
 import {ReactComponent as IconRemark} from '../../../../statics/icons/remark.svg';
 import useAddNoahStep from './hook';
 import FormikComp from '../../../../components/FormikComp';
 import {getFileDistribution, getManualConfirmFields, getScriptExecuteFields} from './util';
+import {STEP_TYPES} from '../../../../constant';
 
 const {Option} = Select;
 

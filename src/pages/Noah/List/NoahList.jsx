@@ -78,7 +78,7 @@ const NoahList = props => {
             render: val => {
                 const types = val?.split(SPLIT_SYMBOL) || [];
                 const renderTag = type => {
-                    return <Tag key={type} title={type}>{type}</Tag>;
+                    return <Tag key={type}>{type}</Tag>;
                 };
                 if (types.length > MAX_DISPLAY_LENGTH) {
                     return (

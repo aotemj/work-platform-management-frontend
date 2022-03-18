@@ -1,3 +1,10 @@
+/**
+ * 新建、 编辑、 执行作业
+ * tip: 当前组件有三个状态：
+ *  1. 新建 表单可以编辑 不可修改步骤启停状态
+ *  2. 编辑 表单可以编辑 不可修改步骤启停状态
+ *  3. 执行作业 表单不可编辑 可以修改步骤启停状态
+ */
 import * as yup from 'yup';
 import {Button, Input, PageHeader, Select} from '@osui/ui';
 import {IconPlusOutlined} from '@osui/icons';
@@ -11,6 +18,7 @@ import GlobalVariableItem from './GlobalVariableItem';
 import AddGlobalVariableDrawer from './AddGlobalVariableDrawer';
 import StepItem from './StepItem';
 import AddNoahStepDrawer from './AddNoahStepDrawer';
+import {DELETE_SYMBOL} from '../../../constant';
 
 const {Option} = Select;
 
@@ -34,6 +42,7 @@ const dropdownRender = (originNode, handleAddCallback, values) => {
 const AddOrEdit = () => {
     const {
         goBack,
+        goBackWithConfirm,
         title,
         categories,
         formikValues,
@@ -42,6 +51,7 @@ const AddOrEdit = () => {
         disabled,
         handleCancelOperate,
         editing,
+        isExecuting,
         handleRemoveStageList,
 
         // category
@@ -68,12 +78,15 @@ const AddOrEdit = () => {
         stepEditingValue,
         setStepEditingValue,
         handleStartAddStep,
+        handleExecute,
     } = useAddOrEdit();
 
     const defaultField = {
         layout: 'horizontal',
     };
 
+    const filterDeleteSymbol = item => item.status !== DELETE_SYMBOL;
+    const filterStageList = formikValues.stageList.filter(filterDeleteSymbol);
     const formFields = {
         name: {
             ...defaultField,
@@ -87,6 +100,7 @@ const AddOrEdit = () => {
                     <Input
                         maxLength={MAX_LENGTH}
                         placeholder={`请输入1~${MAX_LENGTH}位作业名称`}
+                        disabled={isExecuting}
                         suffix={<span>{field.value.length}/{MAX_LENGTH}</span>}
                         {...field}
                     />
@@ -106,6 +120,7 @@ const AddOrEdit = () => {
             DEFAULT_TAG_MAX_COUNT: Math.min(categories.length, 3),
             children: ({field, form: {values}}) => (
                 <SelectAll
+                    disabled={isExecuting}
                     className={cx('category-dropdown')}
                     dropdownRender={originNode => dropdownRender(originNode, handleAddCategory, values)}
                     placeholder="请选择或新增作业分类"
@@ -129,6 +144,7 @@ const AddOrEdit = () => {
             validate: null,
             children: ({field}) => (
                 <TextArea
+                    disabled={isExecuting}
                     width={'500px'}
                     showCount
                     className={cx('noah-textarea')}
@@ -143,28 +159,39 @@ const AddOrEdit = () => {
             ...defaultField,
             name: 'variable',
             label: '全局变量',
-            children: ({form: {values}}) => (
-                <div className={cx('variable-container')}>
-                    {
-                        globalVariables.map(globalVariable => {
-                            return (
-                                <GlobalVariableItem
-                                    handleClose={handleRemoveGlobalVariable}
-                                    handleEdit={() => handleStartEditVariable(globalVariable)}
-                                    key={globalVariable.title}
-                                    {...globalVariable}
-                                />
-                            );
-                        })
+            children: ({form: {values}}) => {
+                const length = globalVariables.length;
+                return (
+                    <div className={cx('variable-container')}>
+                        {
+                            globalVariables.filter(filterDeleteSymbol).map(globalVariable => {
+                                return (
+                                    <GlobalVariableItem
+                                        handleClose={handleRemoveGlobalVariable}
+                                        handleEdit={() => handleStartEditVariable(globalVariable)}
+                                        key={globalVariable.name}
+                                        disabled={isExecuting}
+                                        {...globalVariable}
+                                    />
+                                );
+                            })
+                        }
+                        {
+                            !length && isExecuting && <span className={cx('no-data')}>暂无全局变量</span>
+                        }
+                        {
+                        !isExecuting && (
+                            <Button
+                                onClick={() => handleAddGlobalVariable(values)}
+                                icon={<IconPlusOutlined />}
+                                className={cx('add-variable-button')}
+                            >添加全局变量
+                            </Button>
+                        )
                     }
-                    <Button
-                        onClick={() => handleAddGlobalVariable(values)}
-                        icon={<IconPlusOutlined />}
-                        className={cx('add-variable-button')}
-                    >添加全局变量
-                    </Button>
-                </div>
-            ),
+                    </div>
+                );
+            },
             validate: null,
         },
         stageList: {
@@ -175,12 +202,12 @@ const AddOrEdit = () => {
             children: ({form: {values}}) => (
                 <div className={cx('step-container')}>
                     {
-                        formikValues.stageList.map((stage, index) => {
+                        filterStageList.map((stage, index) => {
                             const key = stage?.id || stage?.key;
                             return (
                                 <div
                                     key={key}
-                                    className={cx('step-item-container')}
+                                    className={cx('step-item-container', isExecuting ? 'disabled' : null)}
                                 >
                                     <span className={cx('index')}>{index + 1}</span>
                                     <StepItem
@@ -189,17 +216,23 @@ const AddOrEdit = () => {
                                         index={index}
                                         {...stage}
                                         editing={editing}
+                                        disabled={isExecuting}
                                     />
                                 </div>
                             );
                         })
                     }
-                    <Button
-                        onClick={() => handleStartAddStep(values)}
-                        icon={<IconPlusOutlined />}
-                        className={cx('add-step-button')}
-                    >添加作业步骤
-                    </Button>
+                    {
+                        !isExecuting && (
+                            <Button
+                                onClick={() => handleStartAddStep(values)}
+                                icon={<IconPlusOutlined />}
+                                className={cx('add-step-button')}
+                            >添加作业步骤
+                            </Button>
+                        )
+                    }
+
                 </div>
             ),
             validate: yup
@@ -232,6 +265,21 @@ const AddOrEdit = () => {
         setStepEditingValue,
         editing,
     };
+
+    const ExecuteFooter = () => {
+
+        return (
+            <div className={cx('execute-footer')}>
+                <Button
+                    type={'primary'}
+                    onClick={handleExecute}
+                    className={cx('confirm-button')}
+                >执行
+                </Button>
+                <Button onClick={goBack}>返回方案列表</Button>
+            </div>
+        );
+    };
     const formikProps = {
         handleSubmit,
         initialValues: formikValues,
@@ -241,9 +289,13 @@ const AddOrEdit = () => {
         handleCancel: handleCancelOperate,
     };
 
+    if (isExecuting) {
+        formikProps.Footer = ExecuteFooter;
+    }
+
     return (
         <div className={cx('add-container')}>
-            <PageHeader title={title} onBack={goBack} />
+            <PageHeader title={title} onBack={goBackWithConfirm} />
             <div className={cx('outer')}>
                 <FormikComp {...formikProps} />
             </div>

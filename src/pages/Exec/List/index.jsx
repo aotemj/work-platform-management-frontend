@@ -2,14 +2,15 @@
  * 执行历史 作业任务列表
  */
 import React from 'react';
-import cx from './index.less';
+import {omit} from 'ramda';
 import {Table, Button, PageHeader, Spin} from '@osui/ui';
+
+import cx from './index.less';
 import useExecList from './hook';
 import {formatTimeStamp} from '../../../utils';
 import OperationBar from './OperationBar';
 import StatusTag from '../../../components/StatusTag';
-import ExecViewStepDrawer from './ExecViewStepDrawer';
-import {omit} from 'ramda';
+import ExecDetailDrawer from './ExecDetailDrawer';
 
 const title = '作业任务';
 
@@ -20,16 +21,22 @@ const ExecList = () => {
         handleChangeInput,
         handleChangeDate,
         handlePaginationChange,
+        reExecution,
+        handleViewDetail,
+        executeDetailVisible,
+        setExecuteDetailVisible,
+        executionDetail,
+        submitCallback,
     } = useExecList();
     const tableOperations = [
         {
             label: '重新执行',
-            execution: null,
+            execution: reExecution,
         },
         {
 
             label: '查看',
-            execution: null,
+            execution: handleViewDetail,
         },
     ];
 
@@ -103,11 +110,15 @@ const ExecList = () => {
         handleChangeDate,
     };
 
-    const viewStepProps = {
-        visible: true,
-        setVisible: () => {},
-        onClose: () => {},
+    const execDetailProps = {
+        visible: executeDetailVisible,
+        setVisible: setExecuteDetailVisible,
+        onClose: () => {
+            setExecuteDetailVisible(false);
+        },
         handleChangeStep: () => {},
+        executionDetail,
+        submitCallback,
     };
 
     return (
@@ -117,7 +128,7 @@ const ExecList = () => {
             <Spin spinning={loading} size="large">
                 <Table {...tableProps} />
             </Spin>
-            <ExecViewStepDrawer {...viewStepProps} />
+            <ExecDetailDrawer {...execDetailProps} />
         </div>
     );
 };

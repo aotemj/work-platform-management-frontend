@@ -8,12 +8,18 @@
     box-sizing: border-box;
     display: flex;
     align-items: center;
-    min-width: 200px;
+    min-width: 238px;
     margin-right: 18px;
     margin-bottom: 8px;
     position: relative;
     cursor: pointer;
-    &:hover {
+    &.disabled{
+      cursor: not-allowed;
+    }
+    &:nth-of-type(2n){
+        margin-right: 0;
+    }
+    &:not(.disabled) &:hover {
         background: rgb(226, 236, 254);
         border: 1px solid @activeColor;
         color: @activeColor;

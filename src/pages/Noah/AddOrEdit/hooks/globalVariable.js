@@ -54,37 +54,19 @@ const useGlobalVariable = ({
 
     const resetForm = useCallback(() => {
         setFormikValues(defaultFormikValues);
-        // setDeletedGlobalVariables([]);
     }, [setFormikValues]);
-
-    const updateDeleteGlobalVariables = useCallback(deleteItem => {
-        const tempList = clone(deletedGlobalVariables);
-        tempList.push({
-            ...deleteItem,
-            status: DELETE_SYMBOL,
-        });
-        setDeletedGlobalVariables(tempList);
-    }, [deletedGlobalVariables]);
 
     // 删除全局变量
     const handleRemoveGlobalVariable = useCallback(globalVariable => {
-        const {name} = globalVariable;
-        const origin = variableMap[name];
-        const {index} = origin;
-
-        // update map
-        setVariableMap(omit([name], variableMap));
-
-        // update array
+        const {index} = globalVariable;
         const tempArray =  clone(globalVariables);
-        tempArray.splice(index, 1);
+        tempArray[index] = {
+            ...globalVariable,
+            status: DELETE_SYMBOL,
+        };
         setGlobalsVariables(tempArray);
-
-        // update deleted list
-        updateDeleteGlobalVariables(origin);
-        // reset
         resetForm();
-    }, [globalVariables, resetForm, updateDeleteGlobalVariables, variableMap]);
+    }, [globalVariables, resetForm]);
 
     // 编辑全局变量
     const handleEditGlobalVariable = useCallback((e, originData) => {

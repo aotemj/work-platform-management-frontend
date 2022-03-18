@@ -10,22 +10,6 @@ export const GLOBAL_VARIABLE_TYPES = {
     },
 };
 
-// 作业步骤类型
-export const STEP_TYPES = {
-    EXECUTE_SCRIPT: {
-        label: '执行脚本',
-        value: 1,
-    },
-    FILE_DISTRIBUTION: {
-        label: '文件分发',
-        value: 2,
-    },
-    MANUAL_CONFIRM: {
-        label: '人工确认',
-        value: 3,
-    },
-};
-
 // 运行环境              // runtimeEnv	运行环境 1：主机运行，2：容器运行		false   // integer
 export const RUNNING_ENVIRONMENT = {
     AGENT: {
@@ -105,6 +89,10 @@ export const URLS = {
     // 上传本地文件
     UPLOAD_LOCAL_FILE: '/rest/v1/file/local',
     // NOAH_DETAIL: id => `/rest/v1/work-plan`,
+    // 切换启停
+    TOGGLE_EXECUTION: '/rest/v1/work-stage/open-status',
+    // 作业单个执行
+    INDIVIDUAL_EXECUTE: '/rest/v1/execute/initialize/', // /rest/v1/execute/initialize/{id}
 };
 
 // 主机类型
@@ -196,4 +184,11 @@ export const NOTICE_APPROACHES = {
 export const BOOLEAN_FROM_SERVER = {
     POSITIVE: 1,
     NEGATIVE: 0,
+};
+
+// openStatus	开关状态 0：关；1：开	query	true    integer(int32)
+
+export const EXECUTING_STATUS = {
+    OPEN: 1,
+    CLOSE: 0,
 };

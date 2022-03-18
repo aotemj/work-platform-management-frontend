@@ -99,3 +99,24 @@ html {
 .spinPage {
     padding: 24px;
 }
+
+.deny-button {
+    margin-right: 10px !important;
+}
+
+:global {
+    .running-icon{
+        animation: build-status-icon-spin 1s linear infinite !important;
+    }
+}
+
+@keyframes build-status-icon-spin {
+    from {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    to {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}

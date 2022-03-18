@@ -1,0 +1,127 @@
+.exec-step-card {
+    background: #F4F4F5;
+    border-radius: 4px;
+    width: 100%;
+    padding: 6px 8px;
+    margin-bottom: 20px;
+
+    &-content {
+        > .exec-title {
+            font-size: 18px;
+            font-weight: 500;
+            color: #1E2A3D;
+        }
+
+        > .main-content {
+            display: flex;
+            flex-wrap: wrap;
+
+            .exec-status {
+                margin-right: 10px;
+
+                .exec-step-card {
+                    border-radius: 4px;
+                    padding: 3px 6px;
+                    font-size: 12px;
+
+                    &.status-1 {
+                        color: #0C62FF;
+                        background: #E2ECFF;
+                    }
+
+                    &.status-2 {
+                        color: #854800;
+                        background: rgba(255, 139, 0, 0.3);
+                    }
+
+                    &.status-3 {
+                        color: #FF5630;
+                        background-color: #FFEBE5;
+                    }
+
+                    &.status-4 {
+                        background-color: #E2FFEE;
+                        color: #00875A;
+                    }
+
+                    &.status-5 {
+                        background: #E9EAEC;
+                        color: #909AAA;
+                    }
+                }
+            }
+
+            > .right {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                //flex-wrap: wrap;
+                >.bottom {
+                    display: flex;
+                    justify-content: space-between;
+                    .desc-container {
+                        flex: 1;
+                        .desc-item{
+                            >.label {
+                                font-size: 14px;
+                                color: #878C96;
+                            }
+                            >.value {
+                                font-weight: 600;
+                                color: #1E2A3D;
+                            }
+                        }
+                        .operations{
+                            flex:1;
+                            display: flex;
+                            justify-content: flex-end;
+                        }
+                    }
+                }
+            }
+        }
+
+        &-context {
+        }
+
+        &-flex {
+            display: flex;
+
+            &-left {
+
+            }
+
+            &-right {
+                flex: 1;
+
+            }
+        }
+    }
+}
+
+.exec-step-card-flex {
+    display: flex;
+    justify-content: space-between;
+}
+
+.exec-step-card-grid {
+    margin-right: 15px;
+}
+
+.exec-step-card-key {
+    font-size: 14px;
+    font-weight: 400;
+    color: #878C96;
+}
+
+.exec-step-card-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1E2A3D;
+}
+
+.exec-step-btn-primary {
+    font-size: 14px;
+    color: #0C62FF;
+}
+

@@ -56,7 +56,6 @@ const useNoahList = getUsersFromOne => {
                 params: {
                     currentPage: current,
                     pageSize,
-                    // TODO 作业类型字段
                     name: searchValue,
                     // typeId: noahType === allType.id ? '' : noahType,
                     typeId: noahType,
@@ -78,7 +77,7 @@ const useNoahList = getUsersFromOne => {
         }
     }, [shouldUpdate, data, searchValue, noahType, updateData]);
 
-    // 获取类型列表
+    // 获取类型列表 // 暂时不做分页
     const getNoahTypes = useCallback(async () => {
         const res = await request({
             url: `${URL_PREFIX1}${URLS.CATEGORY}`,
@@ -93,10 +92,11 @@ const useNoahList = getUsersFromOne => {
             setNoahTypes(list);
         }
     }, []);
-
-    const executeNoah = useCallback(() => {}, []);
+    // 单个执行作业
+    const executeNoah = useCallback(async noahItem => {
+        navigate(routes.NOAH_PRE_EXECUTING.getUrl(noahItem.id));
+    }, [navigate]);
     // 编辑作业
-    // TODO id 动态化
     const editNoah = useCallback((detail = {'id': 1}) => {
         navigate(routes.NOAH_EDIT.getUrl(detail.id));
     }, [navigate]);
@@ -147,16 +147,33 @@ const useNoahList = getUsersFromOne => {
         return valid;
     }, [selectedRowKeys]);
 
+    const executeByBatch = useCallback(async idList => {
+        const res = await request({
+            url: `${URL_PREFIX1}${URLS.EXECUTE_BY_BATCH}${idList.join(SPLIT_SYMBOL)}`,
+            method: REQUEST_METHODS.POST,
+        });
+        const {code} = res;
+        if (code === REQUEST_CODE.SUCCESS) {
+            message.success('操作成功');
+            setShouldUpdate(true);
+
+            navigate(`${getUrlPrefixReal()}/${routes.EXEC_LIST.url}`);
+        }
+    }, [navigate]);
     // 批量执行
-    const executeInBatches = useCallback(() => {
+    const executeInBatch = useCallback(() => {
         if (!checkIfBatchesOperationIsValid()) {
             return false;
         }
-        // TODO 批量执行
-    }, [checkIfBatchesOperationIsValid]);
+        Modal.confirm({
+            title: `确定要批量执行这${selectedRowKeys.length}个作业吗？`,
+            getContainer: getContainerDOM,
+            onOk: () => executeByBatch(selectedRowKeys),
+        });
+    }, [checkIfBatchesOperationIsValid, executeByBatch, selectedRowKeys]);
 
     // 批量删除
-    const removeInBatches = useCallback(() => {
+    const removeInBatch = useCallback(() => {
         if (!checkIfBatchesOperationIsValid()) {
             return false;
         }
@@ -173,13 +190,13 @@ const useNoahList = getUsersFromOne => {
         const {EXECUTING, REMOVE} = DROP_DOWN_MENU;
         switch (key) {
             case EXECUTING.key:
-                executeInBatches();
+                executeInBatch();
                 break;
             case REMOVE.key:
-                removeInBatches();
+                removeInBatch();
                 break;
         }
-    }, [executeInBatches, removeInBatches]);
+    }, [executeInBatch, removeInBatch]);
 
     const showDetail = useCallback(id => {
     }, []);
@@ -195,16 +212,17 @@ const useNoahList = getUsersFromOne => {
     }, []);
 
     // 更新页码
-    const handlePaginationChange = useCallback(debounce((current = 1) => {
+    const handlePaginationChange = useCallback(debounce((current, pageSize = DEFAULT_PAGINATION.pageSize) => {
         updateData({
             current,
+            pageSize,
         });
         setShouldUpdate(true);
     }, 500), []);
 
     // 根据关键字、类型重置页码
     useEffect(() => {
-        handlePaginationChange();
+        handlePaginationChange(1);
     }, [searchValue, noahType]);
 
     useEffect(() => {
