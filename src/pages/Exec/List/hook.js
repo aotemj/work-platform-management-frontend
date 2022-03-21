@@ -121,7 +121,7 @@ const useExecList = () => {
             setExecutionDetail(data);
             loopTimer.current = setTimeout(() => {
                 setNeedLoopDetail(true);
-            }, 2000);
+            }, 5000);
         } else {
             clearTimeout(loopTimer.current);
             setExecuteDetailVisible(false);
