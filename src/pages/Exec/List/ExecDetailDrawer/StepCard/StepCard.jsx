@@ -12,6 +12,7 @@ import {Button} from '@osui/ui';
 import cx from './index.less';
 import useStepCard from './hook';
 import NoPassReasonModal from './NoPassReasonModal';
+import {IGNORE_ERROR, RUNNING} from '../../constant';
 
 const StepCard = props => {
     const {users, detail, getUsersFromOne, submitCallback} = props;
@@ -38,12 +39,15 @@ const StepCard = props => {
         // TODO 运行状态未联调
         return (
             <div className={cx('exec-status')}>
-                <span className={cx('exec-step-card', `status-${detail?.runStatus}`)}>
+                <span
+                    className={cx('exec-step-card', `status-${detail?.ignoreError
+                    ? IGNORE_ERROR.styleLabel : detail?.runStatus}`)}
+                >
                     {runStatusLabel}
                 </span>
             </div>
         );
-    }, [detail?.runStatus, runStatusLabel]);
+    }, [detail, runStatusLabel]);
 
     const TimeItem = ({item}) => {
         return (
@@ -57,6 +61,7 @@ const StepCard = props => {
     const BottomContent = () => {
         const ManualConfirmContent = () => {
 
+            const showOperation = !stageConfirmResult && detail?.runStatus === RUNNING.value;
             return (
                 <div className={cx('desc-container')}>
                     {
@@ -70,7 +75,7 @@ const StepCard = props => {
                         })
                     }
 
-                    {!stageConfirmResult && (
+                    {showOperation && (
                         <div className={cx('operations')}>
                             <Button
                                 danger
@@ -94,6 +99,7 @@ const StepCard = props => {
                                 return (
                                     <Button
                                         type={'link'}
+                                        disabled={operation?.disabled}
                                         key={operation.label}
                                         onClick={operation.execution}
                                     >{operation.label}

@@ -16,7 +16,6 @@ const ExecDetailDrawer = ({onClose, visible, handleChangeStep, executionDetail, 
         title,
         headerDetail,
         stageTriggerList,
-        ignoreError,
     } = useExecDetail(executionDetail);
 
         const HeaderDetailItem = ({item}) => {
@@ -37,14 +36,14 @@ const ExecDetailDrawer = ({onClose, visible, handleChangeStep, executionDetail, 
             onClose={onClose}
             visible={visible}
         >
-            <div className={cx('exec-viewstep-header')}>
+            <div className={cx('exec-viewstep-header-container')}>
                 {headerDetail.map(item => (<HeaderDetailItem key={item?.label} item={item} />))}
             </div>
             <Steps direction="vertical" className={cx('exec-viewstep-content')}>
                 {
                     stageTriggerList.map(stageTrigger => {
-                        // TODO 忽略错误未联调暂无可用数据
-                        const icon = ignoreError ? IGNORE_ERROR.icon : RUN_STATUSES.get(stageTrigger?.runStatus)?.icon;
+                        const icon = stageTrigger?.ignoreError
+                            ? IGNORE_ERROR.icon : RUN_STATUSES.get(stageTrigger?.runStatus)?.icon;
                         return (
                             <Step
                                 key={stageTrigger?.id}

@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useState} from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
 import {message} from '@osui/ui';
 import {reject, anyPass, isEmpty, isNil} from 'ramda';
 // import {useNavigate} from 'react-router-dom';
@@ -10,7 +10,7 @@ import {DEFAULT_PAGINATION, REQUEST_CODE, REQUEST_METHODS, URL_PREFIX1} from '..
 import {URLS} from './constant';
 
 const useExecList = () => {
-    let loopTimer = null;
+    let loopTimer = useRef();
 
     // const navigate = useNavigate();
     // Table加载状态
@@ -32,7 +32,7 @@ const useExecList = () => {
 
     const [executeDetailVisible, setExecuteDetailVisible] = useState(false);
 
-    const [needLoopDetail, setNeedLoopDetail] = useState(false);
+    const [needLoopDetail, setNeedLoopDetail] = useState(true);
 
     // 表格请求参数
     const getList = useCallback(async () => {
@@ -107,34 +107,40 @@ const useExecList = () => {
     }, []);
 
     const getDetailInfo = useCallback(async () => {
+        clearTimeout(loopTimer.current);
+
         if (!currentExecutionId) {
             return;
         }
+        setNeedLoopDetail(false);
         const res = await request({
             url: `${URL_PREFIX1}${URLS.GET_EXECUTION_DETAIL}${currentExecutionId}`,
         });
         const {code, data} = res;
         if (code === REQUEST_CODE.SUCCESS) {
             setExecutionDetail(data);
-            setNeedLoopDetail(false);
+            loopTimer.current = setTimeout(() => {
+                setNeedLoopDetail(true);
+            }, 2000);
         } else {
-            clearTimeout(loopTimer);
+            clearTimeout(loopTimer.current);
             setExecuteDetailVisible(false);
             message.error('获取详情失败');
         }
     }, [currentExecutionId, loopTimer]);
 
     // 重新执行
-    const reExecution = useCallback(async () => {
+    const reExecution = useCallback(async item => {
+        const {id} = item;
         const res = await request({
-            url: `${URL_PREFIX1}${URLS.RE_EXECUTE}${currentExecutionId}`,
+            url: `${URL_PREFIX1}${URLS.RE_EXECUTE}${id}`,
             method: REQUEST_METHODS.POST,
         });
         const {code} = res;
         if (code === REQUEST_CODE.SUCCESS) {
             message.success('操作成功');
         }
-    }, [currentExecutionId]);
+    }, []);
     // Initialize 初始化
     useEffect(() => {
         getList();
@@ -143,7 +149,6 @@ const useExecList = () => {
     useEffect(() => {
         if (currentExecutionId) {
             setExecuteDetailVisible(true);
-            getDetailInfo();
         }
 
     }, [currentExecutionId]);
@@ -155,18 +160,12 @@ const useExecList = () => {
     // 轮询当前详情接口 start
     useEffect(() => {
         if (executeDetailVisible) {
-            if (!needLoopDetail) {
-                setTimeout(() => {
-                    clearTimeout(loopTimer);
-                    setNeedLoopDetail(true);
-                }, 5000);
-            }
+            setNeedLoopDetail(true);
         } else {
-            setCurrentExecutionId(null);
-            clearTimeout(loopTimer);
+            clearTimeout(loopTimer.current);
             setNeedLoopDetail(false);
         }
-    }, [executeDetailVisible, needLoopDetail]);
+    }, [executeDetailVisible]);
 
     useEffect(() => {
         if (needLoopDetail) {
@@ -187,6 +186,7 @@ const useExecList = () => {
         executionDetail,
         reExecution,
         submitCallback: getDetailInfo,
+        setCurrentExecutionId,
     };
 };
 

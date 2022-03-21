@@ -25,6 +25,9 @@ const useExecDetail = executionDetail => {
 
     // 总耗时
     const consumeTime = useMemo(() => {
+        if (!executionDetail) {
+            return;
+        }
         let {consumeTime = null, beginTime} = executionDetail;
         if (!consumeTime && beginTime) {
             consumeTime = (Date.now() - beginTime) / 1000;
@@ -71,7 +74,6 @@ const useExecDetail = executionDetail => {
         },
         {
             label: '总耗时：',
-            //  TODO 耗时未 null 时前端自己计算耗时
             value: consumeTime,
         },
     ];

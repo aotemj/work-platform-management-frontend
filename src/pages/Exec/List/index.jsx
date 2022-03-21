@@ -25,6 +25,7 @@ const ExecList = () => {
         handleViewDetail,
         executeDetailVisible,
         setExecuteDetailVisible,
+        setCurrentExecutionId,
         executionDetail,
         submitCallback,
     } = useExecList();
@@ -114,6 +115,7 @@ const ExecList = () => {
         visible: executeDetailVisible,
         setVisible: setExecuteDetailVisible,
         onClose: () => {
+            setCurrentExecutionId(null);
             setExecuteDetailVisible(false);
         },
         handleChangeStep: () => {},

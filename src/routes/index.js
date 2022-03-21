@@ -25,7 +25,7 @@ import ExecLog from '../pages/Exec/Log';
 const getRoute = ({url, addProjectId = false, component}) => {
     const URL_PREFIX_TEMP = addProjectId ? `/:companyId/:projectId/${PROJECT_ROUTE}` : `/:companyId/${PROJECT_ROUTE}`;
 
-    return <Route key={url} path={`${URL_PREFIX_TEMP}/${url}`} element={component} />;
+    return <Route key={url} path={`${URL_PREFIX_TEMP}/${url}`} element={component} exact />;
 };
 
 export const routes = {
@@ -104,7 +104,6 @@ const App = () => {
                                     return getRoute({url, component, addProjectId: true});
                                 })
                             }
-                            <Route path="/" element={<NoahList />} />
                         </Routes>
                     </BrowserRouter>
                 </div>

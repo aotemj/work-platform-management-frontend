@@ -62,7 +62,7 @@ const useStepCard = ({detail, getUsersFromOne, submitCallback, users}) => {
         return detail?.stageTriggerItemList[0]?.id;
     }, [detail?.stageTriggerItemList]);
 
-    // 是否忽略错误
+    // 是否忽略错误 	错误是否被忽略：0：否；1：是
     const ignoreError = useMemo(() => {
         return detail?.ignoreError;
     }, [detail]);
@@ -172,13 +172,16 @@ const useStepCard = ({detail, getUsersFromOne, submitCallback, users}) => {
     }, [confirmManualResult, name, stageTriggerItemId]);
 
     const operations = useMemo(() => {
-        const {runStatus} = detail;
+        const {runStatus, ignoreError} = detail;
+
+        const ignoreErrorObj = {
+            label: '忽略错误',
+            execution: neglectErrors,
+            disabled: ignoreError,
+        };
 
         const failedOperations = [
-            {
-                label: '忽略错误',
-                execution: neglectErrors,
-            },
+            ignoreErrorObj,
             // 暂时隐藏, 后期迭代
             // {
             //     label: '失败IP重试',
@@ -189,6 +192,7 @@ const useStepCard = ({detail, getUsersFromOne, submitCallback, users}) => {
                 execution: entirelyRetry,
             },
         ];
+
         let tempArr = [
 
             {
@@ -206,7 +210,6 @@ const useStepCard = ({detail, getUsersFromOne, submitCallback, users}) => {
     const manualConfirmDescContents = useMemo(() => {
         const getInformUser = () => {
             const informUserId = stageConfirm?.informUserId;
-            console.log(informUserId);
             if (!informUserId) {
                 return [DEFAULT_STRING_VALUE];
             }

@@ -4,7 +4,7 @@ import {ReactComponent as CloseCircle} from '../../../statics/icons/closecircle.
 import {ReactComponent as CheckCircle} from '../../../statics/icons/checkcircle.svg';// 初始化、执行成功
 import {ReactComponent as Suspend} from '../../../statics/icons/suspend.svg';// 执行暂停
 import {ReactComponent as NotStarted} from '../../../statics/icons/notstarted.svg';// 待确认
-import {ReactComponent as Warning} from '../../../statics/icons/warning-Circle-Fill.svg';// 待确认
+import {ReactComponent as Warning} from '../../../statics/icons/warning-Circle-Fill.svg';// 忽略错误
 
 export const URLS = {
     GET_EXECUTION_DETAIL: '/rest/v1/execute/', // 执行详情 // /rest/v1/execute/{id}
@@ -46,6 +46,7 @@ export const IGNORE_ERROR = {
     label: '忽略错误',
     icon: <Warning />,
     value: 3,
+    styleLabel: 6,
 };
 
 export const PASS = {
