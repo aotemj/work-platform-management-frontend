@@ -17,7 +17,6 @@ export const entirelyRetry = async ({id: id}) => {
     }
 };
 
-// TODO 忽略错误暂未调试 交互
 // 忽略错误
 export const neglectErrors = async ({id}) => {
     const res = await request({
