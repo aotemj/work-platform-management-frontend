@@ -11,7 +11,7 @@ import {throttle} from 'lodash';
 import IconFont from '../../../../components/Iconfont';
 import cx from './index.less';
 import {EXECUTING_STATUS, URLS} from '../constants';
-import {REQUEST_CODE, REQUEST_METHODS, REQUEST_TYPE, URL_PREFIX1} from '../../../../constant';
+import {REQUEST_CODE, REQUEST_METHODS, REQUEST_TYPE, COMMON_URL_PREFIX} from '../../../../constant';
 import {request} from '../../../../request/fetch';
 
 const StepItem  = props => {
@@ -39,7 +39,7 @@ const StepItem  = props => {
         params.append('stageId', stageId);
 
         const res = await request({
-            url: `${URL_PREFIX1}${URLS.TOGGLE_EXECUTION}`,
+            url: `${COMMON_URL_PREFIX}${URLS.TOGGLE_EXECUTION}`,
             method: REQUEST_METHODS.PUT,
             type: REQUEST_TYPE.FORM_DATA,
             params,

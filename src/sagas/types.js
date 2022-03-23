@@ -1,1 +1,2 @@
 export const GET_USER_FROM_ONE_S = Symbol('GET_USER_FROM_ONE_S');
+export const GET_EXECUTION_DETAIL_S = Symbol('GET_EXECUTION_DETAIL_S');

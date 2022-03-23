@@ -23,6 +23,7 @@ export const getScriptExecuteFields = ({
     handleChangeTargetServer,
     editing,
     visible,
+    isViewing,
 }) => {
     const isManualConfirm = !isFileDistribution && !isScriptExecute;
 
@@ -37,6 +38,7 @@ export const getScriptExecuteFields = ({
             children: ({field, form: {values}}) => (
                 <Radio.Group
                     {...field}
+                    disabled={isViewing}
                     options={Object.values(RUNNING_ENVIRONMENT).filter(item => !item.disabled)}
                     onChange={e => {
                         setFormValues({
@@ -57,6 +59,7 @@ export const getScriptExecuteFields = ({
             children: ({field, form: {values}}) => (
                 <Radio.Group
                     {...field}
+                    disabled={isViewing}
                     options={Object.values(SCRIPTS_ORIGIN)}
                     onChange={e => {
                         setFormValues({
@@ -90,6 +93,7 @@ export const getScriptExecuteFields = ({
             children: ({field, form: {values}}) => (
                 <ScriptContent
                     field={field}
+                    disabled={isViewing}
                     scriptLanguage={formikValues.scriptLanguage}
                     setFormValues={setFormValues}
                     values={values}
@@ -116,6 +120,7 @@ export const getScriptExecuteFields = ({
                 <TextArea
                     {...field}
                     showCount
+                    disabled={isViewing}
                     className={cx('noah-textarea')}
                     autoSize={{minRows: 5}}
                     maxLength={scriptExecuteFields.scriptParams.MAX_LENGTH}
@@ -133,6 +138,7 @@ export const getScriptExecuteFields = ({
                 <InputNumber
                     className={cx('time-out-input')}
                     {...field}
+                    disabled={isViewing}
                     placeholder="请输入超时时长"
                 />
             ),
@@ -148,6 +154,7 @@ export const getScriptExecuteFields = ({
                 <Select
                     className={cx('time-out-input')}
                     {...field}
+                    disabled={isViewing}
                     placeholder="请填写镜像"
                 />
             ),
@@ -163,6 +170,7 @@ export const getScriptExecuteFields = ({
             children: ({field, form: {values}}) => (
                 <TargetServer
                     field={field}
+                    disabled={isViewing}
                     handleChange={(agents, agentMap) =>
                         handleChangeTargetServer({agents, values, agentMap, editing})}
                     visible={visible}
@@ -201,6 +209,7 @@ export const getFileDistribution = ({
     visible,
     userInputError,
     setUserInputError,
+    isViewing,
 }) => {
     const isManualConfirm = !isFileDistribution && !isScriptExecute;
 
@@ -213,6 +222,7 @@ export const getFileDistribution = ({
                 <InputNumber
                     className={cx('time-out-input')}
                     {...field}
+                    disabled={isViewing}
                     placeholder="请输入超时时长"
                 />
             ),
@@ -235,11 +245,13 @@ export const getFileDistribution = ({
                                     uploadLimitDisabled: !e,
                                 });
                             }}
+                            disabled={isViewing}
                         />
                         { !uploadLimitDisabled && (
                             <InputNumber
                                 className={cx('time-out-input')}
                                 {...field}
+                                disabled={isViewing}
                                 addonAfter={'MB/s'}
                             />
                         )}
@@ -259,6 +271,7 @@ export const getFileDistribution = ({
                         <Switch
                             className={cx('time-out-switch')}
                             checked={!downloadLimitDisabled}
+                            disabled={isViewing}
                             onChange={e => {
                                 setFormValues({
                                     ...values,
@@ -270,6 +283,7 @@ export const getFileDistribution = ({
                             <InputNumber
                                 className={cx('time-out-input')}
                                 {...field}
+                                disabled={isViewing}
                                 addonAfter={'MB/s'}
                             />
                         )}
@@ -296,6 +310,7 @@ export const getFileDistribution = ({
                                     field={field}
                                     values={values}
                                     setFormValues={setFormValues}
+                                    disabled={isViewing}
                                     storageFileList={formikValues.storageFileList}
                                     changeCallback={storageFileList => {
                                         setFormValues({
@@ -330,8 +345,7 @@ export const getFileDistribution = ({
                         hide: !isFileDistribution,
                         children: ({field}) => {
                             return (
-                                <Input {...field} placeholder={'请填写分发路径'} />
-
+                                <Input {...field} placeholder={'请填写分发路径'} disabled={isViewing} />
                             );
                         },
                         validate: yup.string().ensure().required('请填写分发路径'),
@@ -344,7 +358,10 @@ export const getFileDistribution = ({
                         required: true,
                         children: ({field}) => {
                             return (
-                                <Radio.Group {...field}>
+                                <Radio.Group
+                                    {...field}
+                                    disabled={isViewing}
+                                >
                                     {
                                         Object.values(TRANSMISSION_MODE).map(item => {
                                             const {key} = item;
@@ -367,6 +384,7 @@ export const getFileDistribution = ({
                         children: ({field, form: {values}}) => (
                             <TargetServer
                                 field={field}
+                                disabled={isViewing}
                                 handleChange={(agents, agentMap) =>
                                     handleChangeTargetServer({agents, values, agentMap, editing})}
                                 visible={visible}

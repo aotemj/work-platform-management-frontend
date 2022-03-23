@@ -1,53 +1,38 @@
 import {useCallback, useEffect, useMemo, useState} from 'react';
 import {message, Modal} from '@osui/ui';
 
-import {formatTimeStamp, getContainerDOM, getDateTime} from '../../../../../utils';
+import {convertConsumeTime, formatTimeStamp, getContainerDOM} from '../../../../../utils';
 import {
     DEFAULT_STRING_VALUE,
     REQUEST_CODE,
     REQUEST_METHODS,
     SPLIT_SYMBOL,
     STEP_TYPES,
-    URL_PREFIX1,
+    COMMON_URL_PREFIX,
 } from '../../../../../constant';
-import {CONFIRM_RESULTS, FAILED, IGNORE_ERROR, NOT_PASS, PASS, RUN_STATUSES, URLS} from '../../constant';
+import {CONFIRM_RESULTS, FAILED, IGNORE_ERROR, NOT_PASS, PASS, RUN_STATUSES, SUCCESS, URLS} from '../../constant';
 import {request} from '../../../../../request/fetch';
 import {useNavigate} from 'react-router-dom';
 import {routes} from '../../../../../routes';
+import {entirelyRetry, neglectErrors} from '../util';
 
-const useStepCard = ({detail, getUsersFromOne, submitCallback, users}) => {
+const useStepCard = ({detail, getUsersFromOne, submitCallback, users, executionDetail}) => {
     const navigate = useNavigate();
     const [noPassVisible, setNoPassVisible] = useState(false);
     const name = useMemo(() => {
         return detail?.name;
     }, [detail]);
-    // TODO 忽略错误暂未调试 交互
-    // 忽略错误
-    const neglectErrors = useCallback(() => {
-        const {id} = detail;
-        const res = request({
-            url: `${URL_PREFIX1}${URLS.NEGLECT_ERRORS}${id}`,
-            method: REQUEST_METHODS.POST,
-        });
-        // console.log(res);
-    }, [detail]);
+
     // 失败IP重试 暂时隐藏，后期迭代
     // const reTryWithFailedIPs = useCallback(() => {
     //
     // }, []);
-    // 全部IP重试
-    const entirelyRetry = useCallback(() => {
-        const {id} = detail;
-        const res = request({
-            url: `${URL_PREFIX1}${URLS.ENTIRELY_RE_EXECUTE}${id}`,
-            method: REQUEST_METHODS.POST,
-        });
-        // console.log(res);
-    }, [detail]);
+
     const viewLog = useCallback(() => {
-        const {id} = detail;
-        navigate(routes.EXEC_LOG.getUrl(id));
-    }, [detail, navigate]);
+        const {id: executeId, workPlanId: detailId} = executionDetail;
+        const {id: stepId} = detail;
+        navigate(`${routes.EXEC_LOG.getUrl(detailId, executeId, stepId)}`);
+    }, [detail, executionDetail, navigate]);
     // NOTE  步骤类型
     //  人工确认  类型没有 结束时间
     const type = useMemo(() => {
@@ -107,32 +92,10 @@ const useStepCard = ({detail, getUsersFromOne, submitCallback, users}) => {
         }
         return tempArr;
     }, [detail, isManualConfirm]);
-    const consumeObj = (() => {
-        let {consumeTime, beginTime} = detail;
-        // console.log(beginTime);
-        if (!consumeTime && beginTime) {
-            consumeTime = (Date.now() - beginTime) / 1000;
-        }
-
-        // 总耗时
-        const tempConsumeTime = () => {
-            const {
-                dayTime,
-                hourTime,
-                minuteTime,
-                secondTime,
-            } = getDateTime(consumeTime * 1000);
-            const dateStr = dayTime ? `${dayTime}d` : '';
-            const hourStr = hourTime ? `${hourTime}h` : '';
-            const minuteStr = minuteTime ? `${minuteTime}m` : '';
-            const secondStr = secondTime ? `${secondTime}s` : '';
-            return `${dateStr}${hourStr}${minuteStr}${secondStr}`;
-        };
-        return {
-            label: '耗时：',
-            value: tempConsumeTime(),
-        };
-    })();
+    const consumeObj = {
+        label: '耗时：',
+        value: convertConsumeTime(detail),
+    };
 
     const handleToggleNoPassReasonModal = useCallback((status = false) => {
         setNoPassVisible(status);
@@ -144,7 +107,7 @@ const useStepCard = ({detail, getUsersFromOne, submitCallback, users}) => {
         // id	作业步骤任务执行记录id		false   // integer
         // noPassReason	不通过原因		false   // string
         const res = await request({
-            url: `${URL_PREFIX1}${URLS.CONFIRM_MANUAL_RESULT}`,
+            url: `${COMMON_URL_PREFIX}${URLS.CONFIRM_MANUAL_RESULT}`,
             method: REQUEST_METHODS.POST,
             params,
         });
@@ -188,24 +151,25 @@ const useStepCard = ({detail, getUsersFromOne, submitCallback, users}) => {
             //     execution: reTryWithFailedIPs,
             // },
             {
-                label: '全部IP重试',
+                label: '全部主机重试',
                 execution: entirelyRetry,
             },
         ];
 
-        let tempArr = [
+        const viewLogObj = {
+            label: '查看日志',
+            execution: viewLog,
+        };
 
-            {
-                // TODO 日志整体逻辑
-                label: '查看日志',
-                execution: viewLog,
-            },
-        ];
+        let tempArr = [];
         if (runStatus === FAILED.value) {
             tempArr.unshift(...failedOperations);
         }
+        if (runStatus === FAILED.value || runStatus === SUCCESS.value) {
+            tempArr.push(viewLogObj);
+        }
         return tempArr;
-    }, [detail, entirelyRetry, neglectErrors, viewLog]);
+    }, [detail, neglectErrors, viewLog]);
 
     const manualConfirmDescContents = useMemo(() => {
         const getInformUser = () => {

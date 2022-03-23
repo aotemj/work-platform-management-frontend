@@ -1,6 +1,6 @@
 import {ROUTE_PREFIX} from './constant';
 import {getCompanyId, getSpaceId} from './getRouteIds';
-import {CONTAINER_DOM_ID, DEFAULT_STRING_VALUE, PROJECT_ROUTE} from '../constant';
+import {CONTAINER_DOM_ID, DEFAULT_STRING_VALUE, MILLI_SECOND_STEP, PROJECT_ROUTE} from '../constant';
 
 const formatWidthEero = (origin, maxLength, fillString) => {
     return String(origin).padStart(maxLength, fillString);
@@ -29,7 +29,6 @@ export const formatTimeStamp = (timestamp, dateSymbol = '-', timeSymbol = ':') =
 export const getDateTime = dateTimeStamp => {
     const HOUR_STEP = 24;
     const MINUTE_STEP = 60;
-    const MILLI_SECOND_STEP = 1000;
     const parseIntForDecimal = str => parseInt(str, 10);
     // 获取总秒数
     let secondTime = parseIntForDecimal(dateTimeStamp / MILLI_SECOND_STEP);
@@ -67,7 +66,7 @@ export const getRealUrlPrefix = () => {
     return ROUTE_PREFIX.replace(':companyId', getCompanyId());
 };
 
-export function debounce(fn, delay = 1000) {
+export function debounce(fn, delay = MILLI_SECOND_STEP) {
     let timer = null;
     return function (...rest) {
         if (timer) {
@@ -114,3 +113,49 @@ export function convertFileSize(fileSize) {
     }
     return `${size.toFixed(2)}${symbol}`;
 }
+
+// 换算总耗时
+export function convertConsumeTime(executionDetail) {
+    if (!executionDetail) {
+        return;
+    }
+    let {consumeTime = null, beginTime} = executionDetail;
+    if (!consumeTime && beginTime) {
+        consumeTime = (Date.now() - beginTime) / MILLI_SECOND_STEP;
+    }
+    const {
+        dayTime,
+        hourTime,
+        minuteTime,
+        secondTime,
+    } = getDateTime(consumeTime * MILLI_SECOND_STEP);
+    const dateStr = dayTime ? `${dayTime}d` : '';
+    const hourStr = hourTime ? `${hourTime}h` : '';
+    const minuteStr = minuteTime ? `${minuteTime}m` : '';
+    const secondStr = secondTime ? `${secondTime}s` : '';
+    return `${dateStr}${hourStr}${minuteStr}${secondStr}`;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

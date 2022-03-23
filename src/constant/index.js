@@ -6,6 +6,8 @@ import {ReactComponent as IconWarning} from '../components/FormField/icons/warni
 import React from 'react';
 import {getCompanyId} from '../utils/getRouteIds';
 
+export const IS_PROD = process.env.NODE_ENV === 'production';
+
 export const PROJECT_ROUTE = '_settings';
 
 export const ROUTE_PREFIX = `/:companyId/${PROJECT_ROUTE}`;
@@ -47,7 +49,9 @@ export const LevelIconMap = {
 
 export const DEFAULT_STRING_VALUE = '--';
 
-export const URL_PREFIX1 = '/api';
+export const COMMON_URL_PREFIX = '/api';
+
+export const ONE_URL_PREFIX = '/one';
 
 export const REQUEST_CODE = {
     SUCCESS: 200,
@@ -81,3 +85,5 @@ export const STEP_TYPES = {
         value: 3,
     },
 };
+
+export const MILLI_SECOND_STEP = 1000;

@@ -8,6 +8,7 @@ import StepCard from './StepCard/index';
 import cx from './index.less';
 import {IGNORE_ERROR, RUN_STATUSES} from '../constant';
 import useExecDetail from './hook';
+import HeaderDetailItem from '../../components/HeaderDetailItem';
 
 const {Step} = Steps;
 const ExecDetailDrawer = ({onClose, visible, handleChangeStep, executionDetail, submitCallback}) => {
@@ -17,16 +18,6 @@ const ExecDetailDrawer = ({onClose, visible, handleChangeStep, executionDetail, 
         headerDetail,
         stageTriggerList,
     } = useExecDetail(executionDetail);
-
-        const HeaderDetailItem = ({item}) => {
-
-        return (
-            <span className={cx('exec-viewstep-header-content')}>
-                <span className={cx('exec-viewstep-header-content-title')}>{item?.label}</span>
-                <span className={cx('exec-viewstep-header-content-text')}>{item?.value}</span>
-            </span>
-            );
-    };
 
     return (
         <Drawer
@@ -48,7 +39,13 @@ const ExecDetailDrawer = ({onClose, visible, handleChangeStep, executionDetail, 
                             <Step
                                 key={stageTrigger?.id}
                                 status="finish"
-                                title={<StepCard detail={stageTrigger} submitCallback={submitCallback} />}
+                                title={(
+                                    <StepCard
+                                        detail={stageTrigger}
+                                        submitCallback={submitCallback}
+                                        executionDetail={executionDetail}
+                                    />
+)}
                                 icon={icon}
                             />
                         );

@@ -6,12 +6,10 @@ import {
     RUNNING_ENVIRONMENT,
     SCRIPT_TYPES,
     SCRIPTS_ORIGIN,
-    URLS,
     NOTICE_APPROACHES, LOADING,
 } from '../constants';
-import {DEFAULT_STRING_VALUE, STEP_TYPES, URL_PREFIX1} from '../../../../constant';
+import {DEFAULT_STRING_VALUE, STEP_TYPES, COMMON_URL_PREFIX, IS_PROD} from '../../../../constant';
 import {request} from '../../../../request/fetch';
-import {users} from '../../../../temp/users';
 import {GLOBAL_URLS} from '../../../../constant/index';
 import {TEMP_SCRIPTS} from '../../../../temp/scripts';
 
@@ -55,9 +53,7 @@ const defaultFormikValues = {
     informUserId: [],
 };
 
-const useAddNoahStep = ({onClose, handleChangeStep, stepEditingValue, setStepEditingValue}) => {
-
-    const [usersFromOne, setUsersFromOne] = useState(users);
+const useAddNoahStep = ({onClose, handleChangeStep, stepEditingValue, setStepEditingValue, getUsersFromOne}) => {
 
     const [formikValues, setFormikValues] = useState(defaultFormikValues);
 
@@ -146,30 +142,24 @@ const useAddNoahStep = ({onClose, handleChangeStep, stepEditingValue, setStepEdi
         }
     }, [handleAddTargetServer, handleEditTargetServer]);
 
-    const getALlUsersFromOne = useCallback(async () => {
-        const res = await request({
-            url: `${URL_PREFIX1}${URLS.GET_USERS}`,
-            params: {
-                applyStatus: 'SUCCESS',
-                userType: 'USER',
-            },
-        });
-        setUsersFromOne(res);
-    }, []);
-
     const getScriptsFromPipe = useCallback(async () => {
-        // const res = await request({
-        //     url: `${URL_PREFIX1}${GLOBAL_URLS.GET_SCRIPTS}`,
-        //     params: {
-        //         _offset: 0,
-        //         _limit: 10,
-        //         keyword: '',
-        //     },
-        // });
-        // console.log(res);
-        setScripts(TEMP_SCRIPTS);
+        let scriptList = [];
+        if (IS_PROD) {
+            scriptList = await request({
+                url: `${COMMON_URL_PREFIX}${GLOBAL_URLS.GET_SCRIPTS}`,
+                params: {
+                    _offset: 0,
+                    _limit: 10,
+                    keyword: '',
+                },
+            });
+        } else {
+            scriptList = TEMP_SCRIPTS;
+        }
+
+        setScripts(scriptList);
         const tempMap = {};
-        TEMP_SCRIPTS.forEach(item => {
+        scriptList.forEach(item => {
             tempMap[item.id] = item;
         });
         setScriptsMap(tempMap);
@@ -197,11 +187,10 @@ const useAddNoahStep = ({onClose, handleChangeStep, stepEditingValue, setStepEdi
     }, [formikValues, scriptsMap, setStepEditingValue, stepEditingValue]);
 
     useEffect(() => {
-        // getALlUsersFromOne();
+        getUsersFromOne();
     }, []);
 
     useEffect(() => {
-        // getALlUsersFromOne();
         if (formikValues.type === STEP_TYPES.MANUAL_CONFIRM.value) {
             setFormikValues({
                 ...formikValues,
@@ -227,7 +216,6 @@ const useAddNoahStep = ({onClose, handleChangeStep, stepEditingValue, setStepEdi
         handleChangeTargetServer,
         userInputError,
         setUserInputError,
-        usersFromOne,
         scripts,
         scriptsMap,
         handleChangeImportScript,

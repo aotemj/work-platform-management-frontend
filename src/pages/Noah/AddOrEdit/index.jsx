@@ -17,7 +17,7 @@ import useAddOrEdit from './hook';
 import GlobalVariableItem from './GlobalVariableItem';
 import AddGlobalVariableDrawer from './AddGlobalVariableDrawer';
 import StepItem from './StepItem';
-import AddNoahStepDrawer from './AddNoahStepDrawer';
+import AddNoahStepDrawer from './AddNoahStepDrawer/index';
 import {DELETE_SYMBOL} from '../../../constant';
 
 const {Option} = Select;
@@ -87,6 +87,7 @@ const AddOrEdit = () => {
 
     const filterDeleteSymbol = item => item.status !== DELETE_SYMBOL;
     const filterStageList = formikValues.stageList.filter(filterDeleteSymbol);
+
     const formFields = {
         name: {
             ...defaultField,

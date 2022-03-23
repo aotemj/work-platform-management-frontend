@@ -9,7 +9,7 @@ const {TextArea} = Input;
 const {TabPane} = Tabs;
 
 const ScriptContent = props => {
-    const {onChange, field, scriptLanguage, setFormValues, values} = props;
+    const {onChange, field, scriptLanguage, setFormValues, values, disabled} = props;
     const containerRef = useRef();
     const toggleFullScreen = useCallback(() => {
         if (screenfull.isEnabled) {
@@ -53,6 +53,7 @@ const ScriptContent = props => {
                 autoSize={{minRows: 10}}
                 onChange={onChange}
                 bordered={false}
+                disabled={disabled}
                 {...field}
             />
         </div>

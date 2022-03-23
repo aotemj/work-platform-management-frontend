@@ -16,7 +16,7 @@ import {
     SPLIT_SYMBOL,
     STEP_TYPES,
     SYMBOL_FOR_ALL,
-    URL_PREFIX1,
+    COMMON_URL_PREFIX,
 } from '../../../constant';
 import {routes} from '../../../routes';
 // import {omitBy} from 'lodash';
@@ -35,18 +35,29 @@ const defaultFormikValues = {
     stageList: [],
 };
 
-const useAddOrEdit = () => {
+const useAddOrEdit = executionDetail => {
 
     const params = useParams();
     const navigate = useNavigate();
     const urlParams = new URL(window.location.href);
     const {pathname} = urlParams;
+    const stageId = useMemo(() => {
+        return executionDetail?.stageTriggerList?.filter(item => item.id === Number(params?.stepId))[0]?.stageId;
+    }, [executionDetail, params]);
     // 预执行
     const isExecuting = useMemo(() => {
         return pathname === routes.NOAH_PRE_EXECUTING.getUrl(params?.detailId);
     }, [params?.detailId, pathname]);
+
+    // 预览模式（不允许编辑）
+    const isViewing = useMemo(() => {
+        const {detailId, stepId = null, executeId = null} = params;
+        return pathname === routes.EXEC_LOG.getUrl(detailId, executeId, stepId);
+        // return pathname.startsWith(routes.EXEC_LOG)
+    }, [params, pathname]);
+
     // 编辑
-    const [editing, setEditing] = useState(!isExecuting && !!params?.detailId);
+    const [editing, setEditing] = useState(!isExecuting && !isViewing && !!params?.detailId);
 
     const [formikValues, setFormikValues] = useState(defaultFormikValues);
 
@@ -70,11 +81,11 @@ const useAddOrEdit = () => {
             return `执行作业方案${detailFromServer?.sourceData?.workPlan?.name || DEFAULT_STRING_VALUE}`;
         } else if (editing) {
             return '编辑作业';
-
         }
+
         return '新建作业';
 
-    }, [detailFromServer, editing, isExecuting]);
+    }, [detailFromServer?.sourceData, editing, isExecuting, isViewing, stageId]);
     /**
      * 分类更新逻辑
      *  新增：
@@ -374,7 +385,7 @@ const useAddOrEdit = () => {
 
         const {POST, PUT} = REQUEST_METHODS;
         const res = await request({
-            url: `${URL_PREFIX1}${URLS.ADD_NOAH_WORK_PLAN}`,
+            url: `${COMMON_URL_PREFIX}${URLS.ADD_NOAH_WORK_PLAN}`,
             method: editing ? PUT : POST,
             params,
         });
@@ -784,25 +795,29 @@ const useAddOrEdit = () => {
     const getNoahDetail = useCallback(async () => {
         const {detailId} = params;
         const res = await request({
-            url: `${URL_PREFIX1}${URLS.ADD_NOAH_WORK_PLAN}${detailId}`,
+            url: `${COMMON_URL_PREFIX}${URLS.ADD_NOAH_WORK_PLAN}${detailId}`,
         });
         const {code, data} = res;
         if (code === REQUEST_CODE.SUCCESS) {
             const convertedValues = deConvertParams(data);
             setFormikValues(convertedValues);
-
+            // 查看模式赋值(不允许修改)
+            if (isViewing) {
+                const currentStage = convertedValues?.stageList?.filter(item => item.id === stageId)[0];
+                setStepEditingValue(currentStage);
+            }
             setDetailFromServer({
                 sourceData: data,
                 formattedFromFront: convertedValues,
                 sourceCategoryMap: handleSourceCategoryMap(data),
             });
         }
-    }, [deConvertParams, handleSourceCategoryMap, params]);
+    }, [deConvertParams, handleSourceCategoryMap, isViewing, params, stageId]);
 
     // 执行相关
     const handleExecute = useCallback(async () => {
         const res = await request({
-            url: `${URL_PREFIX1}${URLS.INDIVIDUAL_EXECUTE}${params?.detailId}`,
+            url: `${COMMON_URL_PREFIX}${URLS.INDIVIDUAL_EXECUTE}${params?.detailId}`,
             method: REQUEST_METHODS.POST,
         });
         const {code, data} = res;
@@ -819,11 +834,11 @@ const useAddOrEdit = () => {
 
     // 获取编辑详情
     useEffect(() => {
-        if (!params?.detailId) {
+        if (!params?.detailId || (isViewing && !stageId)) {
             return;
         }
         getNoahDetail();
-    }, [params?.detailId]);
+    }, [params?.detailId, getNoahDetail]);
 
     return {
         title,

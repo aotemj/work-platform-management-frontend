@@ -10,9 +10,9 @@ import {getContainerDOM, getUrlPrefixReal} from '../utils';
 import store from '../store';
 import NoahList from '../pages/Noah/List/index';
 import AddOrEdit from '../pages/Noah/AddOrEdit';
-import ExecList from '../pages/Exec/List';
+import ExecList from '../pages/Exec/List/index';
 import CronList from '../pages/Cron/List';
-import ExecLog from '../pages/Exec/Log';
+import ExecLog from '../pages/Exec/StepLog';
 
 /**
  * 创建通用路由
@@ -53,8 +53,12 @@ export const routes = {
         component: <ExecList />,
     },
     EXEC_LOG: {
-        url: 'exec/log/:detailId',
-        getUrl: id => `${getUrlPrefixReal()}/${routes.EXEC_LOG.url.replace(':detailId', id)}`,
+        // detailId: 当前执行详情id, stepId， 详情中单个步骤id
+        url: 'exec/step/log/:detailId/:executeId/:stepId',
+        getUrl: (detailId, executeId, stepId) => `${getUrlPrefixReal()}/${routes.EXEC_LOG.url
+            .replace(':detailId', detailId)
+            .replace(':executeId', executeId)
+            .replace(':stepId', stepId)}`,
         component: <ExecLog />,
     },
     CRON_LIST: {

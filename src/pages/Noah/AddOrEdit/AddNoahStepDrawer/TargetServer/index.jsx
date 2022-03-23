@@ -8,7 +8,7 @@ import {getCompanyId, getSpaceId} from '../../../../../utils/getRouteIds';
 import {request} from '../../../../../request/fetch';
 import cx from './index.less';
 import {agents, labels} from '../../../../../temp/agents';
-import {URL_PREFIX1} from '../../../../../constant';
+import {COMMON_URL_PREFIX} from '../../../../../constant';
 
 const getAgentMap = agents => {
     const tempMap = {};
@@ -122,6 +122,7 @@ const TargetServer = ({
     multiple = true,
     allowClear = true,
     resetUserInputError,
+    disabled,
 }) => {
     const companyId = getCompanyId();
     const spaceId = getSpaceId();
@@ -157,7 +158,7 @@ const TargetServer = ({
     const fetchAgents = useCallback(async () => {
         // setOriginDataUpdated(true);
         return request({
-            url: getURlWithPrefix(URL_PREFIX1, URLS.AGENTS),
+            url: getURlWithPrefix(COMMON_URL_PREFIX, URLS.AGENTS),
             params: {
                 // companyId: 'xly-poc',
                 companyId,
@@ -182,7 +183,7 @@ const TargetServer = ({
     // pageSize     页大小
     const fetchLabels = useCallback(async () => {
         return request({
-            url: getURlWithPrefix(URL_PREFIX1, URLS.LABELS),
+            url: getURlWithPrefix(COMMON_URL_PREFIX, URLS.LABELS),
             params: {
                 // groupName: 'xly-poc',
                 // groupName: spaceId,
@@ -291,6 +292,7 @@ const TargetServer = ({
             treeDefaultExpandAll
             dropdownClassName={cx('agent-select-tree-dropdown')}
             onFocus={resetUserInputError}
+            disabled={disabled}
             dropdownRender={(originNode, props) => {
                 return (
                     <>

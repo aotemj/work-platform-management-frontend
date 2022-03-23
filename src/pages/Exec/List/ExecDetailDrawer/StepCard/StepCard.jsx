@@ -15,7 +15,7 @@ import NoPassReasonModal from './NoPassReasonModal';
 import {IGNORE_ERROR, RUNNING} from '../../constant';
 
 const StepCard = props => {
-    const {users, detail, getUsersFromOne, submitCallback} = props;
+    const {users, detail, getUsersFromOne, submitCallback, executionDetail} = props;
 
     const {
         consumeObj,
@@ -32,7 +32,13 @@ const StepCard = props => {
         stageConfirmResult,
         manualConfirmDescContents,
         runStatusLabel,
-    } = useStepCard({detail, getUsersFromOne, submitCallback, users});
+    } = useStepCard({
+        detail,
+        getUsersFromOne,
+        submitCallback,
+        users,
+        executionDetail,
+    });
 
     // 运行状态
     const runStatus = useMemo(() => {

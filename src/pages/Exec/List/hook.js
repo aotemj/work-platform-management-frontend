@@ -6,10 +6,16 @@ import {reject, anyPass, isEmpty, isNil} from 'ramda';
 import {debounce} from '../../../utils';
 import {request} from '../../../request/fetch';
 import {EXEC_LIST_URL} from '../../../utils/api';
-import {DEFAULT_PAGINATION, REQUEST_CODE, REQUEST_METHODS, URL_PREFIX1} from '../../../constant';
+import {
+    DEFAULT_PAGINATION,
+    MILLI_SECOND_STEP,
+    REQUEST_CODE,
+    REQUEST_METHODS,
+    COMMON_URL_PREFIX,
+} from '../../../constant';
 import {URLS} from './constant';
 
-const useExecList = () => {
+const useExecList = getExecutionDetail => {
     let loopTimer = useRef();
 
     // const navigate = useNavigate();
@@ -28,7 +34,7 @@ const useExecList = () => {
     // 当前选中查看详情 执行 id
     const [currentExecutionId, setCurrentExecutionId] = useState(null);
     // 执行详情
-    const [executionDetail, setExecutionDetail] = useState(null);
+    // const [executionDetail, setExecutionDetail] = useState(null);
 
     const [executeDetailVisible, setExecuteDetailVisible] = useState(false);
 
@@ -113,27 +119,23 @@ const useExecList = () => {
             return;
         }
         setNeedLoopDetail(false);
-        const res = await request({
-            url: `${URL_PREFIX1}${URLS.GET_EXECUTION_DETAIL}${currentExecutionId}`,
-        });
-        const {code, data} = res;
-        if (code === REQUEST_CODE.SUCCESS) {
-            setExecutionDetail(data);
+        try {
+            await getExecutionDetail(currentExecutionId);
             loopTimer.current = setTimeout(() => {
                 setNeedLoopDetail(true);
-            }, 5000);
-        } else {
+            }, 5 * MILLI_SECOND_STEP);
+        } catch (e) {
             clearTimeout(loopTimer.current);
             setExecuteDetailVisible(false);
             message.error('获取详情失败');
         }
-    }, [currentExecutionId, loopTimer]);
+    }, [currentExecutionId, getExecutionDetail]);
 
     // 重新执行
     const reExecution = useCallback(async item => {
         const {id} = item;
         const res = await request({
-            url: `${URL_PREFIX1}${URLS.RE_EXECUTE}${id}`,
+            url: `${COMMON_URL_PREFIX}${URLS.RE_EXECUTE}${id}`,
             method: REQUEST_METHODS.POST,
         });
         const {code} = res;
@@ -183,7 +185,7 @@ const useExecList = () => {
         handleViewDetail,
         executeDetailVisible,
         setExecuteDetailVisible,
-        executionDetail,
+        // executionDetail,
         reExecution,
         submitCallback: getDetailInfo,
         setCurrentExecutionId,

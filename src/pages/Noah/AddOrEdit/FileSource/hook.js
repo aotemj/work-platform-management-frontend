@@ -2,7 +2,7 @@ import {useCallback, useEffect, useMemo, useState} from 'react';
 import {clone, omit} from 'ramda';
 import {request} from '../../../../request/fetch';
 import {URLS, FILE_SOURCE_TYPE, LOADING, SUCCESS, ERROR} from '../constants';
-import {DEFAULT_STRING_VALUE, REQUEST_METHODS, REQUEST_TYPE, URL_PREFIX1} from '../../../../constant';
+import {DEFAULT_STRING_VALUE, REQUEST_METHODS, REQUEST_TYPE, COMMON_URL_PREFIX} from '../../../../constant';
 
 let tempFileMap = {};
 
@@ -135,7 +135,7 @@ const useFileSource = ({
         params.append('file', e.target.files[0]);
         try {
             const res = await request({
-                url: `${URL_PREFIX1}${URLS.UPLOAD_LOCAL_FILE}`,
+                url: `${COMMON_URL_PREFIX}${URLS.UPLOAD_LOCAL_FILE}`,
                 params,
                 method: REQUEST_METHODS.POST,
                 type: REQUEST_TYPE.FORM_DATA,

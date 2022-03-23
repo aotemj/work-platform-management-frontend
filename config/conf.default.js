@@ -5,7 +5,7 @@ const path = require('path');
 const fs = require('fs');
 const dotenvConfigOutput = require('dotenv').config({path: '.env'});
 
-const {PROXY_TARGET, DEV_PORT} = dotenvConfigOutput.parsed;
+const {PROXY_TARGET, DEV_PORT, PROXY_TARGET_FOR_SA} = dotenvConfigOutput.parsed;
 
 const cookieFilePath = path.join(__dirname, '../COOKIE');
 
@@ -15,6 +15,7 @@ module.exports = {
     PROXY_TARGET,
     DEV_PORT,
     COOKIE,
+    PROXY_TARGET_FOR_SA,
 };
 
 

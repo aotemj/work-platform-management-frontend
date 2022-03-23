@@ -37,8 +37,6 @@ const NoahList = props => {
         setNoahType,
     } = useNoahList(getUsersFromOne);
 
-    // const {users} = props
-    // props.getUserById(123123);
     const tableOperations = [
         {
             label: '执行',
@@ -147,15 +145,6 @@ const NoahList = props => {
     };
     const tableProps = {
         dataSource: data.list,
-        // dataSource: [{
-        //     id: '1',
-        //     key: '1',
-        //     name: 'test1',
-        //     affiliated: 'test2',
-        //     type: 'test1',
-        //     createTime: new Date().getTime(),
-        //     updateTime: new Date().getTime(),
-        // }],
         columns,
         pagination: {
             ...omit('list', data),

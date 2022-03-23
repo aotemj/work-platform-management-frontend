@@ -3,7 +3,7 @@ import {message} from '@osui/ui';
 
 import {ERROR_MSG, URLS} from '../constants';
 import {request} from '../../../../request/fetch';
-import {URL_PREFIX1} from '../../../../constant';
+import {COMMON_URL_PREFIX} from '../../../../constant';
 
 const useCategory = addCallback => {
     const [categories, setCategories] = useState([]);
@@ -36,7 +36,7 @@ const useCategory = addCallback => {
 
     const fetchCategory = useCallback(async () => {
         const res = await request({
-            url: `${URL_PREFIX1}${URLS.CATEGORIES}`,
+            url: `${COMMON_URL_PREFIX}${URLS.CATEGORIES}`,
             params: {
                 // currentPage	当前页	query	false   integer(int32)
                 // name	名称，模糊查询	query	false   string

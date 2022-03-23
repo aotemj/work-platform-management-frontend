@@ -169,10 +169,6 @@ module.exports = (cliEnv = {}, argv) => {
                 template: path.resolve(__dirname, 'public/index.html'),
                 inject: true,
             }),
-            // new EslintWebpackPlugin({
-            //     extensions: ['js', 'jsx'],
-            //     exclude: 'node_modules',
-            // }),
             isProd
             && new MiniCssExtractPlugin({
                 filename: 'style/[name].[contenthash].css',
@@ -192,20 +188,6 @@ module.exports = (cliEnv = {}, argv) => {
                 chunkGroups: false,
                 exclude: [/node_modules/],
             }),
-            // new webpack.IgnorePlugin({
-            //     resourceRegExp: /^\.\/locale$/,
-            //     contextRegExp: /moment$/,
-            // }),
-            // new webpack.ContextReplacementPlugin(/moment[\\/]locale$/, /zh/),
-            // new BundleAnalyzerPlugin({
-            //     analyzerMode: 'server',
-            //     analyzerHost: '127.0.0.1',
-            //     //  将在“服务器”模式下使用的端口启动HTTP服务器。
-            //     analyzerPort: 8888,
-            //     generateStatsFile: true,
-            //     statsOptions: { source: false },
-            //     openAnalyzer: true,
-            // }),
         ].filter(Boolean),
         module: {
             rules: [

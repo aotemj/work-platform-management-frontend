@@ -22,6 +22,9 @@ const AddNoahStepDrawer = ({
     stepEditingValue,
     setStepEditingValue,
     // editing
+    isViewing,
+    getUsersFromOne,
+    users: usersFromOne,
 }) => {
     const {
         formikValues,
@@ -33,7 +36,6 @@ const AddNoahStepDrawer = ({
         handleChangeTargetServer,
         userInputError,
         setUserInputError,
-        usersFromOne,
         scripts,
         handleChangeImportScript,
     } = useAddNoahStep({
@@ -41,6 +43,7 @@ const AddNoahStepDrawer = ({
         handleChangeStep,
         stepEditingValue,
         setStepEditingValue,
+        getUsersFromOne,
     });
 
     const editing = useMemo(() => {
@@ -48,8 +51,8 @@ const AddNoahStepDrawer = ({
     }, [stepEditingValue]);
 
     const title = useMemo(() => {
-        return editing ? '编辑作业步骤' : '新建作业步骤';
-    }, [editing]);
+        return isViewing ? stepEditingValue?.name : (editing ? '编辑作业步骤' : '新建作业步骤');
+    }, [editing, isViewing, stepEditingValue]);
 
     const setFormValues = useCallback(e => {
         return editing ? setStepEditingValue(e) : setFormikValues(e);
@@ -58,7 +61,7 @@ const AddNoahStepDrawer = ({
     const NameLabel = () => {
         return (
             <div className={cx('name-label')}>
-                <span>变量类型</span>
+                <span>步骤类型</span>
                 <Tooltip title={'在步骤参数或脚本内使用 ${变量名} 即可获取到变量值'}>
                     <IconRemark />
                 </Tooltip>
@@ -76,6 +79,7 @@ const AddNoahStepDrawer = ({
             children: ({field, form: {values}}) => {
                 return (
                     <Select
+                        disabled={isViewing}
                         className={cx('variable-type-list-select')}
                         {...field}
                         onChange={e => {
@@ -112,6 +116,7 @@ const AddNoahStepDrawer = ({
                 return (
                     <Input
                         {...field}
+                        disabled={isViewing}
                         className={cx('noah-textarea')}
                         maxLength={MAX_LENGTH}
                         placeholder="请输入步骤名称"
@@ -148,6 +153,7 @@ const AddNoahStepDrawer = ({
             placeholder: '请选择脚本',
             showSearch: true,
             allowClear: true,
+            disabled: isViewing,
             onChange: handleChangeImportScript,
             value: formData.chooseScript,
         };
@@ -162,6 +168,7 @@ const AddNoahStepDrawer = ({
             visible,
             typeSelectProps,
             editing,
+            isViewing,
         });
 
         const fileDistributionFields =  getFileDistribution({
@@ -174,6 +181,7 @@ const AddNoahStepDrawer = ({
             editing,
             userInputError,
             setUserInputError,
+            isViewing,
         });
 
         const manualConfirmFields = getManualConfirmFields({
@@ -185,6 +193,7 @@ const AddNoahStepDrawer = ({
             visible,
             editing,
             usersFromOne,
+            isViewing,
         });
         switch (type) {
             case STEP_TYPES.EXECUTE_SCRIPT.value:
@@ -209,6 +218,7 @@ const AddNoahStepDrawer = ({
         formikValues,
         handleChangeImportScript,
         handleChangeTargetServer,
+        isViewing,
         scripts,
         setFormValues,
         setUserInputError,
@@ -225,6 +235,7 @@ const AddNoahStepDrawer = ({
         setDisabled,
         formFields: updateFormFields(),
         handleCancel,
+        needFooter: !isViewing,
         okText: '保存',
     };
 

@@ -5,7 +5,7 @@ import * as yup from 'yup';
 import FormikComp from '../../../../../../components/FormikComp';
 import cx from './index.less';
 import {request} from '../../../../../../request/fetch';
-import {REQUEST_METHODS, URL_PREFIX1} from '../../../../../../constant';
+import {REQUEST_METHODS, COMMON_URL_PREFIX} from '../../../../../../constant';
 import {CONFIRM_RESULTS, URLS} from '../../../constant';
 
 const {TextArea} = Input;

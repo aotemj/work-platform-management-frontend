@@ -14,7 +14,8 @@ import ExecDetailDrawer from './ExecDetailDrawer';
 
 const title = '作业任务';
 
-const ExecList = () => {
+const ExecList = props => {
+    const {executionDetail, getExecutionDetail} = props;
     const {
         data,
         loading,
@@ -26,9 +27,9 @@ const ExecList = () => {
         executeDetailVisible,
         setExecuteDetailVisible,
         setCurrentExecutionId,
-        executionDetail,
+        // executionDetail,
         submitCallback,
-    } = useExecList();
+    } = useExecList(getExecutionDetail);
     const tableOperations = [
         {
             label: '重新执行',

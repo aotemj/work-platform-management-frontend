@@ -3,7 +3,7 @@ import {message, Modal} from 'antd';
 
 import {debounce, getContainerDOM, getUrlPrefixReal} from '../../../utils';
 import {DROP_DOWN_MENU, URLS} from './constants';
-import {DEFAULT_PAGINATION, REQUEST_CODE, REQUEST_METHODS, SPLIT_SYMBOL, URL_PREFIX1} from '../../../constant';
+import {DEFAULT_PAGINATION, REQUEST_CODE, REQUEST_METHODS, SPLIT_SYMBOL, COMMON_URL_PREFIX} from '../../../constant';
 import {useNavigate} from 'react-router-dom';
 import {routes} from '../../../routes';
 import {request} from '../../../request/fetch';
@@ -52,7 +52,7 @@ const useNoahList = getUsersFromOne => {
                 // typeId	方案分类ID	query	false   integer(int32)
                 // useTemp	是否为临时方案	query	false   integer(int32)
                 // userName	创建人用户名	query	false   string
-                url: `${URL_PREFIX1}${URLS.LIST}`,
+                url: `${COMMON_URL_PREFIX}${URLS.LIST}`,
                 params: {
                     currentPage: current,
                     pageSize,
@@ -80,7 +80,7 @@ const useNoahList = getUsersFromOne => {
     // 获取类型列表 // 暂时不做分页
     const getNoahTypes = useCallback(async () => {
         const res = await request({
-            url: `${URL_PREFIX1}${URLS.CATEGORY}`,
+            url: `${COMMON_URL_PREFIX}${URLS.CATEGORY}`,
             params: {
                 currentPage: 1,
                 name: '',
@@ -107,7 +107,7 @@ const useNoahList = getUsersFromOne => {
 
     const individualDelete = useCallback(async noahId => {
         const res = await request({
-            url: `${URL_PREFIX1}${URLS.INDIVIDUAL_DELETE}${noahId}`,
+            url: `${COMMON_URL_PREFIX}${URLS.INDIVIDUAL_DELETE}${noahId}`,
             method: REQUEST_METHODS.DELETE,
         });
         const {code} = res;
@@ -119,7 +119,7 @@ const useNoahList = getUsersFromOne => {
 
     const deleteByPatch = useCallback(async idList => {
         const res = await request({
-            url: `${URL_PREFIX1}${URLS.DELETE_BY_BATCH}${idList.join(SPLIT_SYMBOL)}`,
+            url: `${COMMON_URL_PREFIX}${URLS.DELETE_BY_BATCH}${idList.join(SPLIT_SYMBOL)}`,
             method: REQUEST_METHODS.DELETE,
         });
         const {code} = res;
@@ -149,7 +149,7 @@ const useNoahList = getUsersFromOne => {
 
     const executeByBatch = useCallback(async idList => {
         const res = await request({
-            url: `${URL_PREFIX1}${URLS.EXECUTE_BY_BATCH}${idList.join(SPLIT_SYMBOL)}`,
+            url: `${COMMON_URL_PREFIX}${URLS.EXECUTE_BY_BATCH}${idList.join(SPLIT_SYMBOL)}`,
             method: REQUEST_METHODS.POST,
         });
         const {code} = res;

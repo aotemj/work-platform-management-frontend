@@ -1,0 +1,29 @@
+.log-container{
+    .header {
+        display: flex;
+        height: 65px;
+        padding: 0 30px;
+        box-sizing: border-box;
+        align-items: center;
+        border-bottom: 1px solid #4D545E;
+        background-color: #1E2A3D;
+        >.log-item-title {
+            box-sizing: border-box;
+            padding: 5px 15px;
+            margin-right: 20px;
+            font-size: 14px;
+            font-weight: 400;
+            color: #878C96;
+            line-height: 22px;
+            cursor: pointer;
+            &.active {
+                color: #fff;
+                background: #4A525E;
+                border-radius: 16px;
+            }
+        }
+    }
+    .content {
+        height: 100%;
+    }
+}

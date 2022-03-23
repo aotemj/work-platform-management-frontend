@@ -18,6 +18,7 @@ const FileSource = ({
     setFormValues,
     userInputError,
     setUserInputError,
+    disabled,
 }) => {
     const uploadRef = useRef();
     const {
@@ -54,8 +55,8 @@ const FileSource = ({
     const RemoveButton = ({record}) => {
         return (
             <span
-                className={cx('delete-button')}
-                onClick={() => handleRemoveLocalFile(record)}
+                className={cx('delete-button', disabled ? 'disabled' : '')}
+                onClick={() => (disabled ? null : handleRemoveLocalFile(record))}
             >移除
             </span>
         );
@@ -78,6 +79,7 @@ const FileSource = ({
                             <Input
                                 value={val}
                                 {...omit(['value'], field)}
+                                disabled={disabled}
                                 onChange={e => {
                                     handleChangeSourcePath({
                                         value: e.target.value,
@@ -99,6 +101,7 @@ const FileSource = ({
                         <TargetServer
                             multiple={false}
                             allowClear={false}
+                            disabled={disabled}
                             field={{...omit(['onChange'], field), value: val}}
                             resetUserInputError={resetUserInputError}
                             handleChange={(agents, agentMapByUuid) =>
@@ -114,8 +117,8 @@ const FileSource = ({
                 render: (_, record) => {
                     return (
                         <span
-                            className={cx('delete-button')}
-                            onClick={() => handleRemoveServerFile(record)}
+                            className={cx('delete-button', disabled ? 'disabled' : '')}
+                            onClick={() => (disabled ? null : handleRemoveServerFile(record))}
                         >移除
                         </span>
                     );
@@ -182,6 +185,7 @@ const FileSource = ({
                         icon={<IconPlusOutlined />}
                         className={cx('add-button')}
                         onClick={handleAddServerFile}
+                        disabled={disabled}
                     >添加服务器文件
                     </Button>
                 </div>
@@ -190,6 +194,7 @@ const FileSource = ({
                 <p className={cx('file-choose-tips')}>{chooseLocalTips}</p>
                 <Table {...localFileTableProps} />
                 <Button
+                    disabled={disabled}
                     size={'small'}
                     icon={<IconPlusOutlined />}
                     className={cx('add-button')}
