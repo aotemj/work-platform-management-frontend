@@ -30,6 +30,7 @@ const ExecList = props => {
         // executionDetail,
         submitCallback,
     } = useExecList(getExecutionDetail);
+
     const tableOperations = [
         {
             label: '重新执行',
@@ -75,7 +76,7 @@ const ExecList = props => {
             width: 170,
             render: (_, record) => {
                 return (
-                    <div style={{marginLeft: '-5px'}}>
+                    <div className={cx('exec-row-operation')}>
                         {
                             tableOperations.map(item => {
                                 const {label, execution} = item;

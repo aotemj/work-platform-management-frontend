@@ -267,20 +267,18 @@ const AddOrEdit = () => {
         editing,
     };
 
-    const ExecuteFooter = () => {
+    const ExecuteFooter = () => (
+        <div className={cx('execute-footer')}>
+            <Button
+                type={'primary'}
+                onClick={handleExecute}
+                className={cx('confirm-button')}
+            >执行
+            </Button>
+            <Button onClick={goBack}>返回方案列表</Button>
+        </div>
+    );
 
-        return (
-            <div className={cx('execute-footer')}>
-                <Button
-                    type={'primary'}
-                    onClick={handleExecute}
-                    className={cx('confirm-button')}
-                >执行
-                </Button>
-                <Button onClick={goBack}>返回方案列表</Button>
-            </div>
-        );
-    };
     const formikProps = {
         handleSubmit,
         initialValues: formikValues,

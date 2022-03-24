@@ -1,4 +1,3 @@
-@activeColor: #0C62FF;
 
 .step-item {
     height: 48px;
@@ -11,17 +10,21 @@
     width: 100%;
     align-items: center;
     padding-right: 10px;
-    &.disabled{
+
+    &.disabled {
         cursor: not-allowed;
     }
+
     &:not(.disabled) &:hover {
         background: rgb(226, 236, 254);
-        border: 1px solid @activeColor;
-        color: @activeColor;
-        >.icon{
+        border: 1px solid var(--active-color);
+        color: var(--active-color);
+
+        > .icon {
             background-color: transparent;
         }
     }
+
     > .icon {
         background-color: rgb(233, 234, 236);
         font-size: 14px;
@@ -30,33 +33,38 @@
         text-align: center;
         line-height: 48px;
     }
-    >.main{
-        flex:1;
+
+    > .main {
+        flex: 1;
         line-height: 48px;
         padding: 0 8px;
         box-sizing: border-box;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        max-width: calc(500px - 2*8px - 48px - 20px);
+        max-width: calc(500px - 2 * 8px - 48px - 20px);
     }
+
     .close-button,
     .editing-button {
         position: absolute;
-        right:0;
-        top:0;
-        transform: translate(50%,-50%);
+        right: 0;
+        top: 0;
+        transform: translate(50%, -50%);
+
         &:hover {
             color: var(--theme-primary-color) !important;
         }
-        &:focus{
+
+        &:focus {
             box-shadow: none !important;
         }
-        &.editing-button{
+
+        &.editing-button {
             top: 50%;
             right: 0;
             width: 30px;
-            transform: translate(80%,-50%);
+            transform: translate(80%, -50%);
             height: 30px;
             display: block;
             background: url('../../../../assets/edit.png') no-repeat center center/50%;

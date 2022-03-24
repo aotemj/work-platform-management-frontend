@@ -1,5 +1,5 @@
 import {useParams} from 'react-router-dom';
-import {useCallback, useEffect, useMemo} from 'react';
+import {useEffect, useMemo} from 'react';
 
 import {IS_PROD} from '../../../constant';
 import {DEVELOP_SA_LOG_PREFIX, SA_LOG_PREFIX} from './constant';
@@ -10,16 +10,17 @@ import {DEVELOP_SA_LOG_PREFIX, SA_LOG_PREFIX} from './constant';
 const useStepLog = (executionDetail, getExecutionDetail) => {
     const params = useParams();
 
-    const getExecuteId = useCallback(() => {
+    const getExecuteId = () => {
         const {executeId} = params;
         getExecutionDetail(executeId);
-    }, [getExecutionDetail, params]);
+    };
     const stageTriggerItemList = useMemo(() => {
         return executionDetail
             ?.stageTriggerList
             ?.filter(item => item.id === Number(params.stepId))[0]?.stageTriggerItemList || [];
     }, [executionDetail, params]);
-    let dataSource = useMemo(() => {
+
+    const dataSource = useMemo(() => {
         return stageTriggerItemList?.map(item => {
             const {stageTriggerItemParams, consumeTime, logUrl, runStatus} = item;
             const targetResource = stageTriggerItemParams?.targetResource;
@@ -38,7 +39,7 @@ const useStepLog = (executionDetail, getExecutionDetail) => {
 
     useEffect(() => {
         getExecuteId();
-    }, [getExecuteId]);
+    }, []);
     return {
         dataSource,
         params,

@@ -2,39 +2,49 @@
     height: 100vh;
     display: flex;
     flex-direction: column;
-    >.fundamental-info {
+
+    > .fundamental-info {
         padding: 24px !important;
-        .desc-container{
+
+        .desc-container {
             margin-left: 40px;
             display: flex;
         }
-        .execute-status{
-            &.status-1{
+
+        .execute-status {
+            &.status-1 {
                 color: rgba(92, 137, 247);
             }
-            &.status-2{
+
+            &.status-2 {
                 color: rgba(182, 110, 38);
             }
-            &.status-3{
+
+            &.status-3 {
                 color: rgba(236, 98, 64);
             }
-            &.status-4{
+
+            &.status-4 {
                 color: rgba(99, 176, 52);
             }
-            &.status-5{
+
+            &.status-5 {
                 color: rgba(178, 181, 187);
             }
         }
     }
-    >.bottom {
+
+    > .bottom {
         flex: 1;
         display: flex;
         border-top: 1px solid #E9EAEC;
-        >.side-bar{
-            max-width:240px;
+
+        > .side-bar {
+            max-width: 240px;
             background-color: #fff;
             width: 240px;
-            >.title {
+
+            > .title {
                 padding: 0 24px;
                 box-sizing: border-box;
                 height: 40px;
@@ -44,24 +54,28 @@
                 color: #1E2A3D;
             }
         }
-        >.log-content{
+
+        > .log-content {
             flex: 1;
             background-color: #1E2A3D;
         }
     }
-}
 
-:global{
-    .reproducible-ip{
-        margin-bottom: 0!important;
-    }
-    .run-status{
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        >.icon {
-            width: 16px;
-            height: 16px;
+    :global {
+        .reproducible-ip {
+            margin-bottom: 0 !important;
+        }
+
+        .run-status {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            > .icon {
+                width: 16px;
+                height: 16px;
+            }
         }
     }
 }
+

@@ -1,11 +1,13 @@
 /**
  * 作业执行步骤卡片 StepCard
  */
-//  1：待执行；未开始、执行暂停（如果某步骤执行失败，之后的步骤变成执行暂停）
-//  2：执行中；执行中、待确认（对于人工确认步骤，执行中状态展示待确认文本）
-//  3：执行失败；执行失败
-//  4：执行成功：执行成功
 
+/**
+ 1：待执行；未开始、执行暂停（如果某步骤执行失败，之后的步骤变成执行暂停）
+ 2：执行中；执行中、待确认（对于人工确认步骤，执行中状态展示待确认文本）
+ 3：执行失败；执行失败
+ 4：执行成功：执行成功
+ */
 import React, {useMemo} from 'react';
 import {Button} from '@osui/ui';
 
@@ -121,12 +123,7 @@ const StepCard = props => {
         return (
             <div className={cx('bottom')}>
                 {
-                    isManualConfirm ? (
-                        <ManualConfirmContent />
-                        )
-                        : (
-                            <ContentExceptManualConfirm />
-                        )
+                    isManualConfirm ? <ManualConfirmContent /> : <ContentExceptManualConfirm />
                 }
             </div>
         );

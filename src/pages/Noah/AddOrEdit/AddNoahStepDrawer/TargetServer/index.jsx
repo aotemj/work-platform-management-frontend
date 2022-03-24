@@ -3,7 +3,8 @@ import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {clone} from 'ramda';
 
 import {AGENT_STATUS, AGENT_TERMINAL_TYPE, LABEL_TYPE, URLS, GROUP_TYPES} from '../../constants';
-import {debounce, getURlWithPrefix} from '../../../../../utils';
+import {getURlWithPrefix} from '../../../../../utils';
+import {debounce} from 'lodash/fp';
 import {getCompanyId, getSpaceId} from '../../../../../utils/getRouteIds';
 import {request} from '../../../../../request/fetch';
 import cx from './index.less';
@@ -127,7 +128,7 @@ const TargetServer = ({
     const companyId = getCompanyId();
     const spaceId = getSpaceId();
 
-    const [needUpdate, setNeedUpdate] =  useState(false);
+    const [needUpdate, setNeedUpdate] = useState(false);
     const [loading, setLoading] = useState(false);
 
     const [treeData, setTreeData] = useState([]);
@@ -137,25 +138,22 @@ const TargetServer = ({
     const [type, setType] = useState(AGENT_TERMINAL_TYPE.LINUX.value);
     const [labelName, setLabelName] = useState('');
 
-    const handleSearch = useCallback(debounce(e => {
-        setLabelName(e);
-    }, 500), []);
+    const handleSearch = debounce(250)(e => setLabelName(e));
 
     const handleChangeType = useCallback(e => {
         handleSearch('');
         setType(e.target.value);
     }, [handleSearch]);
 
-
-    const isEnterPriseType =  useMemo(() => {
+    const isEnterPriseType = useMemo(() => {
         return getSpaceId() === '';
-    }, [getSpaceId]);
+    }, []);
 
     const groupType = useMemo(() => {
         return isEnterPriseType ? GROUP_TYPES.ENTERPRISE : GROUP_TYPES.PROJECT;
     }, [isEnterPriseType]);
 
-    const fetchAgents = useCallback(async () => {
+    const fetchAgents = async () => {
         // setOriginDataUpdated(true);
         return request({
             url: getURlWithPrefix(COMMON_URL_PREFIX, URLS.AGENTS),
@@ -171,7 +169,7 @@ const TargetServer = ({
                 groupType,
             },
         });
-    }, [type, spaceId, groupType, companyId]);
+    };
 
     // labelName    主机名称模糊查询
     // groupName    group名称模糊查询
@@ -181,7 +179,7 @@ const TargetServer = ({
     // companyUuid  租户标识
     // currentPage  当前页
     // pageSize     页大小
-    const fetchLabels = useCallback(async () => {
+    const fetchLabels = async () => {
         return request({
             url: getURlWithPrefix(COMMON_URL_PREFIX, URLS.LABELS),
             params: {
@@ -197,30 +195,30 @@ const TargetServer = ({
                 labelLevel: '',
             },
         });
-    }, [groupType, spaceId, labelName]);
+    };
 
-    const updateData = useCallback(debounce(() => {
+    const updateData = debounce(500)(() => {
         if (!needUpdate) {
             return;
         }
         setNeedUpdate(false);
         setLoading(true);
         setTreeData([]);
-        // Promise.all([fetchAgents(), fetchLabels()]).then(([agentRes, labelRes]) => {
-        // const {status: agentStatus, entities: {agents = []}} = agentRes;
-        setLoading(false);
+        Promise.all([fetchAgents(), fetchLabels()]).then(([agentRes, labelRes]) => {
+            const {status: agentStatus, entities: {agents = []}} = agentRes;
+            setLoading(false);
 
-        // const {status: labelStatus, list: labels} = labelRes;
+            const {status: labelStatus, list: labels} = labelRes;
 
-        // if (!agentStatus && !labelStatus) {
-        const {labelMap, tempLabels: treeData, agentMap, agentMapByUuid} = formatData(agents, labels, type);
-        setTreeData(treeData.filter(item => item));
-        setAgentMap(agentMap);
-        setLabelMap(labelMap);
-        setAgentMapByUuid(agentMapByUuid);
-        // }
-        // });
-    }, 500), [needUpdate, fetchAgents, fetchLabels, type]);
+            if (!agentStatus && !labelStatus) {
+                const {labelMap, tempLabels: treeData, agentMap, agentMapByUuid} = formatData(agents, labels, type);
+                setTreeData(treeData.filter(item => item));
+                setAgentMap(agentMap);
+                setLabelMap(labelMap);
+                setAgentMapByUuid(agentMapByUuid);
+            }
+        });
+    });
 
     const getActiveAgentInfoByLabel = useCallback(labelId => {
         const label = labelMap[labelId];
@@ -268,9 +266,9 @@ const TargetServer = ({
         updateData();
     }, [needUpdate]);
 
-    useEffect(debounce(() => {
+    useEffect(() => {
         setNeedUpdate(true);
-    }, 500), [labelName]);
+    }, [labelName]);
 
     useEffect(() => {
         setNeedUpdate(true);

@@ -1,9 +1,10 @@
+import React from 'react';
+
 import {ReactComponent as IconSuccess} from '../components/FormField/icons/success.svg';
 import cx from '../components/FormField/index.less';
 import {ReactComponent as IconError} from '../components/FormField/icons/error.svg';
 import {ReactComponent as IconInfo} from '../statics/icons/info.svg';
 import {ReactComponent as IconWarning} from '../components/FormField/icons/warning.svg';
-import React from 'react';
 import {getCompanyId} from '../utils/getRouteIds';
 
 export const IS_PROD = process.env.NODE_ENV === 'production';

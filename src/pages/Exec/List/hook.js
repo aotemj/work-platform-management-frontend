@@ -1,7 +1,6 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {message} from '@osui/ui';
 import {reject, anyPass, isEmpty, isNil} from 'ramda';
-// import {useNavigate} from 'react-router-dom';
 
 import {debounce} from '../../../utils';
 import {request} from '../../../request/fetch';
@@ -18,7 +17,6 @@ import {URLS} from './constant';
 const useExecList = getExecutionDetail => {
     let loopTimer = useRef();
 
-    // const navigate = useNavigate();
     // Table加载状态
     const [loading, setLoading] = useState(false);
     // Table显示数据
@@ -33,8 +31,6 @@ const useExecList = getExecutionDetail => {
     });
     // 当前选中查看详情 执行 id
     const [currentExecutionId, setCurrentExecutionId] = useState(null);
-    // 执行详情
-    // const [executionDetail, setExecutionDetail] = useState(null);
 
     const [executeDetailVisible, setExecuteDetailVisible] = useState(false);
 
@@ -70,42 +66,40 @@ const useExecList = getExecutionDetail => {
     }, [searchValue]);
 
     // 更新currentPage、pageSize
-    const handlePaginationChange = useCallback(
-        debounce((currentPage = 1, pageSize = 10) => {
-            setSearchValue(value => ({
-                ...value,
-                currentPage,
-                pageSize,
-            }));
-        }, 500), []);
+    const handlePaginationChange = debounce((currentPage = 1, pageSize = 10) => {
+        setSearchValue(value => ({
+            ...value,
+            currentPage,
+            pageSize,
+        }));
+    }, 500);
 
     // 输入关键字筛选 userName
-    const handleChangeInput = useCallback(
-        debounce(e => {
-            setSearchValue(value => ({
-                ...value,
-                userName: e,
-            }));
-        }, 500), []);
+    const handleChangeInput = debounce(e => {
+        setSearchValue(value => ({
+            ...value,
+            userName: e,
+        }));
+    }, 500);
 
     // 日期变化 beginTime endTime
-    const handleChangeDate = useCallback(
-        debounce(({beginTime, endTime}) => {
-            setSearchValue(value => ({
-                ...value,
-                beginTime,
-                endTime,
-            }));
-        }, 500), []);
+    const handleChangeDate = debounce(({beginTime, endTime}) => {
+        setSearchValue(value => ({
+            ...value,
+            beginTime,
+            endTime,
+        }));
+    }, 500);
 
-    const getDetailId = useCallback(() => {
+    const getDetailId = () => {
         const search = new URL(window.location.href).search;
         const searchParams = new URLSearchParams(search);
         const detailId = searchParams.has('id') ? searchParams.get('id') : null;
         if (detailId) {
             setCurrentExecutionId(detailId);
         }
-    }, []);
+    };
+
     // 查看执行详情
     const handleViewDetail = useCallback(e => {
         const {id} = e;
@@ -152,7 +146,6 @@ const useExecList = getExecutionDetail => {
         if (currentExecutionId) {
             setExecuteDetailVisible(true);
         }
-
     }, [currentExecutionId]);
 
     useEffect(() => {

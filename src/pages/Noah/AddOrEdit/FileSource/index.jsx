@@ -22,11 +22,6 @@ const FileSource = ({
 }) => {
     const uploadRef = useRef();
     const {
-        // handleSubmit,
-        // disabled,
-        // setDisabled,
-        // handleCancel,
-
         // about server file
         handleChangeSourcePath,
         handleAddServerFile,
@@ -140,10 +135,8 @@ const FileSource = ({
                 title: '文件大小',
                 dataIndex: 'fileSize',
                 // width: '20%',
-                render: val => {
-                    // 单位 byte
-                    return convertFileSize(val);
-                },
+                // 单位 byte
+                render: val => convertFileSize(val),
             },
             {
                 title: '操作',
@@ -172,7 +165,6 @@ const FileSource = ({
         ],
         pagination: false,
     };
-
 
     return (
         <div className={cx('file-source-container', userInputError ? 'has-error' : '')}>

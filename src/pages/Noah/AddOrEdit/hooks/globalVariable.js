@@ -52,9 +52,9 @@ const useGlobalVariable = ({
         });
     }, [onClose, setVisible]);
 
-    const resetForm = useCallback(() => {
+    const resetForm = () => {
         setFormikValues(defaultFormikValues);
-    }, [setFormikValues]);
+    };
 
     // 删除全局变量
     const handleRemoveGlobalVariable = useCallback(globalVariable => {
@@ -66,7 +66,7 @@ const useGlobalVariable = ({
         };
         setGlobalsVariables(tempArray);
         resetForm();
-    }, [globalVariables, resetForm]);
+    }, [globalVariables]);
 
     // 编辑全局变量
     const handleEditGlobalVariable = useCallback((e, originData) => {
@@ -91,7 +91,7 @@ const useGlobalVariable = ({
         resetForm();
         message.success('保存成功');
         handleChangeVariable(tempArr);
-    }, [globalVariables, handleChangeVariable, resetForm, variableMap]);
+    }, [globalVariables, handleChangeVariable, variableMap]);
 
     // 新增全局变量
     const handleAddGlobalVariable = useCallback(e => {
@@ -114,7 +114,7 @@ const useGlobalVariable = ({
         message.success('添加成功');
         resetForm();
         handleChangeVariable(newVariables);
-    }, [globalVariables, handleChangeVariable, variableMap, resetForm]);
+    }, [globalVariables, handleChangeVariable, variableMap]);
 
     // 更新全局变量
     const handleChangeGlobalVariable = useCallback((e, editing, originData, data) => {

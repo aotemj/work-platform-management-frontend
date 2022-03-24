@@ -1,10 +1,11 @@
 import {useCallback, useEffect, useState} from 'react';
 import {message, Modal} from 'antd';
+import {debounce} from 'lodash/fp';
+import {useNavigate} from 'react-router-dom';
 
-import {debounce, getContainerDOM, getUrlPrefixReal} from '../../../utils';
+import {getContainerDOM, getUrlPrefixReal} from '../../../utils';
 import {DROP_DOWN_MENU, URLS} from './constants';
 import {DEFAULT_PAGINATION, REQUEST_CODE, REQUEST_METHODS, SPLIT_SYMBOL, COMMON_URL_PREFIX} from '../../../constant';
-import {useNavigate} from 'react-router-dom';
 import {routes} from '../../../routes';
 import {request} from '../../../request/fetch';
 
@@ -25,20 +26,19 @@ const useNoahList = getUsersFromOne => {
 
     const [noahTypes, setNoahTypes] = useState([]);
 
-    const updateData = useCallback(newData => {
+    const updateData = newData => {
         setData({
             ...data,
             ...newData,
         });
-    }, [data]);
+    };
 
     const onSelectChange = useCallback((keys, selectedRows) => {
         setSelectedRowKeys(keys);
         setSelectRows(selectedRows);
     }, []);
 
-    // 这里考虑 searchValue 可能会频繁变更，所以不将其放到 dependencyList 里面，而是当做参数传入
-    const getList = useCallback(async () => {
+    const getList = async () => {
         if (!shouldUpdate) {
             return false;
         }
@@ -75,10 +75,10 @@ const useNoahList = getUsersFromOne => {
         } finally {
             setShouldUpdate(false);
         }
-    }, [shouldUpdate, data, searchValue, noahType, updateData]);
+    };
 
     // 获取类型列表 // 暂时不做分页
-    const getNoahTypes = useCallback(async () => {
+    const getNoahTypes = async () => {
         const res = await request({
             url: `${COMMON_URL_PREFIX}${URLS.CATEGORY}`,
             params: {
@@ -91,7 +91,7 @@ const useNoahList = getUsersFromOne => {
         if (code === REQUEST_CODE.SUCCESS) {
             setNoahTypes(list);
         }
-    }, []);
+    };
     // 单个执行作业
     const executeNoah = useCallback(async noahItem => {
         navigate(routes.NOAH_PRE_EXECUTING.getUrl(noahItem.id));
@@ -198,27 +198,24 @@ const useNoahList = getUsersFromOne => {
         }
     }, [executeInBatch, removeInBatch]);
 
-    const showDetail = useCallback(id => {
-    }, []);
-
     // 作业类型筛选 change event
-    const handleChange = useCallback(e => {
+    const handleChange = e => {
         setNoahType(e || '');
-    }, []);
+    };
 
     // 作业类型筛选 change event
-    const handleChangeInput = useCallback(e => {
+    const handleChangeInput = e => {
         setSearchValue(e);
-    }, []);
+    };
 
     // 更新页码
-    const handlePaginationChange = useCallback(debounce((current, pageSize = DEFAULT_PAGINATION.pageSize) => {
+    const handlePaginationChange = debounce(500)((current, pageSize = DEFAULT_PAGINATION.pageSize) => {
         updateData({
             current,
             pageSize,
         });
         setShouldUpdate(true);
-    }, 500), []);
+    });
 
     // 根据关键字、类型重置页码
     useEffect(() => {
@@ -238,7 +235,6 @@ const useNoahList = getUsersFromOne => {
     return {
         data,
         handlePaginationChange,
-        showDetail,
         handleChange,
         handleChangeInput,
         loading,

@@ -8,7 +8,7 @@ import {DEFAULT_PAGINATION} from '../../../constant';
 import {useNavigate} from 'react-router-dom';
 
 const useCronList = () => {
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
     // Table加载状态
     const [loading, setLoading] = useState(false);
     // Table显示数据
@@ -23,7 +23,7 @@ const useCronList = () => {
     });
 
     // 表格请求参数
-    const getList = useCallback(async () => {
+    const getList = async () => {
         const params = reject(anyPass([isEmpty, isNil]))(searchValue);
         setLoading(true);
         try {
@@ -49,42 +49,38 @@ const useCronList = () => {
         } finally {
             setLoading(false);
         }
-    }, [searchValue]);
+    };
 
     // 更新currentPage、pageSize
-    const handlePaginationChange = useCallback(
-        debounce((currentPage = 1, pageSize = 10) => {
+    const handlePaginationChange = debounce((currentPage = 1, pageSize = 10) => {
             setSearchValue(value => ({
                 ...value,
                 currentPage,
                 pageSize,
             }));
-        }, 500), []);
+        }, 500);
 
     // 输入关键字筛选 userName
-    const handleChangeInput = useCallback(
-        debounce(e => {
-            setSearchValue(value => ({
-                ...value,
-                userName: e,
-            }));
-        }, 500), []);
+    const handleChangeInput = debounce(e => {
+        setSearchValue(value => ({
+            ...value,
+            userName: e,
+        }));
+    }, 500);
 
     // 日期变化 beginTime endTime
-    const handleChangeDate = useCallback(
-        debounce(({beginTime, endTime}) => {
-            setSearchValue(value => ({
-                ...value,
-                beginTime,
-                endTime,
-            }));
-        }, 500), []);
-
+    const handleChangeDate = debounce(({beginTime, endTime}) => {
+        setSearchValue(value => ({
+            ...value,
+            beginTime,
+            endTime,
+        }));
+    }, 500);
 
     // Initialize 初始化
     useEffect(() => {
         getList();
-    }, [getList]);
+    }, [getList, searchValue]);
 
     return {
         data,

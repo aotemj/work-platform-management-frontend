@@ -1,4 +1,5 @@
 import {useMemo} from 'react';
+import {prop} from 'lodash';
 
 import {convertConsumeTime, formatTimeStamp} from '../../../../utils';
 import cx from './index.less';
@@ -9,24 +10,20 @@ const useExecDetail = executionDetail => {
         return `作业${executionDetail?.name}的执行详情`;
     }, [executionDetail]);
 
-    const userName = useMemo(() => {
-        return executionDetail?.userName;
-    }, [executionDetail]);
+    const userName = prop('userName', executionDetail);
+
+    // 是否忽略错误
+    const ignoreError = prop('ignoreError', executionDetail);
+
+    // 步骤列表
+    const stageTriggerList = prop('stageTriggerList', executionDetail) || [];
 
     const beginTime = useMemo(() => {
         const beginTime = executionDetail?.beginTime;
         return formatTimeStamp(beginTime);
     }, [executionDetail]);
 
-    // 是否忽略错误
-    const ignoreError = useMemo(() => {
-        return executionDetail?.ignoreError;
-    }, [executionDetail]);
 
-    // 步骤列表
-    const stageTriggerList = useMemo(() => {
-        return executionDetail?.stageTriggerList || [];
-    }, [executionDetail]);
 
     const runStatus = useMemo(() => {
         //    runStatus	执行状态 1：待执行；2：执行中；3：执行失败；4：执行成功；5：执行暂停；

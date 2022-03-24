@@ -1,27 +1,26 @@
 import {Modal, Input} from '@osui/ui';
-import {useCallback, useState} from 'react';
+import {useState} from 'react';
 import * as yup from 'yup';
 
 import FormikComp from '../../../../../../components/FormikComp';
 import cx from './index.less';
-import {request} from '../../../../../../request/fetch';
-import {REQUEST_METHODS, COMMON_URL_PREFIX} from '../../../../../../constant';
-import {CONFIRM_RESULTS, URLS} from '../../../constant';
+import {CONFIRM_RESULTS} from '../../../constant';
 
 const {TextArea} = Input;
 const defaultData = {reason: ''};
 const NoPassReasonModal = ({visible, setVisible, confirmManualResult, stageTriggerItemId}) => {
     const [disabled, setDisabled] = useState(true);
     const [data, setData] = useState(defaultData);
-    const handleSubmit = useCallback(async () => {
-        const params = {
-                confirmResult: CONFIRM_RESULTS.NO_PASS,
-                noPassReason: data.reason,
-                id: stageTriggerItemId,
-        };
-        const res = await confirmManualResult(params);
 
-    }, [confirmManualResult, data.reason, stageTriggerItemId]);
+    const handleSubmit = async () => {
+        const params = {
+            confirmResult: CONFIRM_RESULTS.NO_PASS,
+            noPassReason: data.reason,
+            id: stageTriggerItemId,
+        };
+        await confirmManualResult(params);
+    };
+
     const modalProps = {
         visible,
         title: '不通过的原因',
@@ -34,6 +33,7 @@ const NoPassReasonModal = ({visible, setVisible, confirmManualResult, stageTrigg
             setData(defaultData);
         },
     };
+
     const formFields = {
         name: {
             name: 'reason',

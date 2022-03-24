@@ -4,7 +4,7 @@
  * @constructor
  */
 
-import {useCallback, useState} from 'react';
+import {useState} from 'react';
 import {Button, Switch, Spin, message} from '@osui/ui';
 import {throttle} from 'lodash';
 
@@ -20,15 +20,16 @@ const StepItem  = props => {
     const [loading, setLoading] = useState(false);
     const [checked, setChecked] = useState(!!openStatus);
 
-    const handleFocus = useCallback(() => {
+    const handleFocus = () => {
         setFocus(true);
-    }, []);
+    };
 
-    const handleBlur = useCallback(() => {
+    const handleBlur = () => {
         setFocus(false);
-    }, []);
+    };
+
     // 切换启停
-    const handleChangeExecution = useCallback(throttle(async e => {
+    const handleChangeExecution = throttle(async e => {
         // TODO 至少保留一个步骤的状态为开启
         // openStatus	开关状态 0：关；1：开	query	true    integer(int32)
         // stageId	作业步骤ID	query	true    integer(int32)
@@ -50,7 +51,7 @@ const StepItem  = props => {
             message.success('操作成功');
             setChecked(e);
         }
-    }), [stageId]);
+    });
 
     return (
         <div

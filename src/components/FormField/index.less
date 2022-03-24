@@ -16,12 +16,8 @@
     margin-bottom: 16px;
 }
 
-.no-label {
-    // margin-left: 0;
-}
-
 .error {
-    color: #ff5630;
+    color: var(--error-color);
 }
 
 .warning {
@@ -97,15 +93,12 @@
     .label {
         flex: 0 0 auto;
         display: flex;
-        // justify-content: flex-end;
         align-items: flex-start;
-        width: calc(
-            @label-text-max-width +
-            @required-asterisk-width +
-            @form-field-margin-size-xs +
-            @label-tooltip-width +
-            @form-field-margin-size-xs
-        );
+        width: calc(@label-text-max-width +
+        @required-asterisk-width +
+        @form-field-margin-size-xs +
+        @label-tooltip-width +
+        @form-field-margin-size-xs);
 
         .text {
             max-width: @label-text-max-width;
@@ -127,7 +120,7 @@
     align-items: center;
     font-size: 12px;
     line-height: 1.5;
-    color: #ff5630;
+    color: var(--error-color);
 }
 
 .hint {

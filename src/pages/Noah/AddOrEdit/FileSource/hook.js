@@ -199,13 +199,6 @@ const useFileSource = ({
         }
     }, [fileMap, handleUpdateStorageFileList, needUpdateFileMap]);
     return {
-        // sourceFiles,
-        // setSourceFiles,
-        // disabled,
-        // setDisabled,
-        // handleSubmit,
-        // handleCancel,
-
         // about server file
         handleChangeSourcePath,
         handleAddServerFile,

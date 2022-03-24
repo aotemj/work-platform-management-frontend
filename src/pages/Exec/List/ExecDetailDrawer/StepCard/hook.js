@@ -1,5 +1,6 @@
 import {useCallback, useEffect, useMemo, useState} from 'react';
 import {message, Modal} from '@osui/ui';
+import {prop} from 'ramda';
 
 import {convertConsumeTime, formatTimeStamp, getContainerDOM} from '../../../../../utils';
 import {
@@ -24,54 +25,45 @@ const useStepCard = ({detail, getUsersFromOne, submitCallback, users, executionD
     }, [detail]);
 
     // 失败IP重试 暂时隐藏，后期迭代
-    // const reTryWithFailedIPs = useCallback(() => {
+    // const reTryWithFailedIPs = () => {
     //
-    // }, []);
+    // };
 
     const viewLog = useCallback(() => {
         const {id: executeId, workPlanId: detailId} = executionDetail;
         const {id: stepId} = detail;
         navigate(`${routes.EXEC_LOG.getUrl(detailId, executeId, stepId)}`);
     }, [detail, executionDetail, navigate]);
+
     // NOTE  步骤类型
     //  人工确认  类型没有 结束时间
     const type = useMemo(() => {
         return detail?.type;
     }, [detail]);
 
-    const stageTriggerItemParams = useMemo(() => {
-        return detail?.stageTriggerItemList[0]?.stageTriggerItemParams;
-    }, [detail]);
+    const stageTriggerItemList = prop('stageTriggerItemList', detail) || [];
 
-    const stageTriggerItemId = useMemo(() => {
-        return detail?.stageTriggerItemList[0]?.id;
-    }, [detail?.stageTriggerItemList]);
+    const stageTriggerItemParams = prop('stageTriggerItemParams', stageTriggerItemList[0]);
+
+    const stageTriggerItemId = prop('id', stageTriggerItemList[0]);
 
     // 是否忽略错误 	错误是否被忽略：0：否；1：是
-    const ignoreError = useMemo(() => {
-        return detail?.ignoreError;
-    }, [detail]);
+    const ignoreError = prop('ignoreError', detail);
 
     // 人工确认相关参数
-    const stageConfirm = useMemo(() => {
-        return stageTriggerItemParams?.stageConfirm;
-    }, [stageTriggerItemParams]);
+    const stageConfirm = prop('stageConfirm', stageTriggerItemParams);
+
     // 人工确认结果（不通过或通过）
-    const stageConfirmResult = useMemo(() => {
-        return stageTriggerItemParams?.stageConfirmResult;
-    }, [stageTriggerItemParams]);
+    const stageConfirmResult = prop('stageConfirmResult', stageTriggerItemParams);
 
     const isNotPass = useMemo(() => {
         return stageConfirmResult && stageConfirmResult.confirmResult === CONFIRM_RESULTS.NO_PASS;
     }, [stageConfirmResult]);
 
-    const notPassReason = useMemo(() => {
-        return stageConfirmResult?.noPassReason;
-    }, [stageConfirmResult]);
+    const notPassReason = prop('noPassReason', stageConfirmResult);
 
-    const isManualConfirm = useMemo(() => {
-        return type === STEP_TYPES.MANUAL_CONFIRM.value;
-    }, [type]);
+    const isManualConfirm = type === STEP_TYPES.MANUAL_CONFIRM.value;
+
     const timeDetails = useMemo(() => {
         if (!detail) {
             return [];
@@ -92,6 +84,7 @@ const useStepCard = ({detail, getUsersFromOne, submitCallback, users, executionD
         }
         return tempArr;
     }, [detail, isManualConfirm]);
+
     const consumeObj = {
         label: '耗时：',
         value: convertConsumeTime(detail),
@@ -169,7 +162,7 @@ const useStepCard = ({detail, getUsersFromOne, submitCallback, users, executionD
             tempArr.push(viewLogObj);
         }
         return tempArr;
-    }, [detail, neglectErrors, viewLog]);
+    }, [detail, viewLog]);
 
     const manualConfirmDescContents = useMemo(() => {
         const getInformUser = () => {
@@ -211,18 +204,19 @@ const useStepCard = ({detail, getUsersFromOne, submitCallback, users, executionD
 
     const runStatusLabel = useMemo(() => {
         const getTitle = () => {
+            const confirmResult = prop('confirmResult', stageConfirmResult);
             if (ignoreError) {
                 return IGNORE_ERROR.label;
-            } else if (stageConfirmResult?.confirmResult === CONFIRM_RESULTS.NO_PASS) {
+            } else if (confirmResult === CONFIRM_RESULTS.NO_PASS) {
                 return NOT_PASS.label;
-            } else if (stageConfirmResult?.confirmResult === CONFIRM_RESULTS.PASS) {
+            } else if (confirmResult === CONFIRM_RESULTS.PASS) {
                 return PASS.label;
             }
             return RUN_STATUSES.get(detail?.runStatus)?.label;
 
         };
         return getTitle();
-    }, [detail?.runStatus, ignoreError, stageConfirmResult?.confirmResult]);
+    }, [detail, ignoreError, stageConfirmResult]);
 
     useEffect(() => {
         getUsersFromOne();

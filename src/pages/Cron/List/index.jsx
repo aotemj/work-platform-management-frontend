@@ -72,29 +72,27 @@ const CronList = () => {
             title: '操作',
             dataIndex: 'operate',
             width: 220,
-            render: (_, record) => {
-                return (
-                    <div style={{marginLeft: '-5px'}}>
-                        <>
-                            {
-                                tableOperations.map(item => {
-                                    const {label, execution} = item;
-                                    return (
-                                        <Button
-                                            key={label}
-                                            type={'link'}
-                                            className={cx('operation-button')}
-                                            onClick={() => execution(record)}
-                                        >{label}
-                                        </Button>
-                                    );
-                                })
-                            }
-                            <Switch defaultChecked />
-                        </>
-                    </div>
-                );
-            },
+            render: (_, record) => (
+                <div style={{marginLeft: '-5px'}}>
+                    <>
+                        {
+                            tableOperations.map(item => {
+                                const {label, execution} = item;
+                                return (
+                                    <Button
+                                        key={label}
+                                        type={'link'}
+                                        className={cx('operation-button')}
+                                        onClick={() => execution(record)}
+                                    >{label}
+                                    </Button>
+                                );
+                            })
+                        }
+                        <Switch defaultChecked />
+                    </>
+                </div>
+            ),
         },
     ];
 

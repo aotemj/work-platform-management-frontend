@@ -1,5 +1,5 @@
 import {connect} from 'react-redux';
-import {compose, get} from 'lodash/fp';
+import {compose} from 'lodash/fp';
 
 import NoahList from './NoahList';
 import {GET_USER_FROM_ONE_S} from '../../../sagas/types';

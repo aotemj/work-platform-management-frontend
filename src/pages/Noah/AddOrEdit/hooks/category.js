@@ -24,7 +24,7 @@ const useCategory = addCallback => {
         return true;
     }, [categoryMap, categories, addCallback]);
 
-    const updateCategoryMap = useCallback(list => {
+    const updateCategoryMap = list => {
         const length = list.length;
         const map = {};
         for (let i = 0; i < length; i++) {
@@ -32,9 +32,9 @@ const useCategory = addCallback => {
             map[name] = list[i];
         }
         setCategoryMap(map);
-    }, []);
+    };
 
-    const fetchCategory = useCallback(async () => {
+    const fetchCategory = async () => {
         const res = await request({
             url: `${COMMON_URL_PREFIX}${URLS.CATEGORIES}`,
             params: {
@@ -52,7 +52,7 @@ const useCategory = addCallback => {
             setCategories(data.list);
             updateCategoryMap(data.list);
         }
-    }, [updateCategoryMap]);
+    };
 
     return {
         categories,

@@ -4,12 +4,12 @@
 
 import {Button} from '@osui/ui';
 import {omit} from 'ramda';
+import {useCallback, useState} from 'react';
 
 import IconFont from '../../../../components/Iconfont';
 import cx from './index.less';
 import VariableIcon from './VariableIcon';
 import {GLOBAL_VARIABLE_TYPES} from '../constants';
-import {useCallback, useState} from 'react';
 
 const GlobalVariableItem = props => {
     const {name, type, value, handleClose, handleEdit, disabled} = props;

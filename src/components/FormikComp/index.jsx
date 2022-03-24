@@ -59,7 +59,7 @@ const FormikComp = ({
             validateSchema.validateSync(values, {abortEarly: false});
             return {};
         } catch (e) {
-            return e.inner.reduce((acc, cur) => set(
+            return e?.inner?.reduce((acc, cur) => set(
                 cur.path,
                 // 如果希望某些特定的条件下level不是error，而是warning，
                 // 请修改下面的逻辑，根据yup的返回结果进行适配
@@ -71,7 +71,7 @@ const FormikComp = ({
 
     const DefaultFooter = ({values}) => {
         return (
-            <>
+            <div className={cx('default-footer-container')}>
                 <Button
                     type={'primary'}
                     disabled={disabled}
@@ -84,7 +84,7 @@ const FormikComp = ({
                     onClick={handleCancel}
                 >取消
                 </Button>
-            </>
+            </div>
         );
     };
 

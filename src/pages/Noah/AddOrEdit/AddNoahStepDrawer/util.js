@@ -409,7 +409,7 @@ export const getManualConfirmFields = ({
     handleChangeTargetServer,
     editing,
     visible,
-    usersFromOne = [],
+    usersFromOne,
 }) => {
     const isManualConfirm = !isFileDistribution && !isScriptExecute;
 
@@ -463,7 +463,7 @@ export const getManualConfirmFields = ({
                     {...field}
                 >
                     {
-                        usersFromOne.map(item => {
+                        usersFromOne?.list.map(item => {
                             return (
                                 <Option
                                     // value={Number(item.userId)}
@@ -501,11 +501,7 @@ export const getManualConfirmFields = ({
             name: 'timeoutValue',
             label: '超时时间（小时）',
             hide: !isManualConfirm,
-            children: ({field}) => (
-                <>
-                    <Select {...timeoutValueProps} {...field} />
-                </>
-            ),
+            children: ({field}) => <Select {...timeoutValueProps} {...field} />,
         },
     };
     return fields;

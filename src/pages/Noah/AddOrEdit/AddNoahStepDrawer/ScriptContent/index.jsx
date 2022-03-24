@@ -17,10 +17,6 @@ const ScriptContent = props => {
         }
     }, []);
 
-    // const handleChange = useCallback(() => {
-    //
-    // }, []);
-
     return (
         <div className={cx('script-content-container')} ref={containerRef}>
             <Tabs
@@ -42,10 +38,7 @@ const ScriptContent = props => {
                 )}
             >
                 {
-                    SCRIPT_TYPES.map(item => {
-                        const {tab, key} = item;
-                        return <TabPane tab={tab} key={key} />;
-                    })
+                    SCRIPT_TYPES.map(({tab, key}) => <TabPane tab={tab} key={key} />)
                 }
             </Tabs>
             <TextArea

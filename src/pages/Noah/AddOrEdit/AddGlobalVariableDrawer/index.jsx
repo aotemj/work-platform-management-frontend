@@ -25,9 +25,6 @@ const AddGlobalVariableDrawer = ({
     setVisible,
     globalVariablesFromServer,
 }) => {
-    // const defaultField = {
-    //     layout: 'horizontal',
-    // };
     const {
         formikValues,
         handleCancel,
@@ -48,17 +45,7 @@ const AddGlobalVariableDrawer = ({
     }, [globalVariableEditingValue]);
 
     const title = useMemo(() => {
-        const title = editing ? '编辑全局变量' : '新建全局变量';
-        return title;
-        // return (
-        //     <div className={cx('global-variable-header')}>
-        //         <div className="left">{title}</div>
-        //         <div className="right">
-        //             <Button>删除</Button>
-        //             <Button type={'primary'}>保存</Button>
-        //         </div>
-        //     </div>
-        // );
+        return editing ? '编辑全局变量' : '新建全局变量';
     }, [editing]);
 
     const NameLabel = () => {

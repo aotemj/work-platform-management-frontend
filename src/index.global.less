@@ -108,6 +108,10 @@ html {
     .running-icon{
         animation: build-status-icon-spin 1s linear infinite !important;
     }
+
+    .category-dropdown {
+        width: 100%;
+    }
 }
 
 @keyframes build-status-icon-spin {
@@ -120,3 +124,9 @@ html {
         transform: rotate(360deg);
     }
 }
+
+:root {
+    --active-color: #0C62FF;
+    --error-color: #ff5630;
+}
+

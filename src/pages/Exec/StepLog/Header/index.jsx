@@ -15,7 +15,7 @@ const Header = ({executionDetail, params, dataSource, setAddStepDrawerVisible}) 
     const navigate = useNavigate();
     const downloadTimer = useRef();
     // 下载日志
-    const downloadLog = useCallback(async () => {
+    const downloadLog = async () => {
         const promises = dataSource.map(item => {
             const {logUrl: url, IP} = item;
             return fetch(url, {
@@ -41,7 +41,8 @@ const Header = ({executionDetail, params, dataSource, setAddStepDrawerVisible}) 
             }
         }, [MILLI_SECOND_STEP]);
 
-    }, [dataSource]);
+    };
+
     const operations = [
         {
             label: '全部主机重试',

@@ -9,7 +9,7 @@ const {RangePicker} = DatePicker;
 
 const DateRangePicker = ({handleChangeDate, dateRange = 31}) => {
     const [dates, setDates] = useState([]);
-    const [hackValue, setHackValue] = useState();
+    const [hackValue, setHackValue] = useState(null);
     const [value, setValue] = useState();
     const disabledDate = current => {
         if (!dates || dates.length === 0) {
@@ -25,7 +25,7 @@ const DateRangePicker = ({handleChangeDate, dateRange = 31}) => {
             setHackValue([]);
             setDates([]);
         } else {
-            setHackValue(undefined);
+            setHackValue(null);
         }
     };
 

@@ -1,5 +1,7 @@
 import React, {useMemo} from 'react';
+import {isNil} from 'ramda';
 import {Tooltip} from '@osui/ui';
+
 import {ReactComponent as IconInfo} from '../../statics/icons/info.svg';
 import {ReactComponent as IconRemark} from '../../statics/icons/remark.svg';
 
@@ -49,10 +51,10 @@ const Layout = ({
     );
     return (
         <div
-            className={cx('root', layout, {'no-label': label === undefined || label === null}, className)}
+            className={cx('root', layout, {'no-label': isNil(label)}, className)}
             style={style}
         >
-            {!hideLabel && label !== undefined && label !== null && (
+            {!hideLabel && !isNil(label) && (
                 <label htmlFor={id} className={cx('label')}>
                     {required && layout === 'vertical' && (
                         <span className={cx({required})}>*</span>

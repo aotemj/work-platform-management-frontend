@@ -1,7 +1,7 @@
 import {useNavigate, useParams} from 'react-router-dom';
 import {useCallback, useEffect, useMemo, useState} from 'react';
 import {message, Modal} from '@osui/ui';
-import {clone, isNil, omit, pickBy} from 'ramda';
+import {clone, isNil, omit, pickBy, prop} from 'ramda';
 
 import {getContainerDOM, getUrlPrefixReal} from '../../../utils';
 import useCategory from './hooks/category';
@@ -42,22 +42,25 @@ const useAddOrEdit = executionDetail => {
     const urlParams = new URL(window.location.href);
     const {pathname} = urlParams;
     const stageId = useMemo(() => {
-        return executionDetail?.stageTriggerList?.filter(item => item.id === Number(params?.stepId))[0]?.stageId;
+        return executionDetail
+            ?.stageTriggerList
+            ?.filter(item => item.id === Number(prop('stepId', params)))[0]
+            ?.stageId;
     }, [executionDetail, params]);
     // 预执行
     const isExecuting = useMemo(() => {
-        return pathname === routes.NOAH_PRE_EXECUTING.getUrl(params?.detailId);
-    }, [params?.detailId, pathname]);
+        return pathname === routes.NOAH_PRE_EXECUTING.getUrl(prop('stepId', params));
+    }, [params, pathname]);
 
     // 预览模式（不允许编辑）
     const isViewing = useMemo(() => {
         const {detailId, stepId = null, executeId = null} = params;
         return pathname === routes.EXEC_LOG.getUrl(detailId, executeId, stepId);
-        // return pathname.startsWith(routes.EXEC_LOG)
     }, [params, pathname]);
 
     // 编辑
-    const [editing, setEditing] = useState(!isExecuting && !isViewing && !!params?.detailId);
+    const editing = useMemo(() => !isExecuting && !isViewing && !!prop('stepId', params),
+        [isExecuting, isViewing, params]);
 
     const [formikValues, setFormikValues] = useState(defaultFormikValues);
 
@@ -66,7 +69,6 @@ const useAddOrEdit = executionDetail => {
     const [globalVariableVisible, setGlobalVariableVisible] = useState(false);
 
     const [addStepDrawerVisible, setAddStepDrawerVisible] = useState(false);
-    // const [addStepDrawerVisible, setAddStepDrawerVisible] = useState(true);
 
     // 编辑全局变量数据
     const [globalVariableEditingValue, setGlobalVariableEditingValue] = useState(null);
@@ -85,7 +87,7 @@ const useAddOrEdit = executionDetail => {
 
         return '新建作业';
 
-    }, [detailFromServer?.sourceData, editing, isExecuting, isViewing, stageId]);
+    }, [detailFromServer?.sourceData, editing, isExecuting]);
     /**
      * 分类更新逻辑
      *  新增：
@@ -102,13 +104,13 @@ const useAddOrEdit = executionDetail => {
         });
     }, [setFormikValues, formikValues]);
 
-    const reset = useCallback(() => {
-    }, []);
+    const reset = () => {
+    };
 
     const goBack = useCallback(() => {
         reset();
         navigate(`${getUrlPrefixReal()}/${routes.NOAH_LIST.url}`);
-    }, [navigate, reset]);
+    }, [navigate]);
 
     const goBackWithConfirm = useCallback(() => {
         Modal.confirm({
@@ -154,7 +156,7 @@ const useAddOrEdit = executionDetail => {
     const convertAdditionCategories = useCallback(list => {
         const listMap = {};
         const tempList = list.map(item => {
-            let tempObj = {};
+            let tempObj;
             if (typeof item === 'number') {
                 tempObj = {workGroup: {id: item}};
                 listMap[item] = tempObj;
@@ -561,11 +563,11 @@ const useAddOrEdit = executionDetail => {
 
     const deConvertedStageFileBean = useCallback(tempObj => {
         const {
-            transmissionMode,
-            timeoutValue,
-            uploadLimit,
-            downloadLimit,
-            targetPath,
+            // transmissionMode,
+            // timeoutValue,
+            // uploadLimit,
+            // downloadLimit,
+            // targetPath,
         } = tempObj;
 
         return tempObj;
@@ -747,9 +749,9 @@ const useAddOrEdit = executionDetail => {
             id,
             name,
             describes,
-            useTemp,
-            // typeNames, // '123123,123123123'
-            status,
+            // useTemp,
+            // typeNames,
+            // status,
             groupRelList,
             workVariateList,
         } = workPlan;
@@ -817,7 +819,7 @@ const useAddOrEdit = executionDetail => {
     // 执行相关
     const handleExecute = useCallback(async () => {
         const res = await request({
-            url: `${COMMON_URL_PREFIX}${URLS.INDIVIDUAL_EXECUTE}${params?.detailId}`,
+            url: `${COMMON_URL_PREFIX}${URLS.INDIVIDUAL_EXECUTE}${prop('detailId', params)}`,
             method: REQUEST_METHODS.POST,
         });
         const {code, data} = res;
@@ -826,7 +828,7 @@ const useAddOrEdit = executionDetail => {
 
             navigate(`${getUrlPrefixReal()}/${routes.EXEC_LIST.url}?id=${data?.id}`);
         }
-    }, [navigate, params?.detailId]);
+    }, [navigate, params]);
 
     useEffect(() => {
         fetchCategory();
@@ -834,11 +836,11 @@ const useAddOrEdit = executionDetail => {
 
     // 获取编辑详情
     useEffect(() => {
-        if (!params?.detailId || (isViewing && !stageId)) {
+        if (!prop('detailId', params) || (isViewing && !stageId)) {
             return;
         }
         getNoahDetail();
-    }, [params?.detailId, getNoahDetail]);
+    }, [params, getNoahDetail]);
 
     return {
         title,

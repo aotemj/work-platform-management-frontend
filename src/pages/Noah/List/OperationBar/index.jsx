@@ -1,8 +1,9 @@
-import cx from '../index.less';
 import {Button, Dropdown, Input, Menu, Select} from '@osui/ui';
+import React from 'react';
+
+import cx from '../index.less';
 import {DROP_DOWN_MENU} from '../constants';
 import {ReactComponent as IconSearch} from '../../../../statics/icons/search.svg';
-import React from 'react';
 
 const OperationBar = ({
     handleChange,
