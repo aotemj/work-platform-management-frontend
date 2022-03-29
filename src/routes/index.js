@@ -4,12 +4,11 @@ import {ConfigProvider, message} from '@osui/ui';
 import {useEffect} from 'react';
 import {Provider} from 'react-redux';
 
-import '../index.global.less';
 import {CONTAINER_DOM_ID, PROJECT_ROUTE} from '../constant';
 import {getContainerDOM, getUrlPrefixReal} from '../utils';
 import store from '../store';
 import NoahList from '../pages/Noah/List/index';
-import AddOrEdit from '../pages/Noah/AddOrEdit';
+import AddOrEditNoah from '../pages/Noah/AddOrEdit/index';
 import ExecList from '../pages/Exec/List/index';
 import CronList from '../pages/Cron/List';
 import ExecLog from '../pages/Exec/StepLog';
@@ -35,18 +34,18 @@ export const routes = {
     },
     NOAH_ADD: {
         url: 'noah/add',
-        component: <AddOrEdit />,
+        component: <AddOrEditNoah />,
     },
     NOAH_EDIT: {
         url: 'noah/:detailId',
         getUrl: id => `${getUrlPrefixReal()}/${routes.NOAH_EDIT.url.replace(':detailId', id)}`,
-        component: <AddOrEdit />,
+        component: <AddOrEditNoah />,
     },
     // 预执行
     NOAH_PRE_EXECUTING: {
         url: 'noah/exec/:detailId',
         getUrl: id => `${getUrlPrefixReal()}/${routes.NOAH_PRE_EXECUTING.url.replace(':detailId', id)}`,
-        component: <AddOrEdit />,
+        component: <AddOrEditNoah />,
     },
     EXEC_LIST: {
         url: 'exec/list',

@@ -248,6 +248,7 @@ module.exports = (cliEnv = {}, argv) => {
                         makeStyleResourcesLoader([
                             path.resolve(__dirname, 'node_modules/@osui/theme/dist/antd-vars-patch.less'),
                             path.resolve(__dirname, 'node_modules/@osui/theme/dist/less-functions-overrides.less'),
+                            path.resolve(__dirname, './src/index.global.less'),
                         ]),
                     ],
                 },

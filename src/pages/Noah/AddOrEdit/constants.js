@@ -82,8 +82,6 @@ export const URLS = {
     ADD_NOAH_WORK_PLAN: '/rest/v1/work-plan/',
     // 新增分类
     ADD_CATEGORIES: '/rest/v1/work-group',
-    // 获取分类
-    CATEGORIES: '/rest/v1/work-group/list',
     // 获取全局参数
     GLOBAL_VARIABLES: '/rest/v1/work-variate/type',
     // 上传本地文件

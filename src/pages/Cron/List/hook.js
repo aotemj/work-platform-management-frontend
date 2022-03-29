@@ -1,11 +1,10 @@
-import {useCallback, useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {message} from 'antd';
 import {debounce} from '../../../utils';
 import {reject, anyPass, isEmpty, isNil} from 'ramda';
 import {request} from '../../../request/fetch';
 import {EXEC_LIST_URL} from '../../../utils/api';
 import {DEFAULT_PAGINATION} from '../../../constant';
-import {useNavigate} from 'react-router-dom';
 
 const useCronList = () => {
     // const navigate = useNavigate();
@@ -80,7 +79,7 @@ const useCronList = () => {
     // Initialize 初始化
     useEffect(() => {
         getList();
-    }, [getList, searchValue]);
+    }, [searchValue]);
 
     return {
         data,

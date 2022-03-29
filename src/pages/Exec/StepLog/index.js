@@ -2,13 +2,12 @@ import {connect} from 'react-redux';
 import {compose} from 'lodash/fp';
 
 import StepLog from './StepLog';
-import {GET_EXECUTION_DETAIL_S} from '../../../sagas/types';
+import {GET_EXECUTION_DETAIL_S, GET_NOAH_DETAIL_S} from '../../../sagas/types';
 
-const mapStateToProps = state => {
-    return {
-        executionDetail: state.executionDetail,
-    };
-};
+const mapStateToProps = ({executionDetail, noahDetail}) => ({
+    executionDetail,
+    noahDetail,
+});
 
 const mapDispatchToProps = dispatch => ({
     getExecutionDetail: payload => {
@@ -17,8 +16,11 @@ const mapDispatchToProps = dispatch => ({
             payload,
         });
     },
+    getNoahWorkPlanDetail: payload => dispatch({
+        type: GET_NOAH_DETAIL_S,
+        payload,
+    }),
 });
-
 
 const withRedux = connect(mapStateToProps, mapDispatchToProps);
 

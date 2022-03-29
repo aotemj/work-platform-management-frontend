@@ -21,6 +21,4 @@ const mapDispatchToProps = (dispatch, {}) => ({
 
 const withRedux = connect(mapStateToProps, mapDispatchToProps);
 
-export default compose(
-    withRedux,
-)(ExecList);
+export default compose(withRedux)(ExecList);

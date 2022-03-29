@@ -39,12 +39,18 @@ const dropdownRender = (originNode, handleAddCallback, values) => {
     );
 };
 
-const AddOrEdit = () => {
+const AddOrEditNoah = props => {
+    const {
+        getNoahWorkPlanDetail,
+        noahDetail,
+        categories: {list: categories, map: categoryMap},
+        getCategoryList,
+        updateCategory,
+    } = props;
     const {
         goBack,
         goBackWithConfirm,
         title,
-        categories,
         formikValues,
         setDisabled,
         handleSubmit,
@@ -79,7 +85,14 @@ const AddOrEdit = () => {
         setStepEditingValue,
         handleStartAddStep,
         handleExecute,
-    } = useAddOrEdit();
+    } = useAddOrEdit({
+        getNoahWorkPlanDetail,
+        noahDetail,
+        categories,
+        categoryMap,
+        getCategoryList,
+        updateCategory,
+    });
 
     const defaultField = {
         layout: 'horizontal',
@@ -181,15 +194,15 @@ const AddOrEdit = () => {
                             !length && isExecuting && <span className={cx('no-data')}>暂无全局变量</span>
                         }
                         {
-                        !isExecuting && (
-                            <Button
-                                onClick={() => handleAddGlobalVariable(values)}
-                                icon={<IconPlusOutlined />}
-                                className={cx('add-variable-button')}
-                            >添加全局变量
-                            </Button>
-                        )
-                    }
+                            !isExecuting && (
+                                <Button
+                                    onClick={() => handleAddGlobalVariable(values)}
+                                    icon={<IconPlusOutlined />}
+                                    className={cx('add-variable-button')}
+                                >添加全局变量
+                                </Button>
+                            )
+                        }
                     </div>
                 );
             },
@@ -305,4 +318,4 @@ const AddOrEdit = () => {
     );
 };
 
-export default AddOrEdit;
+export default AddOrEditNoah;

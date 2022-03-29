@@ -9,6 +9,7 @@ import {formatTimeStamp} from '../../../utils';
 import OperationBar from './OperationBar';
 import StatusTag from '../../../components/StatusTag';
 import {omit} from 'ramda';
+import AddOrEditCron from './AddOrEditCron/index';
 
 const title = '定时任务';
 
@@ -112,6 +113,10 @@ const CronList = () => {
         handleChangeDate,
     };
 
+    const addOrEditCron = {
+        visible: true,
+    };
+
     return (
         <div className={cx('cron-container')}>
             <PageHeader title={title} className={cx('title')} />
@@ -119,6 +124,8 @@ const CronList = () => {
             <Spin spinning={loading} size="large">
                 <Table {...tableProps} />
             </Spin>
+            {/* 新增、 编辑 cron */}
+            <AddOrEditCron {...addOrEditCron} />
         </div>
     );
 };

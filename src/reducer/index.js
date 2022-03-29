@@ -1,4 +1,10 @@
-import {GET_EXECUTION_DETAIL, GET_USERS_FROM_ONE} from '../actions/actionTypes';
+import {
+    GET_EXECUTION_DETAIL,
+    GET_NOAH_DETAIL,
+    GET_NOAH_LIST,
+    GET_USERS_FROM_ONE,
+    UPDATE_CATEGORY_LIST,
+} from '../actions/actionTypes';
 
 const initialState = {
     users: {
@@ -7,6 +13,17 @@ const initialState = {
     },
     // 执行详情
     executionDetail: null,
+    // 作业方案列表
+    noahList: [],
+    // 作业方案 total
+    noahTotal: 0,
+    // 作业方案详情
+    noahDetail: null,
+    // 作业分类
+    categories: {
+        list: [],
+        map: {},
+    },
 };
 
 export default (state = initialState, action) => {
@@ -20,6 +37,24 @@ export default (state = initialState, action) => {
             return {
                 ...state,
                 executionDetail: action.payload,
+            };
+        case GET_NOAH_LIST:
+            const {noahList, noahTotal} = action.payload;
+            return {
+                ...state,
+                noahList,
+                noahTotal,
+            };
+        case GET_NOAH_DETAIL:
+            return {
+                ...state,
+                noahDetail: action.payload,
+            };
+        case UPDATE_CATEGORY_LIST:
+            const {categories} = action.payload;
+            return {
+                ...state,
+                categories,
             };
         default: {
             return state;

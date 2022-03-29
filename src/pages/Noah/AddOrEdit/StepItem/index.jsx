@@ -6,7 +6,7 @@
 
 import {useState} from 'react';
 import {Button, Switch, Spin, message} from '@osui/ui';
-import {throttle} from 'lodash';
+import {throttle} from 'lodash/fp';
 
 import IconFont from '../../../../components/Iconfont';
 import cx from './index.less';
@@ -14,7 +14,7 @@ import {EXECUTING_STATUS, URLS} from '../constants';
 import {REQUEST_CODE, REQUEST_METHODS, REQUEST_TYPE, COMMON_URL_PREFIX} from '../../../../constant';
 import {request} from '../../../../request/fetch';
 
-const StepItem  = props => {
+const StepItem = props => {
     const {name, handleClose, handleEdit, disabled, id: stageId, openStatus} = props;
     const [focus, setFocus] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -29,7 +29,7 @@ const StepItem  = props => {
     };
 
     // 切换启停
-    const handleChangeExecution = throttle(async e => {
+    const handleChangeExecution = throttle()(async e => {
         // TODO 至少保留一个步骤的状态为开启
         // openStatus	开关状态 0：关；1：开	query	true    integer(int32)
         // stageId	作业步骤ID	query	true    integer(int32)
@@ -70,26 +70,26 @@ const StepItem  = props => {
                         </Spin>
                     </div>
                     )
-                : (
-                    <>
-                        {/* 删除按钮 */}
-                        {(
-                            <Button
-                                onClick={handleClose}
-                                type={'text'}
-                                icon={<IconFont type={'icondeleteorerror'} />}
-                                className={cx('close-button')}
-                            />
-                    )}
-                        {/* 编辑按钮 */}
-                        {focus && (
-                            <i
-                                className={cx('editing-button')}
-                                onClick={handleEdit}
-                            />
-                    )}
-                    </>
-                )
+                    : (
+                        <>
+                            {/* 删除按钮 */}
+                            {(
+                                <Button
+                                    onClick={handleClose}
+                                    type={'text'}
+                                    icon={<IconFont type={'icondeleteorerror'} />}
+                                    className={cx('close-button')}
+                                />
+                            )}
+                            {/* 编辑按钮 */}
+                            {focus && (
+                                <i
+                                    className={cx('editing-button')}
+                                    onClick={handleEdit}
+                                />
+                            )}
+                        </>
+                    )
             }
         </div>
     );

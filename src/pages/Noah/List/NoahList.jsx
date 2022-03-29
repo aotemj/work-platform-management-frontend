@@ -14,7 +14,7 @@ import {MAX_DISPLAY_LENGTH, SPLIT_SYMBOL} from '../../../constant';
 const title = '作业管理';
 
 const NoahList = props => {
-    const {getUsersFromOne, users} = props;
+    const {getUsersFromOne, users, getNoahList, noahList, noahTotal} = props;
     const {
         data,
         handlePaginationChange,
@@ -35,7 +35,7 @@ const NoahList = props => {
         // onNoahSelectClear,
         addNoah,
         setNoahType,
-    } = useNoahList(getUsersFromOne);
+    } = useNoahList({getUsersFromOne, getNoahList, noahList, noahTotal});
 
     const tableOperations = [
         {
@@ -60,12 +60,12 @@ const NoahList = props => {
             dataIndex: 'name',
             width: '10%',
             render: val => {
-              return (
-                  <Tooltip title={val}>
-                      <span className={cx('noah-name')}>
-                          {val}
-                      </span>
-                  </Tooltip>
+                return (
+                    <Tooltip title={val}>
+                        <span className={cx('noah-name')}>
+                            {val}
+                        </span>
+                    </Tooltip>
                 );
             },
         },

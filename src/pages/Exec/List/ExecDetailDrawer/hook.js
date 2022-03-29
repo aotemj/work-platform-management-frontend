@@ -1,5 +1,5 @@
 import {useMemo} from 'react';
-import {prop} from 'lodash';
+import {prop} from 'ramda';
 
 import {convertConsumeTime, formatTimeStamp} from '../../../../utils';
 import cx from './index.less';

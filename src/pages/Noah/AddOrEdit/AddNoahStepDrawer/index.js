@@ -4,13 +4,11 @@ import {compose} from 'lodash/fp';
 import {GET_USER_FROM_ONE_S} from '../../../../sagas/types';
 import AddNoahStepDrawer from './AddNoahStepDrawer';
 
-const mapStateToProps = state => {
-    return {
-        users: state.users,
-    };
-};
+const mapStateToProps = ({users}) => ({
+    users,
+});
 
-const mapDispatchToProps = (dispatch, {}) => ({
+const mapDispatchToProps = dispatch => ({
     getUsersFromOne: () => {
         dispatch({
             type: GET_USER_FROM_ONE_S,
@@ -20,6 +18,4 @@ const mapDispatchToProps = (dispatch, {}) => ({
 
 const withRedux = connect(mapStateToProps, mapDispatchToProps);
 
-export default compose(
-    withRedux,
-)(AddNoahStepDrawer);
+export default compose(withRedux)(AddNoahStepDrawer);

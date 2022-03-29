@@ -9,7 +9,7 @@ import {getCompanyId, getSpaceId} from '../../../../../utils/getRouteIds';
 import {request} from '../../../../../request/fetch';
 import cx from './index.less';
 import {agents, labels} from '../../../../../temp/agents';
-import {COMMON_URL_PREFIX} from '../../../../../constant';
+import {COMMON_URL_PREFIX, IS_PROD} from '../../../../../constant';
 
 const getAgentMap = agents => {
     const tempMap = {};
@@ -155,6 +155,7 @@ const TargetServer = ({
 
     const fetchAgents = async () => {
         // setOriginDataUpdated(true);
+
         return request({
             url: getURlWithPrefix(COMMON_URL_PREFIX, URLS.AGENTS),
             params: {
@@ -197,27 +198,36 @@ const TargetServer = ({
         });
     };
 
-    const updateData = debounce(500)(() => {
+    const updateData = debounce(500)(async () => {
         if (!needUpdate) {
             return;
         }
         setNeedUpdate(false);
-        setLoading(true);
         setTreeData([]);
-        Promise.all([fetchAgents(), fetchLabels()]).then(([agentRes, labelRes]) => {
+        let tempAgents;
+        let tempLabels;
+        if (IS_PROD) {
+            setLoading(true);
+            const [agentRes, labelRes] = await Promise.all([fetchAgents(), fetchLabels()]);
             const {status: agentStatus, entities: {agents = []}} = agentRes;
             setLoading(false);
 
             const {status: labelStatus, list: labels} = labelRes;
 
             if (!agentStatus && !labelStatus) {
-                const {labelMap, tempLabels: treeData, agentMap, agentMapByUuid} = formatData(agents, labels, type);
-                setTreeData(treeData.filter(item => item));
-                setAgentMap(agentMap);
-                setLabelMap(labelMap);
-                setAgentMapByUuid(agentMapByUuid);
+                tempAgents = agents;
+                tempLabels = labels;
+
             }
-        });
+        } else {
+            tempAgents = agents;
+            tempLabels = labels;
+        }
+        const {labelMap, tempLabels: treeData, agentMap, agentMapByUuid} = formatData(tempAgents, tempLabels, type);
+        setTreeData(treeData.filter(item => item));
+        setAgentMap(agentMap);
+        setLabelMap(labelMap);
+        setAgentMapByUuid(agentMapByUuid);
     });
 
     const getActiveAgentInfoByLabel = useCallback(labelId => {

@@ -4,10 +4,9 @@ import {message, Modal} from '@osui/ui';
 import {clone, isNil, omit, pickBy, prop} from 'ramda';
 
 import {getContainerDOM, getUrlPrefixReal} from '../../../utils';
-import useCategory from './hooks/category';
 import useGlobalVariable from './hooks/globalVariable';
 import {request} from '../../../request/fetch';
-import {URLS, UPDATE_FILE_STATUS, BOOLEAN_FROM_SERVER} from './constants';
+import {URLS, UPDATE_FILE_STATUS, BOOLEAN_FROM_SERVER, ERROR_MSG} from './constants';
 import {
     DEFAULT_STRING_VALUE,
     DELETE_SYMBOL,
@@ -19,7 +18,7 @@ import {
     COMMON_URL_PREFIX,
 } from '../../../constant';
 import {routes} from '../../../routes';
-// import {omitBy} from 'lodash';
+import {deConvertParams} from '../../../utils/convertNoahDetail';
 
 const defaultFormikValues = {
     id: null,
@@ -35,12 +34,21 @@ const defaultFormikValues = {
     stageList: [],
 };
 
-const useAddOrEdit = executionDetail => {
-
+const useAddOrEdit = ({
+    executionDetail,
+    getNoahWorkPlanDetail,
+    noahDetail,
+    categories,
+    categoryMap,
+    getCategoryList,
+    updateCategory,
+}) => {
     const params = useParams();
     const navigate = useNavigate();
     const urlParams = new URL(window.location.href);
     const {pathname} = urlParams;
+    const [addCategoryVisible, setAddCategoryVisible] = useState(false);
+
     const stageId = useMemo(() => {
         return executionDetail
             ?.stageTriggerList
@@ -49,7 +57,7 @@ const useAddOrEdit = executionDetail => {
     }, [executionDetail, params]);
     // 预执行
     const isExecuting = useMemo(() => {
-        return pathname === routes.NOAH_PRE_EXECUTING.getUrl(prop('stepId', params));
+        return pathname === routes.NOAH_PRE_EXECUTING.getUrl(prop('detailId', params));
     }, [params, pathname]);
 
     // 预览模式（不允许编辑）
@@ -92,7 +100,7 @@ const useAddOrEdit = executionDetail => {
      * 分类更新逻辑
      *  新增：
      *      * 如果是在服务端请求到的已存在的分类，则传递当前分类id 和名称
-            *  * 如果是在页面上新增的分类，则只传递名称
+     *  * 如果是在页面上新增的分类，则只传递名称
      *  删除：
      *      * 某条记录之前选中的记录，如果删除了，需要把当前删除的分类 status 置为 -1 （正常为 0）
      */
@@ -120,14 +128,31 @@ const useAddOrEdit = executionDetail => {
         });
     }, [editing, goBack, isExecuting]);
 
-    const {
-        categories,
-        categoryMap,
-        handleSubmitAddCategory,
-        addCategoryVisible,
-        setAddCategoryVisible,
-        fetchCategory,
-    } = useCategory(addCategoryCallback);
+    // 新增分类不进行入库操作，只在前端做暂存
+    const handleSubmitAddCategory = useCallback(({name}) => {
+        if (categoryMap[name]) {
+            message.error(ERROR_MSG.CATEGORY_ALREADY_EXIST);
+            return false;
+        }
+
+        const id = Date.now();
+        const newCategory = {
+            name,
+            id,
+        };
+        updateCategory({
+            categories: {
+                list: [newCategory, ...categories],
+                map: {
+                    ...categoryMap,
+                    [name]: newCategory,
+                },
+            },
+        });
+        message.success('添加成功');
+        addCategoryCallback({name, id});
+        return true;
+    }, [categoryMap, updateCategory, categories, addCategoryCallback]);
 
     const handleChangeVariable = useCallback(variables => {
         setFormikValues({
@@ -292,7 +317,7 @@ const useAddOrEdit = executionDetail => {
 
             const {EXECUTE_SCRIPT, MANUAL_CONFIRM, FILE_DISTRIBUTION} = STEP_TYPES;
 
-            const commonParams =  pickBy(property => !isNil(property), {
+            const commonParams = pickBy(property => !isNil(property), {
                 id,
                 type,
                 name,
@@ -460,7 +485,7 @@ const useAddOrEdit = executionDetail => {
     }, [formikValues]);
 
     // 更新步骤
-    const handleChangeStep =  useCallback((e, stepEditingValue) => {
+    const handleChangeStep = useCallback((e, stepEditingValue) => {
         const key = Date.now();
         const tempValue = {
             ...e,
@@ -474,7 +499,7 @@ const useAddOrEdit = executionDetail => {
         }
     }, [formikValues.stageList.length, handleAddStep, handleEditStep]);
 
-    const handleRemoveStageList =  useCallback((e, stage) => {
+    const handleRemoveStageList = useCallback((e, stage) => {
         e.stopPropagation();
         const {stageList} = formikValues;
         const {index} = stage;
@@ -502,282 +527,6 @@ const useAddOrEdit = executionDetail => {
         setAddStepDrawerVisible(true);
     }, []);
 
-    const deConvertedTargetResourceList = useCallback(list => {
-        return list.map(item => {
-            const {
-                // id,
-                // stageId,
-                targetUuid,
-                targetResourceName,
-                // groupName,
-                // groupType,
-                // tenant,
-                // userId,
-                // updateTime,
-                // status,
-            } = item;
-            return {
-                ...item,
-                uuid: targetUuid,
-                value: targetUuid,
-                key: targetUuid,
-                name: targetResourceName,
-                title: targetResourceName,
-            };
-        });
-    }, []);
-
-    const deConvertedStorageFileList = useCallback(list => {
-        return list.map((item, index) => {
-            const {
-            //     id,
-            //     stageId,
-            //     fileSource,
-            //     sourceUuid,
-                sourceResourceName = DEFAULT_STRING_VALUE,
-                sourcePath = DEFAULT_STRING_VALUE,
-            //     fileName,
-            //     storageFilePath,
-            //     storageFileUrl,
-            //     storageId,
-            //     fileMd5,
-            //     fileSize,
-            //     userId,
-            //     createTime,
-            //     updateTime,
-            //     groupName,
-            //     groupType,
-            //     tenant,
-            //     status,
-            } = item;
-            return {
-                ...item,
-                // id,
-                key: index,
-                sourcePath,
-                // fileSource,
-                sourceResourceName,
-            };
-        });
-    }, []);
-
-    const deConvertedStageFileBean = useCallback(tempObj => {
-        const {
-            // transmissionMode,
-            // timeoutValue,
-            // uploadLimit,
-            // downloadLimit,
-            // targetPath,
-        } = tempObj;
-
-        return tempObj;
-    }, []);
-
-    const deConvertedStageListStatus = useCallback(status => {
-        return UPDATE_FILE_STATUS.get(status).label;
-    }, []);
-
-    const deConvertStageList = useCallback(list => {
-        // type,
-        // name,
-        // runningEnvironment,
-        // scriptOrigin,
-        // chooseScript,
-        // scriptContents,
-        // targetResourceList,
-        // scriptLanguage,
-        // scriptParams,
-        // timeoutValue,
-        // uploadLimitDisabled,
-        // uploadLimit,
-        // downloadLimitDisabled,
-        // downloadLimit,
-        const {EXECUTE_SCRIPT, MANUAL_CONFIRM, FILE_DISTRIBUTION} = STEP_TYPES;
-
-        return list.map(item => {
-            const {
-                id,
-                name,
-                type,
-                sortIndex,
-                openStatus,
-                stageFileBean,
-                stageConfirmBean,
-                status,
-                stageScriptBean,
-                storageFileList,
-                targetResourceList,
-                describes = '',
-            } = item;
-
-            const convertedStorageFileList = deConvertedStorageFileList(storageFileList);
-
-            const convertedTargetResourceList = deConvertedTargetResourceList(targetResourceList);
-
-            const commonParams = {
-                id,
-                type,
-                name,
-                describes,
-                index: sortIndex - 1,
-                openStatus,
-                // index: sortIndex,
-            };
-
-            switch (type) {
-                case EXECUTE_SCRIPT.value:
-                    const {
-                        scriptId,
-                        scriptType,
-                        scriptLanguage,
-                        scriptContents,
-                        scriptParams,
-                        timeoutValue,
-                        runtimeEnv,
-                    } = stageScriptBean;
-                    return {
-                        ...commonParams,
-                        runningEnvironment: runtimeEnv,
-                        scriptOrigin: scriptType,
-                        scriptContents,
-                        scriptParams,
-                        scriptLanguage,
-                        timeoutValue,
-                        scriptType,
-                        chooseScript: scriptId,
-                        targetResourceList: convertedTargetResourceList,
-                    };
-                case MANUAL_CONFIRM.value:
-                {
-                    const {
-                        timeoutValue,
-                        informUserId,
-                        informWay,
-                        describes,
-                    } = stageConfirmBean;
-                    return {
-                        ...commonParams,
-                        describes,
-                        informUserId: informUserId?.split(SPLIT_SYMBOL),
-                        informWay: informWay?.split(SPLIT_SYMBOL).map(item => Number(item)),
-                        timeoutValue,
-                        status: deConvertedStageListStatus(status),
-                    };
-                }
-                case FILE_DISTRIBUTION.value:
-                {
-                    const convertedStageFileBean = deConvertedStageFileBean(stageFileBean);
-
-                    const {
-                        transmissionMode,
-                        timeoutValue,
-                        uploadLimit,
-                        downloadLimit,
-                        targetPath,
-                    } = convertedStageFileBean;
-                    return {
-                        ...commonParams,
-                        transmissionMode,
-                        timeoutValue,
-                        uploadLimitDisabled: !uploadLimit,
-                        downloadLimitDisabled: !downloadLimit,
-                        uploadLimit,
-                        downloadLimit,
-                        targetPath,
-                        storageFileList: convertedStorageFileList,
-                        targetResourceList: convertedTargetResourceList,
-                    };
-                }
-            }
-        });
-    }, [
-        deConvertedStageFileBean,
-        deConvertedStageListStatus,
-        deConvertedStorageFileList,
-        deConvertedTargetResourceList,
-    ]);
-
-    // 作业分类列表
-    const deConvertedGroupRelList = useCallback(list => {
-        return list.map(item => {
-            const {
-                // id,
-                workGroup: {
-                    id,
-                    // name
-                }} = item;
-            return id;
-        });
-    }, []);
-
-    const deConvertWorkVariateList = useCallback(list => {
-        // type
-        // name
-        // value
-        // describes
-        // exeChange
-        // exeRequired
-        // index
-        const tempMap = {};
-        const tempList = list.map((item, index) => {
-            const {
-            //     id,
-                name,
-            //     value,
-            //     type,
-            //     exeChange,
-            //     exeRequired,
-            //     describes,
-            //     status,
-            } = item;
-            const tempItem = {
-                ...item,
-                index,
-            };
-            tempMap[name] = tempItem;
-            return tempItem;
-        });
-
-        setGlobalsVariables(tempList);
-
-        setVariableMap(tempMap);
-        return tempList;
-    }, [setGlobalsVariables, setVariableMap]);
-
-    const deConvertWorkPlan = useCallback(workPlan => {
-        const {
-            id,
-            name,
-            describes,
-            // useTemp,
-            // typeNames,
-            // status,
-            groupRelList,
-            workVariateList,
-        } = workPlan;
-        const convertedGroupRelList = deConvertedGroupRelList(groupRelList);
-        const convertedWorkVariateList = deConvertWorkVariateList(workVariateList);
-
-        return {
-            name,
-            id,
-            noahDescribes: describes,
-            category: convertedGroupRelList,
-            // status
-            variable: convertedWorkVariateList,
-        };
-    }, [deConvertWorkVariateList, deConvertedGroupRelList]);
-
-    const deConvertParams = useCallback(data => {
-        const {stageList, workPlan} = data;
-        const convertedStageList = deConvertStageList(stageList);
-        const convertedWorkPlan = deConvertWorkPlan(workPlan);
-        return {
-            ...convertedWorkPlan,
-            stageList: convertedStageList,
-        };
-    }, [deConvertStageList, deConvertWorkPlan]);
-
     const handleSourceCategoryMap = useCallback(data => {
         const tempMap = {};
         if (data) {
@@ -796,25 +545,8 @@ const useAddOrEdit = executionDetail => {
 
     const getNoahDetail = useCallback(async () => {
         const {detailId} = params;
-        const res = await request({
-            url: `${COMMON_URL_PREFIX}${URLS.ADD_NOAH_WORK_PLAN}${detailId}`,
-        });
-        const {code, data} = res;
-        if (code === REQUEST_CODE.SUCCESS) {
-            const convertedValues = deConvertParams(data);
-            setFormikValues(convertedValues);
-            // 查看模式赋值(不允许修改)
-            if (isViewing) {
-                const currentStage = convertedValues?.stageList?.filter(item => item.id === stageId)[0];
-                setStepEditingValue(currentStage);
-            }
-            setDetailFromServer({
-                sourceData: data,
-                formattedFromFront: convertedValues,
-                sourceCategoryMap: handleSourceCategoryMap(data),
-            });
-        }
-    }, [deConvertParams, handleSourceCategoryMap, isViewing, params, stageId]);
+        await getNoahWorkPlanDetail(detailId);
+    }, [getNoahWorkPlanDetail, params]);
 
     // 执行相关
     const handleExecute = useCallback(async () => {
@@ -831,7 +563,31 @@ const useAddOrEdit = executionDetail => {
     }, [navigate, params]);
 
     useEffect(() => {
-        fetchCategory();
+        if (noahDetail) {
+            const {
+                tempList,
+                tempMap,
+                tempParams,
+            } = deConvertParams(noahDetail);
+            setGlobalsVariables(tempList);
+            setVariableMap(tempMap);
+            setFormikValues(tempParams);
+            // 查看模式赋值(不允许修改)
+            if (isViewing) {
+                const currentStage = tempParams?.stageList?.filter(item => item.id === stageId)[0];
+                setStepEditingValue(currentStage);
+            }
+            setDetailFromServer({
+                sourceData: noahDetail,
+                formattedFromFront: tempParams,
+                sourceCategoryMap: handleSourceCategoryMap(noahDetail),
+            });
+        }
+    }, [noahDetail]);
+
+    // initial
+    useEffect(() => {
+        getCategoryList();
     }, []);
 
     // 获取编辑详情
@@ -887,6 +643,3 @@ const useAddOrEdit = executionDetail => {
 };
 
 export default useAddOrEdit;
-
-
-
