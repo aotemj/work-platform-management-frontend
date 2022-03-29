@@ -206,23 +206,24 @@ const TargetServer = ({
         setTreeData([]);
         let tempAgents;
         let tempLabels;
-        if (IS_PROD) {
-            setLoading(true);
-            const [agentRes, labelRes] = await Promise.all([fetchAgents(), fetchLabels()]);
-            const {status: agentStatus, entities: {agents = []}} = agentRes;
-            setLoading(false);
-
-            const {status: labelStatus, list: labels} = labelRes;
-
-            if (!agentStatus && !labelStatus) {
-                tempAgents = agents;
-                tempLabels = labels;
-
-            }
-        } else {
+        // TODO 正式上线后逻辑改为正常模式
+        // if (IS_PROD) {
+        //     setLoading(true);
+        //     const [agentRes, labelRes] = await Promise.all([fetchAgents(), fetchLabels()]);
+        //     const {status: agentStatus, entities: {agents = []}} = agentRes;
+        //     setLoading(false);
+        //
+        //     const {status: labelStatus, list: labels} = labelRes;
+        //
+        //     if (!agentStatus && !labelStatus) {
+        //         tempAgents = agents;
+        //         tempLabels = labels;
+        //
+        //     }
+        // } else {
             tempAgents = agents;
             tempLabels = labels;
-        }
+        // }
         const {labelMap, tempLabels: treeData, agentMap, agentMapByUuid} = formatData(tempAgents, tempLabels, type);
         setTreeData(treeData.filter(item => item));
         setAgentMap(agentMap);

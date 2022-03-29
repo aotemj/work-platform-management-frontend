@@ -144,18 +144,19 @@ const useAddNoahStep = ({onClose, handleChangeStep, stepEditingValue, setStepEdi
 
     const getScriptsFromPipe = useCallback(async () => {
         let scriptList = [];
-        if (IS_PROD) {
-            scriptList = await request({
-                url: `${COMMON_URL_PREFIX}${GLOBAL_URLS.GET_SCRIPTS}`,
-                params: {
-                    _offset: 0,
-                    _limit: 10,
-                    keyword: '',
-                },
-            });
-        } else {
+        // TODO 生产环境动态化
+        // if (IS_PROD) {
+        //     scriptList = await request({
+        //         url: `${COMMON_URL_PREFIX}${GLOBAL_URLS.GET_SCRIPTS}`,
+        //         params: {
+        //             _offset: 0,
+        //             _limit: 10,
+        //             keyword: '',
+        //         },
+        //     });
+        // } else {
             scriptList = TEMP_SCRIPTS;
-        }
+        // }
 
         setScripts(scriptList);
         const tempMap = {};

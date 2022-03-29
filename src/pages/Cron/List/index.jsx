@@ -125,7 +125,7 @@ const CronList = () => {
                 <Table {...tableProps} />
             </Spin>
             {/* 新增、 编辑 cron */}
-            <AddOrEditCron {...addOrEditCron} />
+            {/* <AddOrEditCron {...addOrEditCron} /> */}
         </div>
     );
 };

@@ -22,13 +22,14 @@ import {URLS} from '../pages/Exec/List/constant';
 // 获取用户信息
 function* getUsersFromOne() {
     let finalUsers = [];
-    if (IS_PROD) {
-        finalUsers = yield request({
-            url: `${ONE_URL_PREFIX}${GLOBAL_URLS.GET_USERS}`,
-        });
-    } else {
+    // TODO 生产环境动态化
+    // if (IS_PROD) {
+    //     finalUsers = yield request({
+    //         url: `${ONE_URL_PREFIX}${GLOBAL_URLS.GET_USERS}`,
+    //     });
+    // } else {
         finalUsers = users;
-    }
+    // }
 
     const usersMap = new Map();
 
