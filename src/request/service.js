@@ -8,10 +8,10 @@ const service = axios.create({
 service.interceptors.request.use(
     config => {
         // TODO 临时数据，发版需要去掉
-        // config.headers['HEADER-USERINFO'] = 'eyJ1U05DcmVhdGVkIjoiMSIsInNBTUFjY291bnROYW1lIjoiemhhbmdzYW4ifQ==';
-        // config.headers['Company-Uuid'] = 'osc';
-        // config.headers['Group-Name'] = 'osc';
-        // config.headers['Group-Type'] = 1;
+        config.headers['HEADER-USERINFO'] = 'eyJ1U05DcmVhdGVkIjoiMSIsInNBTUFjY291bnROYW1lIjoiemhhbmdzYW4ifQ==';
+        config.headers['Company-Uuid'] = 'osc';
+        config.headers['Group-Name'] = 'osc';
+        config.headers['Group-Type'] = 1;
         return config;
     },
     error => {
