@@ -109,7 +109,7 @@ const StepCard = props => {
                                         type={'link'}
                                         disabled={operation?.disabled}
                                         key={operation.label}
-                                        onClick={operation.execution}
+                                        onClick={() => operation.execution(executionDetail)}
                                     >{operation.label}
                                     </Button>
                                 );

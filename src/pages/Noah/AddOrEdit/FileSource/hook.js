@@ -68,7 +68,7 @@ const useFileSource = ({
 
     const handleChangeServerFileSourceResource = useCallback((agents, agentMapByUuid, key) => {
         let tempFileMap = clone(fileMap);
-        tempFileMap[key].sourceResourceName = agents?.[0]?.uuid;
+        tempFileMap[key].sourceResourceName = agents?.[0]?.name;
         setFileMap(tempFileMap);
         setNeedUpdateFileMap(true);
     }, [fileMap]);

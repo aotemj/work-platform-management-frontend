@@ -1,4 +1,4 @@
-import {DEFAULT_STRING_VALUE, SPLIT_SYMBOL, STEP_TYPES} from '../constant';
+import {DEFAULT_STRING_VALUE, MAGE_BYTE_SCALE, MINUTE_STEP, SPLIT_SYMBOL, STEP_TYPES} from '../constant';
 import {UPDATE_FILE_STATUS} from '../pages/Noah/AddOrEdit/constants';
 
 // about convert
@@ -17,6 +17,15 @@ export const deConvertedTargetResourceList = list => {
             title: targetResourceName,
         };
     });
+};
+// second -> hour
+const deConvertTimeoutValue = timeoutValue => {
+    return timeoutValue / Math.pow(MINUTE_STEP, 2);
+};
+
+// Kb -> Mb
+const deConvertFileSize = size => {
+    return size / MAGE_BYTE_SCALE;
 };
 
 const deConvertedStorageFileList = list => {
@@ -112,9 +121,10 @@ const deConvertStageList = list => {
                     scriptLanguage,
                     scriptContents,
                     scriptParams,
-                    timeoutValue,
+                    timeoutValue: originalTimeoutValue,
                     runtimeEnv,
                 } = stageScriptBean;
+                const timeoutValue = deConvertTimeoutValue(originalTimeoutValue);
                 return {
                     ...commonParams,
                     runningEnvironment: runtimeEnv,
@@ -158,8 +168,8 @@ const deConvertStageList = list => {
                     timeoutValue,
                     uploadLimitDisabled: !uploadLimit,
                     downloadLimitDisabled: !downloadLimit,
-                    uploadLimit,
-                    downloadLimit,
+                    uploadLimit: deConvertFileSize(uploadLimit),
+                    downloadLimit: deConvertFileSize(downloadLimit),
                     targetPath,
                     storageFileList: convertedStorageFileList,
                     targetResourceList: convertedTargetResourceList,

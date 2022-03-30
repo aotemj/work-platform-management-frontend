@@ -95,8 +95,9 @@ const updateCategoryMap = list => {
     const length = list.length;
     const map = {};
     for (let i = 0; i < length; i++) {
-        const {name = ''} = list[i];
+        const {name = '', id} = list[i];
         map[name] = list[i];
+        map[id] = list[i];
     }
     return map;
 };

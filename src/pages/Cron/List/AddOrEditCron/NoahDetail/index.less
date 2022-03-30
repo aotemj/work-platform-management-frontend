@@ -4,11 +4,14 @@
 
     > .item {
         .flex-justify-content-space-between;
-        height: 80px;
-        line-height: 80px;
+        align-items: center;
+        min-height: 80px;
+        background-color: #E9EAEC;
 
         > .label {
             width: 88px;
+            min-height: 80px;
+            line-height: 80px;
             background: #E9EAEC;
             font-size: 14px;
             font-weight: 400;
@@ -17,10 +20,35 @@
         }
 
         > .content {
+            .flex-align-item-center;
             flex: 1;
+            min-height: 80px;
             box-sizing: border-box;
             padding: 0 8px;
             background-color: #F4F4F5;
+
+            .variable-container {
+                //margin-bottom: 16px;
+                display: flex;
+                flex-wrap: wrap;
+            }
+
+            .step-container {
+                width: 100%;
+
+                > .step-item-container {
+                    display: flex;
+                    align-items: center;
+
+                    > .index {
+                        padding: 0 4px;
+                        box-sizing: border-box;
+                        border: 1px solid #d4d6d9;
+                        border-radius: 3px;
+                        margin-right: 8px;
+                    }
+                }
+            }
         }
     }
 }

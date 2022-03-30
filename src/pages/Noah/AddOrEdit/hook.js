@@ -1,5 +1,5 @@
 import {useNavigate, useParams} from 'react-router-dom';
-import {useCallback, useEffect, useMemo, useState} from 'react';
+import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {message, Modal} from '@osui/ui';
 import {clone, isNil, omit, pickBy, prop} from 'ramda';
 
@@ -16,6 +16,8 @@ import {
     STEP_TYPES,
     SYMBOL_FOR_ALL,
     COMMON_URL_PREFIX,
+    MINUTE_STEP,
+    MAGE_BYTE_SCALE,
 } from '../../../constant';
 import {routes} from '../../../routes';
 import {deConvertParams} from '../../../utils/convertNoahDetail';
@@ -42,12 +44,14 @@ const useAddOrEdit = ({
     categoryMap,
     getCategoryList,
     updateCategory,
+    updateNoahDetail,
 }) => {
     const params = useParams();
     const navigate = useNavigate();
     const urlParams = new URL(window.location.href);
     const {pathname} = urlParams;
     const [addCategoryVisible, setAddCategoryVisible] = useState(false);
+    let formRef = useRef();
 
     const stageId = useMemo(() => {
         return executionDetail
@@ -67,7 +71,7 @@ const useAddOrEdit = ({
     }, [params, pathname]);
 
     // 编辑
-    const editing = useMemo(() => !isExecuting && !isViewing && !!prop('stepId', params),
+    const editing = useMemo(() => !isExecuting && !isViewing && !!prop('detailId', params),
         [isExecuting, isViewing, params]);
 
     const [formikValues, setFormikValues] = useState(defaultFormikValues);
@@ -113,6 +117,8 @@ const useAddOrEdit = ({
     }, [setFormikValues, formikValues]);
 
     const reset = () => {
+        setFormikValues(defaultFormikValues);
+        setStepEditingValue(null);
     };
 
     const goBack = useCallback(() => {
@@ -121,6 +127,7 @@ const useAddOrEdit = ({
     }, [navigate]);
 
     const goBackWithConfirm = useCallback(() => {
+        reset();
         Modal.confirm({
             title: `确定要取消${isExecuting ? '执行' : (editing ? '编辑' : '添加')}作业吗？`,
             getContainer: getContainerDOM,
@@ -259,6 +266,15 @@ const useAddOrEdit = ({
         return status;
     }, []);
 
+    const convertTimeoutValue = useCallback(timeoutValue => {
+        return timeoutValue * Math.pow(MINUTE_STEP, 2);
+    }, []);
+
+    // Mb -> Kb
+    const convertFileSize = useCallback(size => {
+        return size * MAGE_BYTE_SCALE;
+    }, []);
+
     const convertStageList = useCallback(stageList => {
         return stageList.map((item, index) => {
             // runtimeEnv	运行环境 1：主机运行，2：容器运行		false   // integer
@@ -267,7 +283,7 @@ const useAddOrEdit = ({
             // scriptLanguage	脚本语言：Groovy、Python、Linux Bash		false   // string
             // scriptParams	脚本参数,多个参数英文逗号分隔		false   // string
             // scriptType	脚本类型 1：脚本引用；2：手动录入		false   // integer
-            // timeoutValue	超时时长(单位秒)		false   // integer
+            // timeoutValue	超时时长(单位秒)		false   // integer 这里需要注意，前端的展示代为为小时，这里需要转换一下时间
             const {
                 id = null,
                 status,
@@ -276,6 +292,7 @@ const useAddOrEdit = ({
                 scriptContents,
                 scriptParams,
                 scriptLanguage,
+                // 超时时间
                 timeoutValue,
                 scriptOrigin: scriptType,
                 // 脚本管理平台ID
@@ -325,6 +342,7 @@ const useAddOrEdit = ({
                 status: convertedStageListStatus(status),
             });
 
+
             switch (type) {
                 case EXECUTE_SCRIPT.value:
                     return {
@@ -351,7 +369,7 @@ const useAddOrEdit = ({
                             describes,
                             informUserId: informUserId.join(SPLIT_SYMBOL),
                             informWay: informWay.join(SPLIT_SYMBOL),
-                            timeoutValue,
+                            timeoutValue: convertTimeoutValue(timeoutValue),
                         },
                     };
                 case FILE_DISTRIBUTION.value:
@@ -363,9 +381,9 @@ const useAddOrEdit = ({
                         ...commonParams,
                         stageFileBean: {
                             targetPath,
-                            downloadLimit,
+                            downloadLimit: convertFileSize(downloadLimit),
                             timeoutValue,
-                            uploadLimit,
+                            uploadLimit: convertFileSize(uploadLimit),
                             transmissionMode,
                         },
                         storageFileList: tempStorageFileList,
@@ -588,6 +606,9 @@ const useAddOrEdit = ({
     // initial
     useEffect(() => {
         getCategoryList();
+        return () => {
+            updateNoahDetail(null);
+        };
     }, []);
 
     // 获取编辑详情
@@ -611,6 +632,8 @@ const useAddOrEdit = ({
         handleRemoveStageList,
         editing,
         isExecuting,
+        formRef,
+
 
         // about category
         handleAddCategory,

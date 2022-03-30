@@ -14,7 +14,7 @@ import {MAX_DISPLAY_LENGTH, SPLIT_SYMBOL} from '../../../constant';
 const title = '作业管理';
 
 const NoahList = props => {
-    const {getUsersFromOne, users, getNoahList, noahList, noahTotal} = props;
+    const {getNoahList, noahList, noahTotal} = props;
     const {
         data,
         handlePaginationChange,
@@ -35,7 +35,7 @@ const NoahList = props => {
         // onNoahSelectClear,
         addNoah,
         setNoahType,
-    } = useNoahList({getUsersFromOne, getNoahList, noahList, noahTotal});
+    } = useNoahList({getNoahList, noahList, noahTotal});
 
     const tableOperations = [
         {
@@ -95,10 +95,7 @@ const NoahList = props => {
         {
             title: '创建人',
             align: 'center',
-            dataIndex: 'userId',
-            render(text) {
-                return users.map.get(`${text}`)?.enterpriseCard;
-            },
+            dataIndex: 'userName',
         },
         {
             title: '创建时间',

@@ -1,6 +1,13 @@
 import {ROUTE_PREFIX} from './constant';
 import {getCompanyId, getSpaceId} from './getRouteIds';
-import {CONTAINER_DOM_ID, DEFAULT_STRING_VALUE, MILLI_SECOND_STEP, PROJECT_ROUTE} from '../constant';
+import {
+    CONTAINER_DOM_ID,
+    DEFAULT_STRING_VALUE,
+    HOUR_STEP, MAGE_BYTE_SCALE,
+    MILLI_SECOND_STEP,
+    MINUTE_STEP,
+    PROJECT_ROUTE,
+} from '../constant';
 
 const formatWidthEero = (origin, maxLength, fillString) => {
     return String(origin).padStart(maxLength, fillString);
@@ -27,8 +34,7 @@ export const formatTimeStamp = (timestamp, dateSymbol = '-', timeSymbol = ':') =
  * @returns {{hourTime: number, secondTime: number, minuteTime: number, dayTime: number}}
  */
 export const getDateTime = dateTimeStamp => {
-    const HOUR_STEP = 24;
-    const MINUTE_STEP = 60;
+
     const parseIntForDecimal = str => parseInt(str, 10);
     // 获取总秒数
     let secondTime = parseIntForDecimal(dateTimeStamp / MILLI_SECOND_STEP);
@@ -98,17 +104,18 @@ export function getUrlPrefixReal() {
  * @param fileSize 单位 byte
  */
 export function convertFileSize(fileSize) {
-    const Symbol = 1024;
     let size = 0;
     let symbol = 'byte';
-    if (fileSize < Math.pow(Symbol, 2)) {
-        size = fileSize / Symbol;
+    const doubleUnit = Math.pow(MAGE_BYTE_SCALE, 2);
+    const treblingUnit = Math.pow(MAGE_BYTE_SCALE, 3);
+    if (fileSize < doubleUnit) {
+        size = fileSize / MAGE_BYTE_SCALE;
         symbol = 'Kb';
-    } else if (fileSize <= Math.pow(Symbol, 3)) {
-        size = fileSize / Math.pow(Symbol, 2);
+    } else if (fileSize <= treblingUnit) {
+        size = fileSize / doubleUnit;
         symbol = 'Mb';
     } else {
-        size = fileSize / Math.pow(Symbol, 3);
+        size = fileSize / treblingUnit;
         symbol = 'Gb';
     }
     return `${size.toFixed(2)}${symbol}`;

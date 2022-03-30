@@ -4,7 +4,8 @@ import {ReactComponent as CloseCircle} from '../../../statics/icons/closecircle.
 import {ReactComponent as CheckCircle} from '../../../statics/icons/checkcircle.svg';// 初始化、执行成功
 import {ReactComponent as Suspend} from '../../../statics/icons/suspend.svg';// 执行暂停
 import {ReactComponent as NotStarted} from '../../../statics/icons/notstarted.svg';// 待确认
-import {ReactComponent as Warning} from '../../../statics/icons/warning-Circle-Fill.svg';// 忽略错误
+import {ReactComponent as Warning} from '../../../statics/icons/warning-Circle-Fill.svg';
+// 忽略错误
 
 export const URLS = {
     // 获取分类
@@ -19,6 +20,8 @@ export const URLS = {
     ENTIRELY_RE_EXECUTE: '/rest/v1/execute/retry/stage-trigger/',
     // 作业步骤人工确认结果
     CONFIRM_MANUAL_RESULT: '/rest/v1/execute/stage-confirm',
+    // 分页获取执行列表
+    EXEC_LIST_URL: '/rest/v1/execute/infos',
 };
 
 // 执行状态 1：待执行；2：执行中；3：执行失败；4：执行成功；5：执行暂停；

@@ -58,7 +58,8 @@ const ExecList = props => {
         },
         {
             title: '任务状态',
-            dataIndex: 'status',
+            dataIndex: 'runStatus',
+            align: 'center',
             render(status) {
                 return <StatusTag status={status} />;
             },

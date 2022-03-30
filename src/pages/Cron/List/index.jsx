@@ -10,6 +10,7 @@ import OperationBar from './OperationBar';
 import StatusTag from '../../../components/StatusTag';
 import {omit} from 'ramda';
 import AddOrEditCron from './AddOrEditCron/index';
+import {STRATEGIES_TYPES} from '../constant';
 
 const title = '定时任务';
 
@@ -48,8 +49,11 @@ const CronList = () => {
             dataIndex: 'name',
         },
         {
-            title: '执行策略',
-            dataIndex: 'userName',
+            title: '策略类型',
+            dataIndex: 'exePolicy',
+            render: val => {
+                return STRATEGIES_TYPES.get(val);
+            },
         },
         {
             title: '更新人',
@@ -125,7 +129,7 @@ const CronList = () => {
                 <Table {...tableProps} />
             </Spin>
             {/* 新增、 编辑 cron */}
-            {/* <AddOrEditCron {...addOrEditCron} /> */}
+            <AddOrEditCron {...addOrEditCron} />
         </div>
     );
 };

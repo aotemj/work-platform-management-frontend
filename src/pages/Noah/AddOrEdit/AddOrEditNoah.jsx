@@ -46,6 +46,7 @@ const AddOrEditNoah = props => {
         categories: {list: categories, map: categoryMap},
         getCategoryList,
         updateCategory,
+        updateNoahDetail,
     } = props;
     const {
         goBack,
@@ -59,6 +60,7 @@ const AddOrEditNoah = props => {
         editing,
         isExecuting,
         handleRemoveStageList,
+        formRef,
 
         // category
         addCategoryVisible,
@@ -92,6 +94,7 @@ const AddOrEditNoah = props => {
         categoryMap,
         getCategoryList,
         updateCategory,
+        updateNoahDetail,
     });
 
     const defaultField = {
@@ -299,6 +302,9 @@ const AddOrEditNoah = props => {
         setDisabled,
         formFields,
         handleCancel: handleCancelOperate,
+        transformRef: form => {
+            formRef.current = form;
+        },
     };
 
     if (isExecuting) {

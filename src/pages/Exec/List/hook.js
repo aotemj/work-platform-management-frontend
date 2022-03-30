@@ -4,7 +4,6 @@ import {reject, anyPass, isEmpty, isNil} from 'ramda';
 
 import {debounce} from '../../../utils';
 import {request} from '../../../request/fetch';
-import {EXEC_LIST_URL} from '../../../utils/api';
 import {
     DEFAULT_PAGINATION,
     MILLI_SECOND_STEP,
@@ -42,7 +41,7 @@ const useExecList = getExecutionDetail => {
         setLoading(true);
         try {
             const res = await request({
-                url: EXEC_LIST_URL,
+                url: `${COMMON_URL_PREFIX}${URLS.EXEC_LIST_URL}`,
                 params: params,
             });
             const {status, data, msg} = res;

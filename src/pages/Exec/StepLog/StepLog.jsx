@@ -13,7 +13,7 @@ import useAddOrEdit from '../../Noah/AddOrEdit/hook';
 import useStepLog from './hook';
 
 const ExecLog = props => {
-    const {executionDetail, getExecutionDetail, users, getNoahWorkPlanDetail, noahDetail} = props;
+    const {executionDetail, getExecutionDetail, users, getNoahWorkPlanDetail, noahDetail, getCategoryList} = props;
 
     const {Paragraph} = Typography;
 
@@ -24,7 +24,12 @@ const ExecLog = props => {
         handleChangeStep,
         stepEditingValue,
         setStepEditingValue,
-    } = useAddOrEdit({getNoahWorkPlanDetail, noahDetail, executionDetail});
+    } = useAddOrEdit({
+        getNoahWorkPlanDetail,
+        noahDetail,
+        executionDetail,
+        getCategoryList,
+    });
 
     const {
         dataSource,

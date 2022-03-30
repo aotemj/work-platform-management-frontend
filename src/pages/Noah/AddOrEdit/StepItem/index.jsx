@@ -29,8 +29,7 @@ const StepItem = props => {
     };
 
     // 切换启停
-    const handleChangeExecution = throttle()(async e => {
-        // TODO 至少保留一个步骤的状态为开启
+    const handleChangeExecution = throttle(500)(async e => {
         // openStatus	开关状态 0：关；1：开	query	true    integer(int32)
         // stageId	作业步骤ID	query	true    integer(int32)
         const {OPEN, CLOSE} = EXECUTING_STATUS;

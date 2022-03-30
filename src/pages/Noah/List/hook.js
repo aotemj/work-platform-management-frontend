@@ -9,7 +9,7 @@ import {DEFAULT_PAGINATION, REQUEST_CODE, REQUEST_METHODS, SPLIT_SYMBOL, COMMON_
 import {routes} from '../../../routes';
 import {request} from '../../../request/fetch';
 
-const useNoahList = ({getUsersFromOne, getNoahList, noahList: list, noahTotal: total}) => {
+const useNoahList = ({getNoahList, noahList: list, noahTotal: total}) => {
   const navigate = useNavigate();
   const [data, setData] = useState({DEFAULT_PAGINATION, list, total});
   // 方案名过滤
@@ -244,7 +244,6 @@ const useNoahList = ({getUsersFromOne, getNoahList, noahList: list, noahTotal: t
   // initialize
   useEffect(() => {
     getNoahTypes();
-    getUsersFromOne();
   }, []);
 
   return {

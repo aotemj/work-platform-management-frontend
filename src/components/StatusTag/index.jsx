@@ -22,18 +22,18 @@ const statuses = [{
 }, {
     index: 3,
     label: '成功',
-    color: '#E2FFEE',
-    bgColor: '#00875A',
+    color: '#00875A',
+    bgColor: '#E2FFEE',
 }, {
     index: 4,
-    label: '其他',
-    color: 'red',
-    bgColor: 'cyan',
+    label: '执行暂停',
+    color: '#909AAA',
+    bgColor: '#E9EAEC',
 }];
 
 const StatusTag = ({status}) => {
-    const currentStatus = statuses[status];
-    const {label = '其他', color, bgColor: backgroundColor} = currentStatus;
+    const currentStatus = statuses[status - 1];
+    const {label, color, bgColor: backgroundColor} = currentStatus;
     return (
         <span
             className={cx('noah-status-tag')}

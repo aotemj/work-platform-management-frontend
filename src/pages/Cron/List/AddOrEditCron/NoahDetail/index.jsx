@@ -1,28 +1,100 @@
 import {propOr} from 'ramda';
 
 import cx from './index.less';
-import {DEFAULT_STRING_VALUE} from '../../../../../constant';
+import {DEFAULT_STRING_VALUE, DELETE_SYMBOL, SPLIT_SYMBOL} from '../../../../../constant';
+import GlobalVariableItem from '../../../../Noah/AddOrEdit/GlobalVariableItem';
+import StepItem from '../../../../Noah/AddOrEdit/StepItem';
 
-const NoahItem = ({label, content}) => (
+const NoahItem = ({
+    label,
+    content,
+}) => (
     <div className={cx('item')}>
         <div className={cx('label')}>{label}</div>
         <div className={cx('content')}>{content}</div>
     </div>
 );
-const NoahDetail = ({noahDetail}) => {
+const NoahDetail = ({
+    noahDetail,
+    categoryMap,
+}) => {
+    const filterDeleteSymbol = item => item.status !== DELETE_SYMBOL;
+
+    const filterStageList = propOr([], 'stageList', noahDetail).filter(filterDeleteSymbol);
+
     const nameObj = {
-        label: '名称',
+        label: '方案名称',
         content: propOr(DEFAULT_STRING_VALUE, 'name', noahDetail),
     };
 
+    const categoryIds = propOr([], 'category', noahDetail);
+
     const categoryObj = {
         label: '方案分类',
-        content: propOr([], 'category', noahDetail),
+        content: categoryIds.map(id => categoryMap?.[id]?.name).join(SPLIT_SYMBOL),
     };
+    const descriptionObj = {
+        label: '方案描述',
+        content: propOr('', 'noahDescribes', noahDetail),
+    };
+
+    const globalVariablesObj = {
+        label: '全局变量',
+        content: (
+            <div className={cx('variable-container')}>
+                {
+                    propOr([], 'variable', noahDetail).map(variable => (
+                        <GlobalVariableItem
+                            key={variable.name}
+                            disabled
+                            {...variable}
+                        />
+                    ))
+                }
+            </div>
+        ),
+    };
+
+    const noahStepsObj = {
+        label: '作业步骤',
+        content: (
+            <div className={cx('step-container')}>
+                {
+                    filterStageList.map((stage, index) => {
+                        const key = stage?.id || stage?.key;
+                        return (
+                            <div
+                                key={key}
+                                className={cx('step-item-container', 'disabled')}
+                            >
+                                <span className={cx('index')}>{index + 1}</span>
+                                <StepItem
+                                    index={index}
+                                    {...stage}
+                                    editing={false}
+                                    disabled
+                                />
+                            </div>
+                        );
+                    })
+                }
+            </div>
+        ),
+    };
+
+    const contents = [
+        nameObj,
+        categoryObj,
+        descriptionObj,
+        globalVariablesObj,
+        noahStepsObj,
+    ];
 
     return (
         <div className={cx('noah-detail-container')}>
-            <NoahItem {...nameObj} />
+            {
+                contents.map(item => <NoahItem key={item.label} {...item} />)
+            }
         </div>
     );
 };

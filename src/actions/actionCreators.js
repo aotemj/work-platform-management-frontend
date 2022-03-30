@@ -2,7 +2,7 @@ import {
     GET_EXECUTION_DETAIL,
     GET_NOAH_LIST,
     GET_USERS_FROM_ONE,
-    GET_NOAH_DETAIL,
+    UPDATE_NOAH_DETAIL,
     UPDATE_CATEGORY_LIST,
 } from './actionTypes';
 
@@ -22,7 +22,7 @@ export const getNoahList_A = payload => ({
 });
 
 export const getNoahDetail_A = payload => ({
-    type: GET_NOAH_DETAIL,
+    type: UPDATE_NOAH_DETAIL,
     payload,
 });
 

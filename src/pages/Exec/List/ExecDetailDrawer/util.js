@@ -6,7 +6,7 @@ import {REQUEST_CODE, REQUEST_METHODS, COMMON_URL_PREFIX} from '../../../../cons
 import {URLS} from '../constant';
 
 // 全部主机 重试
-export const entirelyRetry = async ({id: id}) => {
+export const entirelyRetry = async ({id}) => {
     const res = await request({
         url: `${COMMON_URL_PREFIX}${URLS.ENTIRELY_RE_EXECUTE}${id}`,
         method: REQUEST_METHODS.POST,

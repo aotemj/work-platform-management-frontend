@@ -3,8 +3,8 @@ import {message} from 'antd';
 import {debounce} from '../../../utils';
 import {reject, anyPass, isEmpty, isNil} from 'ramda';
 import {request} from '../../../request/fetch';
-import {EXEC_LIST_URL} from '../../../utils/api';
-import {DEFAULT_PAGINATION} from '../../../constant';
+import {COMMON_URL_PREFIX, DEFAULT_PAGINATION} from '../../../constant';
+import {URLS} from '../constant';
 
 const useCronList = () => {
     // const navigate = useNavigate();
@@ -27,7 +27,7 @@ const useCronList = () => {
         setLoading(true);
         try {
             const res = await request({
-                url: EXEC_LIST_URL,
+                url: `${COMMON_URL_PREFIX}${URLS.CRON_LIST_URL}`,
                 params: params,
             });
             const {status, data, msg} = res;

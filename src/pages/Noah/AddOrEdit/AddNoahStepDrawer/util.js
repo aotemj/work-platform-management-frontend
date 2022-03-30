@@ -110,25 +110,26 @@ export const getScriptExecuteFields = ({
                 .ensure()
                 .required('请输入脚本内容'),
         },
-        scriptParams: {
-            name: 'scriptParams',
-            label: '脚本参数',
-            MAX_LENGTH: 500,
-            // required: true,
-            hide: !isScriptExecute,
-            children: ({field}) => (
-                <TextArea
-                    {...field}
-                    showCount
-                    disabled={isViewing}
-                    className={cx('noah-textarea')}
-                    autoSize={{minRows: 5}}
-                    maxLength={scriptExecuteFields.scriptParams.MAX_LENGTH}
-                    placeholder="脚本执行时传入参数，同脚本在终端执行时的传参格式，例：./test.sh XXXX"
-                />
-            ),
-            validate: null,
-        },
+        // TODO 暂时隐藏, 需求来自 张超[backend]
+        // scriptParams: {
+        //     name: 'scriptParams',
+        //     label: '脚本参数',
+        //     MAX_LENGTH: 500,
+        //     // required: true,
+        //     hide: !isScriptExecute,
+        //     children: ({field}) => (
+        //         <TextArea
+        //             {...field}
+        //             showCount
+        //             disabled={isViewing}
+        //             className={cx('noah-textarea')}
+        //             autoSize={{minRows: 5}}
+        //             maxLength={scriptExecuteFields.scriptParams.MAX_LENGTH}
+        //             placeholder="脚本执行时传入参数，同脚本在终端执行时的传参格式，例：./test.sh XXXX"
+        //         />
+        //     ),
+        //     validate: null,
+        // },
         timeoutValue: {
             name: 'timeoutValue',
             label: '超时时长（秒）',
@@ -459,7 +460,7 @@ export const getManualConfirmFields = ({
                 <SelectAll
                     className={cx('category-dropdown')}
                     placeholder="请选择通知人员"
-                    maxTagCount={3}
+                    maxTagCount={Math.min(usersFromOne?.list.length, 3)}
                     {...field}
                 >
                     {

@@ -1,6 +1,6 @@
 import {
     GET_EXECUTION_DETAIL,
-    GET_NOAH_DETAIL,
+    UPDATE_NOAH_DETAIL,
     GET_NOAH_LIST,
     GET_USERS_FROM_ONE,
     UPDATE_CATEGORY_LIST,
@@ -45,7 +45,7 @@ export default (state = initialState, action) => {
                 noahList,
                 noahTotal,
             };
-        case GET_NOAH_DETAIL:
+        case UPDATE_NOAH_DETAIL:
             return {
                 ...state,
                 noahDetail: action.payload,
