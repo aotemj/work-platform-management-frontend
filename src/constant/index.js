@@ -53,7 +53,7 @@ export const LevelIconMap = {
 
 export const DEFAULT_STRING_VALUE = '--';
 
-export const COMMON_URL_PREFIX = `${PUBLIC_PATH}/api`;
+export const COMMON_URL_PREFIX = `/api`;
 
 export const ONE_URL_PREFIX = '/one';
 
