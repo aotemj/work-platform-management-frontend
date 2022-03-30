@@ -4,7 +4,7 @@ import {ConfigProvider, message} from '@osui/ui';
 import {useEffect} from 'react';
 import {Provider} from 'react-redux';
 
-import {CONTAINER_DOM_ID, PROJECT_ROUTE} from '../constant';
+import {CONTAINER_DOM_ID, PROJECT_ROUTE, PUBLIC_PATH} from '../constant';
 import {getContainerDOM, getUrlPrefixReal} from '../utils';
 import store from '../store';
 import NoahList from '../pages/Noah/List/index';
@@ -21,10 +21,11 @@ import ExecLog from '../pages/Exec/StepLog';
  * @returns {JSX.Element}
  */
 
+
 const getRoute = ({url, addProjectId = false, component}) => {
     const URL_PREFIX_TEMP = addProjectId ? `/:companyId/:projectId/${PROJECT_ROUTE}` : `/:companyId/${PROJECT_ROUTE}`;
 
-    return <Route key={url} path={`${URL_PREFIX_TEMP}/${url}`} element={component} exact />;
+    return <Route key={url} path={`${PUBLIC_PATH}${URL_PREFIX_TEMP}/${url}`} element={component} exact />;
 };
 
 export const routes = {

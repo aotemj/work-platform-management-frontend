@@ -13,6 +13,9 @@ export const PROJECT_ROUTE = '_settings';
 
 export const ROUTE_PREFIX = `/:companyId/${PROJECT_ROUTE}`;
 
+export const PUBLIC_PATH = IS_PROD ? '/assets/noah' : '';
+
+
 // common pagination
 export const DEFAULT_PAGINATION = {
     list: [],
