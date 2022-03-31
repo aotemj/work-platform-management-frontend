@@ -1,12 +1,16 @@
+import {message} from '@osui/ui';
+
 import {ROUTE_PREFIX} from './constant';
 import {getCompanyId, getSpaceId} from './getRouteIds';
 import {
     CONTAINER_DOM_ID,
     DEFAULT_STRING_VALUE,
-    HOUR_STEP, MAGE_BYTE_SCALE,
+    HOUR_STEP,
+    MAGE_BYTE_SCALE,
     MILLI_SECOND_STEP,
     MINUTE_STEP,
-    PROJECT_ROUTE,
+    PROJECT_ROUTE, PUBLIC_PATH,
+    REQUEST_CODE,
 } from '../constant';
 
 const formatWidthEero = (origin, maxLength, fillString) => {
@@ -96,7 +100,8 @@ export function getURlWithPrefix(prefix, url) {
 export function getUrlPrefixReal() {
     const companyId = getCompanyId();
     const projectId = getSpaceId();
-    return projectId ? `/${companyId}/${projectId}/${PROJECT_ROUTE}` : `/${companyId}/${PROJECT_ROUTE}`;
+    const PREFIX = projectId ? `${PUBLIC_PATH}/${companyId}${projectId}` : `${PUBLIC_PATH}/${companyId}`;
+    return `${PREFIX}${PROJECT_ROUTE}`;
 }
 
 /**
@@ -143,7 +148,17 @@ export function convertConsumeTime(executionDetail) {
     return `${dateStr}${hourStr}${minuteStr}${secondStr}`;
 }
 
-
+export function requestSuccessCallback({
+    res,
+    successMessage = '',
+    callback,
+}) {
+    const {code, msg, data} = res;
+    if (code === REQUEST_CODE.SUCCESS) {
+        message.success(successMessage || msg);
+        callback && callback(data);
+    }
+}
 
 
 
