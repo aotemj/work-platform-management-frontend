@@ -1,20 +1,17 @@
 import React from 'react';
 
-import {ReactComponent as IconSuccess} from '../components/FormField/icons/success.svg';
 import cx from '../components/FormField/index.less';
+import {getCompanyId} from '../utils/getRouteIds';
+import {ReactComponent as IconSuccess} from '../components/FormField/icons/success.svg';
 import {ReactComponent as IconError} from '../components/FormField/icons/error.svg';
 import {ReactComponent as IconInfo} from '../statics/icons/info.svg';
 import {ReactComponent as IconWarning} from '../components/FormField/icons/warning.svg';
-import {getCompanyId} from '../utils/getRouteIds';
 
 export const IS_PROD = process.env.NODE_ENV === 'production';
 
-export const PROJECT_ROUTE = '_settings';
+export const PROJECT_ROUTE = '_noah';
 
-export const ROUTE_PREFIX = `/:companyId/${PROJECT_ROUTE}`;
-
-export const PUBLIC_PATH = IS_PROD ? '/assets/noah' : '';
-
+export const PUBLIC_PATH = '/';
 
 // common pagination
 export const DEFAULT_PAGINATION = {
@@ -53,7 +50,7 @@ export const LevelIconMap = {
 
 export const DEFAULT_STRING_VALUE = '--';
 
-export const COMMON_URL_PREFIX = `/noah/api`;
+export const COMMON_URL_PREFIX = IS_PROD ? '/noah/api' : '/api';
 
 export const ONE_URL_PREFIX = '/one';
 

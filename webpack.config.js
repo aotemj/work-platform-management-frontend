@@ -29,7 +29,7 @@ const outputConfig = isProd =>
             chunkFilename: 'js/[name].[chunkhash].bundle.min.js',
             path: path.resolve(__dirname, distOutputPath),
             publicPath: '/assets/noah/',
-            library: 'dist',
+            library: 'noah',
             libraryTarget: 'window',
         }
         : {

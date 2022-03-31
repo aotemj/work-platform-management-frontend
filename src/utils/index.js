@@ -1,6 +1,5 @@
 import {message} from '@osui/ui';
 
-import {ROUTE_PREFIX} from './constant';
 import {getCompanyId, getSpaceId} from './getRouteIds';
 import {
     CONTAINER_DOM_ID,
@@ -9,7 +8,8 @@ import {
     MAGE_BYTE_SCALE,
     MILLI_SECOND_STEP,
     MINUTE_STEP,
-    PROJECT_ROUTE, PUBLIC_PATH,
+    PROJECT_ROUTE,
+    PUBLIC_PATH,
     REQUEST_CODE,
 } from '../constant';
 
@@ -72,10 +72,6 @@ export const getDateTime = dateTimeStamp => {
     };
 };
 
-export const getRealUrlPrefix = () => {
-    return ROUTE_PREFIX.replace(':companyId', getCompanyId());
-};
-
 export function debounce(fn, delay = MILLI_SECOND_STEP) {
     let timer = null;
     return function (...rest) {
@@ -100,8 +96,8 @@ export function getURlWithPrefix(prefix, url) {
 export function getUrlPrefixReal() {
     const companyId = getCompanyId();
     const projectId = getSpaceId();
-    const PREFIX = projectId ? `${PUBLIC_PATH}/${companyId}${projectId}` : `${PUBLIC_PATH}/${companyId}`;
-    return `${PREFIX}${PROJECT_ROUTE}`;
+    const PREFIX = projectId ? `${PUBLIC_PATH}${companyId}/${projectId}` : `${PUBLIC_PATH}${companyId}`;
+    return `${PREFIX}/${PROJECT_ROUTE}`;
 }
 
 /**
@@ -150,7 +146,7 @@ export function convertConsumeTime(executionDetail) {
 
 export function requestSuccessCallback({
     res,
-    successMessage = '',
+    successMessage = '操作成功',
     callback,
 }) {
     const {code, msg, data} = res;

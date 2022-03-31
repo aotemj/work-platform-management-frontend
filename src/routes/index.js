@@ -23,7 +23,7 @@ import ExecLog from '../pages/Exec/StepLog';
 
 
 const getRoute = ({url, addProjectId = false, component}) => {
-    const URL_PREFIX_TEMP = addProjectId ? `/:companyId/:projectId/${PROJECT_ROUTE}` : `/:companyId/${PROJECT_ROUTE}`;
+    const URL_PREFIX_TEMP = addProjectId ? `:companyId/:projectId/${PROJECT_ROUTE}` : `:companyId/${PROJECT_ROUTE}`;
 
     return <Route key={url} path={`${PUBLIC_PATH}${URL_PREFIX_TEMP}/${url}`} element={component} exact />;
 };
