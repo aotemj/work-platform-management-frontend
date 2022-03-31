@@ -21,6 +21,7 @@ import {
 } from '../../../constant';
 import {routes} from '../../../routes';
 import {deConvertParams} from '../../../utils/convertNoahDetail';
+import {debounce} from 'lodash/fp';
 
 const defaultFormikValues = {
     id: null,
@@ -425,7 +426,7 @@ const useAddOrEdit = ({
         };
     }, [convertCategory, convertStageList, convertWorkVariateList, globalVariables]);
 
-    const handleSubmit = useCallback(async e => {
+    const handleSubmit = debounce(500)(async e => {
         const params = convertParams(e);
 
         const {POST, PUT} = REQUEST_METHODS;
@@ -439,7 +440,7 @@ const useAddOrEdit = ({
             message.success('操作成功');
             navigate(`${getUrlPrefixReal()}/${routes.NOAH_LIST.url}`);
         }
-    }, [convertParams, editing, navigate]);
+    });
 
     const handleCancelOperate = useCallback(() => {
         Modal.info({
