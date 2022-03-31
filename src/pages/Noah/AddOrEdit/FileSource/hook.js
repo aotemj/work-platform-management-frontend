@@ -45,7 +45,7 @@ const useFileSource = ({
     }, [fileMap]);
 
     const handleAddServerFile = useCallback(() => {
-        const length = storageFileList.length;
+        const length = storageFileList?.length;
         let key = 0;
         if (length) {
             const lastItem = storageFileList[length - 1];
@@ -84,7 +84,7 @@ const useFileSource = ({
     }, [fileMap]);
 
     const updateServerAndLocalFiles = useCallback(() => {
-        const length = storageFileList.length;
+        const length = storageFileList?.length;
         const serverArr = [];
         const localArr = [];
         const fileMapTemp = {};
