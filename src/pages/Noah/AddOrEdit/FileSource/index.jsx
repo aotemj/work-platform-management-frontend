@@ -147,13 +147,13 @@ const FileSource = ({
                     switch (status) {
                         case SUCCESS.value:
                             return (
-                                <RemoveButton />
+                                <RemoveButton record={record} />
                             );
                         case ERROR.value:
                             return (
                                 <>
                                     <RetryButton />
-                                    <RemoveButton />
+                                    <RemoveButton record={record} />
                                 </>
                             );
                         case LOADING.value:
