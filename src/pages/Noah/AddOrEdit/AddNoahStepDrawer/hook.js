@@ -53,7 +53,14 @@ const defaultFormikValues = {
     informUserId: [],
 };
 
-const useAddNoahStep = ({onClose, handleChangeStep, stepEditingValue, setStepEditingValue, getUsersFromOne}) => {
+const useAddNoahStep = ({
+    onClose,
+    handleChangeStep,
+    stepEditingValue,
+    setStepEditingValue,
+    getUsersFromOne,
+    editing,
+}) => {
 
     const [formikValues, setFormikValues] = useState(defaultFormikValues);
 
@@ -112,7 +119,7 @@ const useAddNoahStep = ({onClose, handleChangeStep, stepEditingValue, setStepEdi
 
     const handleCancel = useCallback(() => {
         Modal.confirm({
-            title: '确定要取消添加当前步骤吗？',
+            title: '确定要取消当前操作吗？',
             getContainer: getContainerDOM,
             onOk: () => {
                 // 重置表单
