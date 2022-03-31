@@ -70,7 +70,6 @@ const useAddNoahStep = ({onClose, handleChangeStep, stepEditingValue, setStepEdi
     // 本地文件如果还处于上传中，则禁止保存
     const checkStorageListAvailable = useCallback(e => {
         const {storageFileList = []} = e;
-        console.log(storageFileList);
         const length = storageFileList?.length;
 
         let tempMap = {};
@@ -123,9 +122,13 @@ const useAddNoahStep = ({onClose, handleChangeStep, stepEditingValue, setStepEdi
         });
     }, [onClose]);
 
-    const handleEditTargetServer = useCallback(() => {
-
-    }, []);
+    const handleEditTargetServer = useCallback((agents, values, agentMap) => {
+        setStepEditingValue({
+            ...values,
+            targetResourceList: agents,
+        });
+        setAgentMapByUuid(agentMap);
+    }, [setStepEditingValue]);
 
     const handleAddTargetServer = useCallback((agents, values, agentMap) => {
         setFormikValues({
