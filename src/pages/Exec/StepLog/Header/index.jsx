@@ -7,7 +7,7 @@ import cx from '../index.less';
 import HeaderDetailItem from '../../components/HeaderDetailItem';
 import {convertConsumeTime, formatTimeStamp, getUrlPrefixReal} from '../../../../utils';
 import {routes} from '../../../../routes';
-import {RUN_STATUSES} from '../../List/constant';
+import {FAILED, RUN_STATUSES} from '../../List/constant';
 import {entirelyRetry, neglectErrors} from '../../List/ExecDetailDrawer/util';
 import {MILLI_SECOND_STEP} from '../../../../constant';
 
@@ -43,41 +43,9 @@ const Header = ({executionDetail, params, dataSource, setAddStepDrawerVisible}) 
 
     };
 
-    const operations = [
-        {
-            label: '全部主机重试',
-            execution: entirelyRetry,
-        },
-        {
-            label: '忽略错误',
-            execution: neglectErrors,
-        },
-        {
-            label: '下载日志', // 下载日志，下载所有的IP执行日志，是压缩文件，一个ip一个txt文档 (from product manager)
-            execution: downloadLog,
-        },
-        {
-            label: '查看步骤内容',
-            execution: () => setAddStepDrawerVisible(true),
-            type: 'primary',
-        },
-    ];
-    const userName = useMemo(() => {
-        return executionDetail?.userName;
-    }, [executionDetail]);
-
     const stepDetail = useMemo(() => {
         return executionDetail?.stageTriggerList?.filter(item => item.id === Number(params?.stepId))[0];
     }, [executionDetail?.stageTriggerList, params?.stepId]);
-
-    const title = useMemo(() => {
-        return stepDetail?.name;
-    }, [stepDetail?.name]);
-
-    const beginTime = useMemo(() => {
-        const beginTime = stepDetail?.beginTime;
-        return formatTimeStamp(beginTime);
-    }, [stepDetail?.beginTime]);
 
     const runStatus = useMemo(() => {
         //    runStatus	执行状态 1：待执行；2：执行中；3：执行失败；4：执行成功；5：执行暂停；
@@ -88,6 +56,47 @@ const Header = ({executionDetail, params, dataSource, setAddStepDrawerVisible}) 
         );
 
     }, [executionDetail?.runStatus, stepDetail?.runStatus]);
+
+    const errorOperations = [
+        {
+            label: '全部主机重试',
+            execution: entirelyRetry,
+        },
+        {
+            label: '忽略错误',
+            execution: neglectErrors,
+        },
+    ];
+
+    const operations = [
+        {
+            label: '下载日志', // 下载日志，下载所有的IP执行日志，是压缩文件，一个ip一个txt文档 (from product manager)
+            execution: downloadLog,
+        },
+        {
+            label: '查看步骤内容',
+            execution: () => setAddStepDrawerVisible(true),
+            type: 'primary',
+        },
+    ];
+
+    if (executionDetail?.runStatus === FAILED.value) {
+        operations.unshift(...errorOperations);
+    }
+
+    const userName = useMemo(() => {
+        return executionDetail?.userName;
+    }, [executionDetail]);
+
+
+    const title = useMemo(() => {
+        return stepDetail?.name;
+    }, [stepDetail?.name]);
+
+    const beginTime = useMemo(() => {
+        const beginTime = stepDetail?.beginTime;
+        return formatTimeStamp(beginTime);
+    }, [stepDetail?.beginTime]);
 
     const headerDetail = [
         {
