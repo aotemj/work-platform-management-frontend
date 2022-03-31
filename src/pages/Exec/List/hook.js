@@ -158,6 +158,7 @@ const useExecList = getExecutionDetail => {
         } else {
             clearTimeout(loopTimer.current);
             setNeedLoopDetail(false);
+            getList();
         }
     }, [executeDetailVisible]);
 
