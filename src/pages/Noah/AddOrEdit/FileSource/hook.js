@@ -144,7 +144,7 @@ const useFileSource = ({
 
             if (!status) {
                 const {key} = tempData;
-                const {url: storageFileUrl} = data;
+                const {storageFileUrl} = data;
                 const newTempData = {
                     ...tempData,
                     ...omit(['url', 'sourcePath', 'sourceResourceName'], data),

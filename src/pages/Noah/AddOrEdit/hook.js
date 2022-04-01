@@ -250,7 +250,7 @@ const useAddOrEdit = ({
         return convertAdditionCategories(groupRelList).tempList;
     }, [convertAdditionCategories, convertEditCategories, editing]);
 
-    const coverStorageFileList = useCallback((originList = []) => {
+    const convertStorageFileList = useCallback((originList = []) => {
         return originList.map(item => {
             let tempObj = pickBy(
                 property => property !== DEFAULT_STRING_VALUE,
@@ -315,7 +315,7 @@ const useAddOrEdit = ({
                 informWay,
             } = item;
 
-            const tempStorageFileList = coverStorageFileList(storageFileList);
+            const tempStorageFileList = convertStorageFileList(storageFileList);
             const tempTargetResourceList = targetResourceList.map(item => {
                 // id	ID		false   // integer
                 // status	通用状态 0：正常；-1：删除；		false   // integer
@@ -393,7 +393,7 @@ const useAddOrEdit = ({
             }
 
         });
-    }, [convertedStageListStatus, coverStorageFileList]);
+    }, [convertedStageListStatus, convertStorageFileList]);
 
     const convertWorkVariateList = useCallback(variables => {
         const {POSITIVE, NEGATIVE} = BOOLEAN_FROM_SERVER;
