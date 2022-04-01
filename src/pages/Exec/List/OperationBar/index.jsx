@@ -11,7 +11,7 @@ const OperationBar = ({handleChangeInput, handleChangeDate}) => {
             <div className={cx('left')}>
                 {/* 发起人查询 */}
                 <Input
-                    placeholder={'请输入搜索关键字'}
+                    placeholder={'请输入发起人'}
                     className={cx('search')}
                     suffix={<IconSearch />}
                     onChange={e => handleChangeInput(e.target.value)}
