@@ -146,6 +146,7 @@ const useStepCard = ({detail, getUsersFromOne, submitCallback, users, executionD
             {
                 label: '全部主机重试',
                 execution: entirelyRetry,
+                disabled: ignoreError,
             },
         ];
 
