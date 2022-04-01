@@ -128,7 +128,6 @@ const useAddOrEdit = ({
     }, [navigate]);
 
     const goBackWithConfirm = useCallback(() => {
-        reset();
         Modal.confirm({
             title: `确定要取消${isExecuting ? '执行' : (editing ? '编辑' : '添加')}作业吗？`,
             getContainer: getContainerDOM,
