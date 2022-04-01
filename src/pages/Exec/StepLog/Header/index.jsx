@@ -35,7 +35,7 @@ const Header = ({executionDetail, params, dataSource, setAddStepDrawerVisible}) 
 
         downloadTimer.current = setTimeout(() => {
             if (failedCount < length) {
-                message.success(`当前日志下载完成，成功${length}个，失败${failedCount}个`);
+                message.success(`当前日志下载完成，成功${length - failedCount}个，失败${failedCount}个`);
             } else if (failedCount === length) {
                 message.error('当前日志下载失败');
             }
