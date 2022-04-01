@@ -189,8 +189,11 @@ export const getScriptExecuteFields = ({
 const TransmissionModeTitle = () => {
     const List = () => (
         <div>
-            <p>传输至linux服务器需以/开头的绝对路径，如：/data/xx</p>
-            <p>传输至Windows服务器需包含盘符开头，如：D:\tmp\</p>
+            <p>强制模式指：</p>
+            <p>不论目标路径是否存在，都将强制按照用户填写的目标路径进行传输（路径不存在会自动创建）。</p>
+
+            <p>演进模式指：</p>
+            <p>严谨判断目标路径是否存在，若不存在将直接终止任务。</p>
         </div>
     );
     return (
