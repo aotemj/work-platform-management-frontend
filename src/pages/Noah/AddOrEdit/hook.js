@@ -393,7 +393,7 @@ const useAddOrEdit = ({
             }
 
         });
-    }, [convertedStageListStatus, convertStorageFileList]);
+    }, [convertStorageFileList, convertedStageListStatus, convertTimeoutValue, convertFileSize]);
 
     const convertWorkVariateList = useCallback(variables => {
         const {POSITIVE, NEGATIVE} = BOOLEAN_FROM_SERVER;

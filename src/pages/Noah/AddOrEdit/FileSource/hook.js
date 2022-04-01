@@ -1,5 +1,6 @@
 import {useCallback, useEffect, useMemo, useState} from 'react';
-import {clone, omit} from 'ramda';
+import {clone, omit, prop} from 'ramda';
+
 import {request} from '../../../../request/fetch';
 import {URLS, FILE_SOURCE_TYPE, LOADING, SUCCESS, ERROR} from '../constants';
 import {DEFAULT_STRING_VALUE, REQUEST_METHODS, REQUEST_TYPE, COMMON_URL_PREFIX} from '../../../../constant';
@@ -57,6 +58,7 @@ const useFileSource = ({
             fileSource: FILE_SOURCE_TYPE.SERVER,
             sourcePath: '',
             sourceResourceName: '',
+            sourceUuid: '',
         };
 
         setFileMap({
@@ -68,7 +70,9 @@ const useFileSource = ({
 
     const handleChangeServerFileSourceResource = useCallback((agents, agentMapByUuid, key) => {
         let tempFileMap = clone(fileMap);
-        tempFileMap[key].sourceResourceName = agents?.[0]?.name;
+        const targetAgent = agents?.[0];
+        tempFileMap[key].sourceResourceName = prop('name', targetAgent);
+        tempFileMap[key].sourceUuid = prop('uuid', targetAgent);
         setFileMap(tempFileMap);
         setNeedUpdateFileMap(true);
     }, [fileMap]);
