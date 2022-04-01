@@ -70,10 +70,6 @@ const useGlobalVariable = ({
 
     // 编辑全局变量
     const handleEditGlobalVariable = useCallback((e, originData) => {
-        if (variableMap[e.name]) {
-            return message.error(ERROR_MSG.VARIABLE_ALREADY_EXIST);
-        }
-
         const {name, index} = originData;
         const origin = variableMap[name];
 
@@ -118,6 +114,7 @@ const useGlobalVariable = ({
 
     // 更新全局变量
     const handleChangeGlobalVariable = useCallback((e, editing, originData, data) => {
+        console.log(editing);
         if (editing) {
             handleEditGlobalVariable(e, originData);
         } else {

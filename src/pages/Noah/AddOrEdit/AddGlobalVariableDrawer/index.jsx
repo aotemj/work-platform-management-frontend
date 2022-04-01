@@ -189,9 +189,10 @@ const AddGlobalVariableDrawer = ({
             children: ({field, form: {values}}) => (
                 <Checkbox
                     {...(omit('value', field))}
-                    checked={field.value}
+                    checked={formikValues.exeRequired}
                     onChange={e => {
                         setFormikValues({
+                            ...formikValues,
                             ...values,
                             exeRequired: e.target.checked,
                         });
