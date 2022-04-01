@@ -35,6 +35,7 @@ const NoahList = props => {
         // onNoahSelectClear,
         addNoah,
         setNoahType,
+        batchSpin,
     } = useNoahList({getNoahList, noahList, noahTotal});
 
     const tableOperations = [
@@ -159,13 +160,15 @@ const NoahList = props => {
         setNoahType,
     };
     return (
-        <div className={cx('noah-container')}>
-            <PageHeader title={title} className={cx('title')} />
-            <OperationBar {...operationBarProps} />
-            <Spin spinning={loading} size="large">
-                <Table {...tableProps} />
-            </Spin>
-        </div>
+        <Spin spinning={batchSpin} tip={'正在批量操作，请稍后'} size={'large'}>
+            <div className={cx('noah-container')}>
+                <PageHeader title={title} className={cx('title')} />
+                <OperationBar {...operationBarProps} />
+                <Spin spinning={loading} size="large">
+                    <Table {...tableProps} />
+                </Spin>
+            </div>
+        </Spin>
     );
 };
 
