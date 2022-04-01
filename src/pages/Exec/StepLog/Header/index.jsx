@@ -50,12 +50,12 @@ const Header = ({executionDetail, params, dataSource, setAddStepDrawerVisible}) 
     const runStatus = useMemo(() => {
         //    runStatus	执行状态 1：待执行；2：执行中；3：执行失败；4：执行成功；5：执行暂停；
         return (
-            <span className={cx('execute-status', `status-${executionDetail?.runStatus}`)}>
+            <span className={cx('execute-status', `status-${stepDetail?.runStatus}`)}>
                 {RUN_STATUSES.get(stepDetail?.runStatus)?.label}
             </span>
         );
 
-    }, [executionDetail?.runStatus, stepDetail?.runStatus]);
+    }, [stepDetail?.runStatus]);
 
     const errorOperations = [
         {
