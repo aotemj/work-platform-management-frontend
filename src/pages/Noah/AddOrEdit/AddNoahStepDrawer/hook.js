@@ -24,7 +24,8 @@ const defaultFormikValues = {
     targetResourceList: [],
     scriptLanguage: SCRIPT_TYPES[0].key,
     scriptParams: '',
-    timeoutValue: 0,
+    // 18. 脚本执行/文件分发，默认超时时间60秒
+    timeoutValue: 60,
 
     // about file distribution
     // 文件
