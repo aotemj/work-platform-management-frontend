@@ -11,7 +11,7 @@ export const IS_PROD = process.env.NODE_ENV === 'production';
 
 export const PROJECT_ROUTE = '_noah';
 
-export const PUBLIC_PATH = '/';
+export const PUBLIC_PATH = '/assets/noah/';
 
 // common pagination
 export const DEFAULT_PAGINATION = {
