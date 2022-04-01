@@ -44,8 +44,9 @@ const ExecDetailDrawer = ({onClose, visible, handleChangeStep, executionDetail, 
                                         detail={stageTrigger}
                                         submitCallback={submitCallback}
                                         executionDetail={executionDetail}
+                                        stepId={stageTrigger?.id}
                                     />
-)}
+                                )}
                                 icon={icon}
                             />
                         );

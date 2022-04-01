@@ -17,7 +17,7 @@ import NoPassReasonModal from './NoPassReasonModal';
 import {IGNORE_ERROR, RUNNING} from '../../constant';
 
 const StepCard = props => {
-    const {users, detail, getUsersFromOne, submitCallback, executionDetail} = props;
+    const {users, detail, getUsersFromOne, submitCallback, executionDetail, stepId} = props;
 
     const {
         consumeObj,
@@ -41,10 +41,8 @@ const StepCard = props => {
         users,
         executionDetail,
     });
-
     // 运行状态
     const runStatus = useMemo(() => {
-        // TODO 运行状态未联调
         return (
             <div className={cx('exec-status')}>
                 <span
@@ -109,7 +107,7 @@ const StepCard = props => {
                                         type={'link'}
                                         disabled={operation?.disabled}
                                         key={operation.label}
-                                        onClick={() => operation.execution(executionDetail)}
+                                        onClick={() => operation.execution({id: stepId})}
                                     >{operation.label}
                                     </Button>
                                 );
