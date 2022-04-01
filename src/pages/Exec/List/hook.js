@@ -2,12 +2,11 @@ import {useCallback, useEffect, useRef, useState} from 'react';
 import {message} from '@osui/ui';
 import {reject, anyPass, isEmpty, isNil} from 'ramda';
 
-import {debounce} from '../../../utils';
+import {debounce, requestSuccessCallback} from '../../../utils';
 import {request} from '../../../request/fetch';
 import {
     DEFAULT_PAGINATION,
     MILLI_SECOND_STEP,
-    REQUEST_CODE,
     REQUEST_METHODS,
     COMMON_URL_PREFIX,
 } from '../../../constant';
@@ -15,6 +14,7 @@ import {URLS} from './constant';
 
 const useExecList = getExecutionDetail => {
     let loopTimer = useRef();
+    let reTryTimer = useRef();
 
     // Table加载状态
     const [loading, setLoading] = useState(false);
@@ -131,15 +131,19 @@ const useExecList = getExecutionDetail => {
             url: `${COMMON_URL_PREFIX}${URLS.RE_EXECUTE}${id}`,
             method: REQUEST_METHODS.POST,
         });
-        const {code} = res;
-        if (code === REQUEST_CODE.SUCCESS) {
-            message.success('操作成功');
-        }
-    }, []);
+        requestSuccessCallback({
+            res,
+            callback() {
+                reTryTimer.current = setTimeout(getList, MILLI_SECOND_STEP * 3);
+            },
+        });
+    }, [getList]);
     // Initialize 初始化
     useEffect(() => {
-        getList();
-    }, [searchValue]);
+        if (!executeDetailVisible) {
+            getList();
+        }
+    }, [searchValue, executeDetailVisible]);
 
     useEffect(() => {
         if (currentExecutionId) {
@@ -149,6 +153,10 @@ const useExecList = getExecutionDetail => {
 
     useEffect(() => {
         getDetailId();
+        return () => {
+            clearTimeout(reTryTimer);
+            clearTimeout(loopTimer);
+        };
     }, []);
 
     // 轮询当前详情接口 start
@@ -158,7 +166,6 @@ const useExecList = getExecutionDetail => {
         } else {
             clearTimeout(loopTimer.current);
             setNeedLoopDetail(false);
-            getList();
         }
     }, [executeDetailVisible]);
 
