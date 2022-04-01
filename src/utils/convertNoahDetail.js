@@ -121,10 +121,9 @@ const deConvertStageList = list => {
                     scriptLanguage,
                     scriptContents,
                     scriptParams,
-                    timeoutValue: originalTimeoutValue,
+                    timeoutValue,
                     runtimeEnv,
                 } = stageScriptBean;
-                const timeoutValue = deConvertTimeoutValue(originalTimeoutValue);
                 return {
                     ...commonParams,
                     runningEnvironment: runtimeEnv,
@@ -139,11 +138,13 @@ const deConvertStageList = list => {
                 };
             case MANUAL_CONFIRM.value: {
                 const {
-                    timeoutValue,
+                    timeoutValue: originalTimeoutValue,
                     informUserId,
                     informWay,
                     describes,
                 } = stageConfirmBean;
+                const timeoutValue = deConvertTimeoutValue(originalTimeoutValue);
+
                 return {
                     ...commonParams,
                     describes,
@@ -157,7 +158,6 @@ const deConvertStageList = list => {
 
                 const {
                     transmissionMode,
-                    timeoutValue,
                     uploadLimit,
                     downloadLimit,
                     targetPath,
