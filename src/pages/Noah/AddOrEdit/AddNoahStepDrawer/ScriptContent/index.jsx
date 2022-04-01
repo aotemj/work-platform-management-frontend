@@ -28,6 +28,8 @@ const ScriptContent = props => {
                     setFormValues({
                         ...values,
                         scriptLanguage: e,
+                        // 脚本命令，切换脚本语言，不保留之前数据
+                        scriptContents: '',
                     });
                 }}
                 tabBarExtraContent={(
