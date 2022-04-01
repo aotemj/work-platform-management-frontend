@@ -1,10 +1,11 @@
 import {ReactComponent as ReadyRun} from '../../../statics/icons/readyrun.svg';// 未开始
-import {ReactComponent as Running} from '../../../statics/icons/running.svg';// 执行中
 import {ReactComponent as CloseCircle} from '../../../statics/icons/closecircle.svg';// 执行失败
 import {ReactComponent as CheckCircle} from '../../../statics/icons/checkcircle.svg';// 初始化、执行成功
 import {ReactComponent as Suspend} from '../../../statics/icons/suspend.svg';// 执行暂停
 import {ReactComponent as NotStarted} from '../../../statics/icons/notstarted.svg';// 待确认
 import {ReactComponent as Warning} from '../../../statics/icons/warning-Circle-Fill.svg';
+import Iconfont from '../../../components/Iconfont';
+import cx from './index.less';
 // 忽略错误
 
 export const URLS = {
@@ -32,7 +33,7 @@ export const READY_RUN = {
 };
 export const RUNNING = {
     label: '执行中',
-    icon: <Running className={'running-icon'} />,
+    icon: <Iconfont type={'iconrunning'} className={cx('running-icon')} />,
     value: 2,
 };
 export const FAILED = {

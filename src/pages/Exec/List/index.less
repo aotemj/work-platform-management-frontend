@@ -44,5 +44,22 @@
     }
 }
 
+:global(.running-icon) {
+    @keyframes spin {
+        from {
+            transform: rotate(0deg);
+        }
+        to {
+            transform: rotate(360deg);
+        }
+    }
 
+    animation: spin 1s linear infinite !important;
+
+    > svg {
+        width: 32px;
+        height: 32px;
+        color: var(--theme-primary-color);
+    }
+}
 
