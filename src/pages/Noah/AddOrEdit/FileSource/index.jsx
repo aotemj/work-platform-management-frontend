@@ -90,7 +90,7 @@ const FileSource = ({
             },
             {
                 title: '服务器',
-                dataIndex: 'sourceResourceName',
+                dataIndex: 'sourceUuid',
                 render: (val, record) => {
                     return (
                         <TargetServer
