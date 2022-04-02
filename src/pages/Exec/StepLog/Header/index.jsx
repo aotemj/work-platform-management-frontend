@@ -60,7 +60,7 @@ const Header = ({executionDetail, params, dataSource, setAddStepDrawerVisible}) 
     const errorOperations = [
         {
             label: '全部主机重试',
-            execution: entirelyRetry,
+            execution: () => entirelyRetry({id: params?.stepId}),
         },
         {
             label: '忽略错误',
@@ -139,13 +139,13 @@ const Header = ({executionDetail, params, dataSource, setAddStepDrawerVisible}) 
                     onClick={() => operation.execution(executionDetail)}
                 >{operation.label}
                 </Button>
-        ))}
+            ))}
         >
             <div className={cx('desc-container')}>
                 {headerDetail.map(item => (<HeaderDetailItem key={item?.label} item={item} />))}
             </div>
         </PageHeader>
-);
+    );
 };
 
 export default Header;
