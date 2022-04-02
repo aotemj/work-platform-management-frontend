@@ -161,6 +161,7 @@ const deConvertStageList = list => {
                     uploadLimit,
                     downloadLimit,
                     targetPath,
+                    timeoutValue,
                 } = stageFileBean;
                 return {
                     ...commonParams,
