@@ -34,6 +34,8 @@ const NoPassReasonModal = ({visible, setVisible, confirmManualResult, stageTrigg
         },
     };
 
+    const handleChangeReason = e => setData({reason: e.target.value});
+
     const formFields = {
         name: {
             name: 'reason',
@@ -50,7 +52,7 @@ const NoPassReasonModal = ({visible, setVisible, confirmManualResult, stageTrigg
                         maxLength={MAX_LENGTH}
                         autoSize={{minRows: 5}}
                         {...field}
-                        onChange={e => setData({reason: e.target.value})}
+                        onChange={handleChangeReason}
                     />
                 );
             },
@@ -75,7 +77,7 @@ const NoPassReasonModal = ({visible, setVisible, confirmManualResult, stageTrigg
         <Modal {...modalProps}>
             <FormikComp {...formikProps} />
         </Modal>
-);
+    );
 };
 
 export default NoPassReasonModal;

@@ -21,14 +21,14 @@ export const STRATEGIES_TYPES = new Map([
 
 export const URLS = {
     // 分页查询定时任务
-    CRON_LIST_URL: 'rest/v1/cron-execute',
+    CRON_LIST_URL: '/rest/v1/cron-execute',
+    ADD_CRON: '/rest/v1/cron-execute',
+    DELETE_CRON_ITEM: '/rest/v1/cron-execute/', // /rest/v1/cron-execute/{id}
+    GET_CRON_DETAIL: '/rest/v1/cron-execute/', // rest/v1/cron-execute/{id}
+    EDIT_CRON: '/rest/v1/cron-execute/', // rest/v1/cron-execute/{id}
 };
 
 export const CRON_DATE_WEEKS = [
-    // {
-    //     label: '全选',
-    //     value: 0,
-    // },
     {
         label: '星期一',
         value: 1,

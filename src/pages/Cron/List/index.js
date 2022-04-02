@@ -1,8 +1,8 @@
 import {connect} from 'react-redux';
 import {compose} from 'lodash/fp';
 
-import AddOrEditCron from './AddOrEditCron';
-import {GET_NOAH_DETAIL_S, GET_NOAH_LIST_S, UPDATE_CATEGORY_LIST_S} from '../../../../sagas/types';
+import CronList from './CronList';
+import {GET_NOAH_DETAIL_S, GET_NOAH_LIST_S, UPDATE_CATEGORY_LIST_S} from '../../../sagas/types';
 
 const mapStateToProps = ({
     noahList,
@@ -33,5 +33,4 @@ const mapDispatchToProps = dispatch => ({
 });
 
 const withRedux = connect(mapStateToProps, mapDispatchToProps);
-
-export default compose(withRedux)(AddOrEditCron);
+export default compose(withRedux)(CronList);

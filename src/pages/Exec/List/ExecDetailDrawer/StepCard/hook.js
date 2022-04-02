@@ -1,6 +1,7 @@
 import {useCallback, useEffect, useMemo, useState} from 'react';
 import {message, Modal} from '@osui/ui';
 import {prop} from 'ramda';
+import {useNavigate} from 'react-router-dom';
 
 import {convertConsumeTime, formatTimeStamp, getContainerDOM} from '../../../../../utils';
 import {
@@ -13,7 +14,6 @@ import {
 } from '../../../../../constant';
 import {CONFIRM_RESULTS, FAILED, IGNORE_ERROR, NOT_PASS, PASS, RUN_STATUSES, SUCCESS, URLS} from '../../constant';
 import {request} from '../../../../../request/fetch';
-import {useNavigate} from 'react-router-dom';
 import {routes} from '../../../../../routes';
 import {entirelyRetry, neglectErrors} from '../util';
 

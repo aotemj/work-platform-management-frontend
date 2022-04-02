@@ -10,7 +10,7 @@ import store from '../store';
 import NoahList from '../pages/Noah/List/index';
 import AddOrEditNoah from '../pages/Noah/AddOrEdit/index';
 import ExecList from '../pages/Exec/List/index';
-import CronList from '../pages/Cron/List';
+import CronList from '../pages/Cron/List/index';
 import ExecLog from '../pages/Exec/StepLog';
 
 /**

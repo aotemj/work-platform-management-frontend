@@ -144,15 +144,21 @@ export function convertConsumeTime(executionDetail) {
     return `${dateStr}${hourStr}${minuteStr}${secondStr}`;
 }
 
-export function requestSuccessCallback({
+export function requestCallback({
     res,
+    hideMessage = false,
     successMessage = '操作成功',
     callback,
+    errorCallback,
 }) {
     const {code, msg, data} = res;
     if (code === REQUEST_CODE.SUCCESS) {
-        message.success(successMessage || msg);
+        if (!hideMessage) {
+            message.success(successMessage || msg);
+        }
         callback && callback(data);
+    } else {
+        errorCallback && errorCallback(data);
     }
 }
 

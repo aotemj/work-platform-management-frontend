@@ -1,33 +1,34 @@
-import {Drawer, Button, Input, Radio, DatePicker, Select, Checkbox, TimePicker} from '@osui/ui';
+import {Drawer, Input, Radio, DatePicker, Select, Checkbox, TimePicker} from '@osui/ui';
 import * as yup from 'yup';
 import moment from 'moment';
+import {useRef} from 'react';
 
 import cx from './index.less';
 import FormikComp from '../../../../components/FormikComp';
 import useAddOrEditCron from './hook';
 import {CRON_DATE_WEEKS, STRATEGIES} from '../../constant';
 import NoahDetail from './NoahDetail';
-import {useRef} from 'react';
 
-const AddOrEditCron = ({
-    visible,
-    onClose,
-    editing,
-    noahList,
-    noahTotal,
-    noahDetail,
-    categories,
-    categoryMap,
-    getNoahList,
-    getNoahWorkPlanDetail,
-    getCategoryList,
-}) => {
+const AddOrEditCron = props => {
+    const {
+        visible,
+        setVisible,
+        onClose,
+        editing,
+        noahList,
+        noahTotal,
+        noahDetail,
+        categoryMap,
+        getNoahList,
+        getNoahWorkPlanDetail,
+        getCategoryList,
+        editDetailId,
+    } = props;
     const {
         disabled,
         setDisabled,
         formikValues,
         editValues,
-        handleChangeDate,
         handleChangeNoah,
         convertedNoahDetail,
         handleChangeDatePicker,
@@ -41,9 +42,12 @@ const AddOrEditCron = ({
         noahTotal,
         noahDetail,
         editing,
+        editDetailId,
         getNoahList,
         getNoahWorkPlanDetail,
         getCategoryList,
+        setVisible,
+        visible,
     });
 
     let formRef = useRef();
@@ -54,15 +58,16 @@ const AddOrEditCron = ({
                 <div className={cx('left')}>
                     {editing ? '编辑定时任务' : '新建定时任务'}
                 </div>
-                <div className={cx('right')}>
-                    <Button danger>删除</Button>
-                    <Button
-                        disabled={disabled}
-                        type={'primary'}
-                        onClick={() => handleSubmit(formRef.current.values)}
-                    >保存
-                    </Button>
-                </div>
+                {/*  暂时保留后期可能会用到 */}
+                {/* <div className={cx('right')}> */}
+                {/*    <Button danger>删除</Button> */}
+                {/*    <Button */}
+                {/*        disabled={disabled} */}
+                {/*        type={'primary'} */}
+                {/*        onClick={() => handleSubmit(formRef.current.values)} */}
+                {/*    >保存 */}
+                {/*    </Button> */}
+                {/* </div> */}
             </div>
         );
     };
@@ -70,13 +75,13 @@ const AddOrEditCron = ({
     const initialValues = editValues || formikValues;
 
     const formFields = {
-        name: {
+        taskName: {
             label: '任务名称',
-            name: 'name',
+            name: 'taskName',
             required: true,
             MAX_LENGTH: 80,
             children: ({field}) => {
-                const maxLength = formFields.name.MAX_LENGTH;
+                const maxLength = formFields.taskName.MAX_LENGTH;
                 return (
                     <Input
                         {...field}
@@ -174,6 +179,8 @@ const AddOrEditCron = ({
                 return (
                     <TimePicker
                         allowClear={false}
+                        showNow={false}
+                        suffixIcon={null}
                         defaultValue={moment()}
                         format={'HH:mm'}
                         onOk={e => {
@@ -198,7 +205,7 @@ const AddOrEditCron = ({
                     categoryMap,
                 };
                 const workPlanSelectProps = {
-                    options: noahList.map(item => {
+                    options: noahList?.map(item => {
                         const {name, id} = item;
                         return {label: name, value: id, key: id};
                     }),
@@ -223,6 +230,7 @@ const AddOrEditCron = ({
     };
 
     const formikProps = {
+        handleSubmit: () => handleSubmit(formRef.current.values),
         initialValues,
         disabled,
         setDisabled,
@@ -231,7 +239,7 @@ const AddOrEditCron = ({
         transformRef: form => {
             formRef.current = form;
         },
-        needFooter: false,
+        // needFooter: false,
     };
 
     return (

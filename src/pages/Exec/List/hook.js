@@ -2,7 +2,7 @@ import {useCallback, useEffect, useRef, useState} from 'react';
 import {message} from '@osui/ui';
 import {reject, anyPass, isEmpty, isNil} from 'ramda';
 
-import {debounce, requestSuccessCallback} from '../../../utils';
+import {debounce, requestCallback} from '../../../utils';
 import {request} from '../../../request/fetch';
 import {
     DEFAULT_PAGINATION,
@@ -131,7 +131,7 @@ const useExecList = getExecutionDetail => {
             url: `${COMMON_URL_PREFIX}${URLS.RE_EXECUTE}${id}`,
             method: REQUEST_METHODS.POST,
         });
-        requestSuccessCallback({
+        requestCallback({
             res,
             callback() {
                 reTryTimer.current = setTimeout(getList, MILLI_SECOND_STEP * 3);

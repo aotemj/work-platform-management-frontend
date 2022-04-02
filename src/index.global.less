@@ -10,12 +10,17 @@ html {
     body {
         color: #2E405E;
         min-height: 450px;
-        margin: 0px;
+        margin: 0;
 
         :global {
+
+            .category-dropdown {
+                width: 100%;
+            }
+
             .ant-page-header {
                 margin-bottom: 24px !important;
-                padding: 0px !important;
+                padding: 0 !important;
 
                 .ant-page-header-heading-left {
                     margin: 0 !important;
@@ -121,26 +126,6 @@ html {
     margin-right: 10px !important;
 }
 
-:global {
-    .running-icon {
-        animation: build-status-icon-spin 1s linear infinite !important;
-    }
-
-    .category-dropdown {
-        width: 100%;
-    }
-}
-
-@keyframes build-status-icon-spin {
-    from {
-        -webkit-transform: rotate(0deg);
-        transform: rotate(0deg);
-    }
-    to {
-        -webkit-transform: rotate(360deg);
-        transform: rotate(360deg);
-    }
-}
 
 :root {
     --active-color: #0C62FF;
@@ -166,3 +151,4 @@ html {
     display: flex;
     align-items: center;
 }
+
