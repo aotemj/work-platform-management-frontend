@@ -96,10 +96,6 @@ const AddOrEditCron = props => {
             validate: yup
                 .string()
                 .ensure()
-                .trim()
-                // .test('code', '分类名称支持：汉字 A-Z a-z 0-9 _ - ! # @ $ & % ^ ~ = + .', value =>
-                //     /^[\w-_\u4e00-\u9fa5!#@$&%^~=+\.]*$/.test(value),
-                // )
                 .required('请输入任务名称'),
         },
         exePolicy: {
