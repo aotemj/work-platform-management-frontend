@@ -2,6 +2,7 @@ import {useNavigate, useParams} from 'react-router-dom';
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {message, Modal} from '@osui/ui';
 import {clone, isNil, omit, pickBy, prop} from 'ramda';
+import {debounce} from 'lodash/fp';
 
 import {getContainerDOM, getUrlPrefixReal} from '../../../utils';
 import useGlobalVariable from './hooks/globalVariable';
@@ -20,8 +21,7 @@ import {
     MAGE_BYTE_SCALE,
 } from '../../../constant';
 import {routes} from '../../../routes';
-import {deConvertParams} from '../../../utils/convertNoahDetail';
-import {debounce} from 'lodash/fp';
+import {deConvertDataFromExecutionDetail, deConvertParams} from '../../../utils/convertNoahDetail';
 
 const defaultFormikValues = {
     id: null,
@@ -342,7 +342,6 @@ const useAddOrEdit = ({
                 status: convertedStageListStatus(status),
             });
 
-
             switch (type) {
                 case EXECUTE_SCRIPT.value:
                     return {
@@ -580,6 +579,13 @@ const useAddOrEdit = ({
         }
     }, [navigate, params]);
 
+    const updateEditValeFromExecutionDetail = () => {
+        const {stageTriggerList} = executionDetail;
+        const currentHistoryDetail = stageTriggerList.filter(item => item.stageId === stageId) [0];
+        const data = deConvertDataFromExecutionDetail(currentHistoryDetail);
+        setStepEditingValue(data);
+    };
+
     useEffect(() => {
         if (noahDetail) {
             const {
@@ -613,11 +619,15 @@ const useAddOrEdit = ({
 
     // 获取编辑详情
     useEffect(() => {
-        if (!prop('detailId', params) || (isViewing && !stageId)) {
+        if (!prop('detailId', params) || isViewing) {
+            // 查看历史详情
+            if (isViewing && executionDetail) {
+                updateEditValeFromExecutionDetail();
+            }
             return;
         }
         getNoahDetail();
-    }, [params, stageId]);
+    }, [params, stageId, executionDetail, isViewing]);
 
     return {
         title,
@@ -633,7 +643,6 @@ const useAddOrEdit = ({
         editing,
         isExecuting,
         formRef,
-
 
         // about category
         handleAddCategory,

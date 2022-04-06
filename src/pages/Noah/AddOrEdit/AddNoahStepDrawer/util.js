@@ -59,8 +59,8 @@ export const getScriptExecuteFields = ({
             children: ({field, form: {values}}) => (
                 <Radio.Group
                     {...field}
-                    disabled={isViewing}
-                    options={Object.values(SCRIPTS_ORIGIN)}
+                    options={Object.values(SCRIPTS_ORIGIN)
+                        .map(item => ({...item, disabled: isViewing && field.value !== item.value}))}
                     onChange={e => {
                         setFormValues({
                             ...values,
@@ -276,7 +276,7 @@ export const getFileDistribution = ({
                             className={cx('time-out-switch')}
                             checked={!downloadLimitDisabled}
                             disabled={isViewing}
-                            onChange={e => {
+                            onChange={() => {
                                 setFormValues({
                                     ...values,
                                     downloadLimitDisabled: !downloadLimitDisabled,
@@ -408,11 +408,6 @@ export const getFileDistribution = ({
 export const getManualConfirmFields = ({
     isFileDistribution,
     isScriptExecute,
-    setFormValues,
-    formikValues,
-    handleChangeTargetServer,
-    editing,
-    visible,
     usersFromOne,
 }) => {
     const isManualConfirm = !isFileDistribution && !isScriptExecute;

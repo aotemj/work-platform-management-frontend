@@ -227,4 +227,191 @@ export const deConvertParams = data => {
     };
 };
 
+/**
+ * 当前方法为转换日志显示详情页的作业详情快照，数据是从后端的执行详情里转换成前端使用的表单数据，比较复杂，而且没什么意义，纯粹是为了匹配后端的字段，不熟悉勿动！
+ */
+export const deConvertDataFromExecutionDetail = originData => {
+    const {
+        name,
+        sortIndex,
+        stageTriggerItemList,
+        type,
+        describes,
+    } = originData;
+
+    const {EXECUTE_SCRIPT, FILE_DISTRIBUTION} = STEP_TYPES;
+    const commonParams = {
+        type,
+        name,
+        describes,
+        index: sortIndex - 1,
+    };
+    switch (type) {
+        case EXECUTE_SCRIPT.value:
+        {
+            const {stageScript} = stageTriggerItemList[0]?.stageTriggerItemParams;
+            const {
+                runtimeEnv: runningEnvironment,
+                scriptContents,
+                scriptId,
+                scriptLanguage,
+                scriptParams,
+                scriptType,
+                timeoutValue,
+            } = stageScript;
+            const targetResourceList = stageTriggerItemList.map(item => {
+                const {
+                    sortIndex,
+                    stageTriggerItemParams,
+                    type,
+                } = item;
+                const {
+                    stageScript,
+                    targetResource,
+                } = stageTriggerItemParams;
+
+                const {
+                    id,
+                    targetUuid,
+                    targetResourceName,
+                } = targetResource;
+                return {
+                    id,
+                    sortIndex,
+                    type,
+                    stageScript,
+                    uuid: targetUuid,
+                    value: targetUuid,
+                    key: targetUuid,
+                    name: targetResourceName,
+                    title: targetResourceName,
+                };
+            });
+            return {
+                ...commonParams,
+                chooseScript: scriptId,
+                runningEnvironment,
+                scriptContents,
+                scriptLanguage,
+                scriptOrigin: scriptType,
+                scriptParams,
+                scriptType,
+                targetResourceList,
+                timeoutValue,
+            };
+        }
+
+        case FILE_DISTRIBUTION.value:
+        {
+            let targetResourceListMap = {};
+            let storageFileListMap = {};
+            let targetResourceList = [];
+            let storageFileList = [];
+
+            let transmissionMode;
+            let uploadLimit;
+            let downloadLimit;
+            let targetPath;
+            let timeoutValue;
+
+            stageTriggerItemList.forEach(item => {
+                {
+                    const {
+                        stageTriggerItemParams,
+                    } = item;
+                    const {targetResource} = stageTriggerItemParams;
+                    const {
+                        id,
+                        // stageId,
+                        targetUuid,
+                        targetResourceName,
+                        status,
+                    } = targetResource;
+
+                    if (!targetResourceListMap[id]) {
+                        targetResourceList.push({
+                            id,
+                            targetUuid,
+                            targetResourceName,
+                            status,
+                            sortIndex,
+                            type,
+                            uuid: targetUuid,
+                            value: targetUuid,
+                            key: targetUuid,
+                            name: targetResourceName,
+                            title: targetResourceName,
+                        });
+                        targetResourceListMap[id] = true;
+                    }
+                }
+                {
+
+                    const {stageTriggerItemParams} = item;
+                    const {
+                        storageFile,
+                        stageFile,
+                    } = stageTriggerItemParams;
+                    const {
+                        transmissionMode: itemTransmissionMode,
+                        timeoutValue: itemTimeoutValue,
+                        uploadLimit: itemUploadLimit,
+                        downloadLimit: itemDownloadLimit,
+                        targetPath: itemTargetPath,
+                    } = stageFile;
+                    transmissionMode = itemTransmissionMode;
+                    uploadLimit = itemUploadLimit;
+                    downloadLimit = itemDownloadLimit;
+                    targetPath = itemTargetPath;
+                    timeoutValue = itemTimeoutValue;
+                    const {
+                        fileSource,
+                        sourceUuid,
+                        sourceResourceName = DEFAULT_STRING_VALUE,
+                        sourcePath = DEFAULT_STRING_VALUE,
+                        fileName,
+                        storageFilePath,
+                        storageFileUrl,
+                        storageId,
+                        fileMd5,
+                        fileSize,
+                        status,
+                        id,
+                    } = storageFile;
+
+                    if (!storageFileListMap[id]) {
+                        storageFileList.push({
+                            id,
+                            fileSource,
+                            sourceUuid,
+                            sourceResourceName,
+                            sourcePath,
+                            fileName,
+                            storageFilePath,
+                            storageFileUrl,
+                            storageId,
+                            fileMd5,
+                            fileSize,
+                            status,
+                        });
+                        storageFileListMap[id] = true;
+                    }
+
+                }
+            });
+            return {
+                ...commonParams,
+                transmissionMode,
+                timeoutValue,
+                uploadLimitDisabled: !uploadLimit,
+                downloadLimitDisabled: !downloadLimit,
+                uploadLimit: deConvertFileSize(uploadLimit),
+                downloadLimit: deConvertFileSize(downloadLimit),
+                targetPath,
+                storageFileList,
+                targetResourceList,
+            };
+        }
+    }
+};
 

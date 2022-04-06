@@ -68,7 +68,7 @@ const StepItem = props => {
                             <Switch checked={checked} onChange={handleChangeExecution} />
                         </Spin>
                     </div>
-                    )
+                )
                     : (
                         <>
                             {/* 删除按钮 */}
