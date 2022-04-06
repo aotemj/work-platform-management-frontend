@@ -5,8 +5,7 @@ import fileDownload from 'js-file-download';
 
 import cx from '../index.less';
 import HeaderDetailItem from '../../components/HeaderDetailItem';
-import {convertConsumeTime, formatTimeStamp, getUrlPrefixReal} from '../../../../utils';
-import {routes} from '../../../../routes';
+import {convertConsumeTime, formatTimeStamp} from '../../../../utils';
 import {FAILED, RUN_STATUSES} from '../../List/constant';
 import {entirelyRetry, neglectErrors} from '../../List/ExecDetailDrawer/util';
 import {MILLI_SECOND_STEP} from '../../../../constant';
@@ -118,7 +117,7 @@ const Header = ({executionDetail, params, dataSource, setAddStepDrawerVisible}) 
     ];
 
     const goBack = useCallback(() => {
-        navigate(`${getUrlPrefixReal()}/${routes.EXEC_LIST.url}`);
+        navigate(-1);
     }, [navigate]);
 
     useEffect(() => {
