@@ -13,10 +13,17 @@ import {MILLI_SECOND_STEP} from '../../../../constant';
 const Header = ({executionDetail, params, dataSource, setAddStepDrawerVisible}) => {
     const navigate = useNavigate();
     const downloadTimer = useRef();
+    const downloadButtonDisable = useMemo(() => {
+        const availableLength =  dataSource.map(item => item.logUrl || false).filter(Boolean).length;
+        return !availableLength;
+    }, [dataSource]);
     // 下载日志
     const downloadLog = async () => {
         const promises = dataSource.map(item => {
             const {logUrl: url, IP} = item;
+            if (!url) {
+                return false;
+            }
             return fetch(url, {
                 headers: {
                     IP,
@@ -26,8 +33,7 @@ const Header = ({executionDetail, params, dataSource, setAddStepDrawerVisible}) 
                 fileDownload(content, `${IP}.log`);
                 return content;
             });
-        });
-
+        }).filter(Boolean);
         const res = await Promise.allSettled(promises);
         const failedCount = res.filter(item => item.status !== 'fulfilled').length;
         const length = res.length;
@@ -71,6 +77,7 @@ const Header = ({executionDetail, params, dataSource, setAddStepDrawerVisible}) 
         {
             label: '下载日志', // 下载日志，下载所有的IP执行日志，是压缩文件，一个ip一个txt文档 (from product manager)
             execution: downloadLog,
+            disabled: downloadButtonDisable,
         },
         {
             label: '查看步骤内容',
@@ -133,6 +140,7 @@ const Header = ({executionDetail, params, dataSource, setAddStepDrawerVisible}) 
             className={cx('fundamental-info')}
             extra={operations.map(operation => (
                 <Button
+                    disabled={operation.disabled}
                     key={operation.label}
                     type={operation.type || 'default'}
                     onClick={() => operation.execution(executionDetail)}

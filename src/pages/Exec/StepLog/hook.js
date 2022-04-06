@@ -22,7 +22,7 @@ const useStepLog = (executionDetail, getExecutionDetail) => {
 
     const dataSource = useMemo(() => {
         return stageTriggerItemList?.map(item => {
-            const {stageTriggerItemParams, consumeTime, logUrl, runStatus} = item;
+            const {stageTriggerItemParams, consumeTime, logUrl, runStatus, errorInfo} = item;
             const targetResource = stageTriggerItemParams?.targetResource;
             const id = stageTriggerItemParams.id;
 
@@ -33,6 +33,7 @@ const useStepLog = (executionDetail, getExecutionDetail) => {
                 consumeTime,
                 logUrl: IS_PROD ? logUrl : logUrl?.replace(SA_LOG_PREFIX, DEVELOP_SA_LOG_PREFIX),
                 runStatus,
+                errorInfo,
             } : null;
         });
     }, [stageTriggerItemList]);

@@ -40,7 +40,11 @@ const ScriptContent = props => {
                 )}
             >
                 {
-                    SCRIPT_TYPES.map(({tab, key}) => <TabPane tab={tab} key={key} />)
+                    SCRIPT_TYPES.map(({tab, key}) => <TabPane
+                        disabled={disabled}
+                        tab={tab}
+                        key={key}
+                    />)
                 }
             </Tabs>
             <TextArea

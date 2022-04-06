@@ -13,7 +13,15 @@ import useAddOrEdit from '../../Noah/AddOrEdit/hook';
 import useStepLog from './hook';
 
 const ExecLog = props => {
-    const {executionDetail, getExecutionDetail, users, getNoahWorkPlanDetail, noahDetail, getCategoryList} = props;
+    const {
+        executionDetail,
+        getExecutionDetail,
+        users,
+        getNoahWorkPlanDetail,
+        noahDetail,
+        getCategoryList,
+        updateNoahDetail,
+    } = props;
 
     const {Paragraph} = Typography;
 
@@ -29,6 +37,7 @@ const ExecLog = props => {
         noahDetail,
         executionDetail,
         getCategoryList,
+        updateNoahDetail,
     });
 
     const {
@@ -84,7 +93,6 @@ const ExecLog = props => {
         isViewing: true,
         users,
     };
-
     return (
         <div className={cx('step-log')}>
             <Header {...headerProps} />

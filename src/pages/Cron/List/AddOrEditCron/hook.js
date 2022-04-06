@@ -232,19 +232,19 @@ const useAddOrEditCron = ({
         });
     };
     useEffect(() => {
-        if (editDetailId && editing) {
+        if (editDetailId) {
             getCronDetail(editDetailId);
         }
-    }, [editDetailId, editing]);
+    }, [editDetailId]);
 
     useEffect(() => {
-        if (noahDetail && editing) {
+        if (noahDetail) {
             const {
                 tempParams,
             } = deConvertParams(noahDetail);
             setConvertedNoahDetail(tempParams);
         }
-    }, [noahDetail, editing]);
+    }, [noahDetail]);
 
     useEffect(() => {
         // TODO 滑动加载更多

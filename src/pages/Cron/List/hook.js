@@ -5,7 +5,7 @@ import {debounce} from 'lodash/fp';
 
 import {getContainerDOM, requestCallback} from '../../../utils';
 import {request} from '../../../request/fetch';
-import {COMMON_URL_PREFIX, DEFAULT_PAGINATION, REQUEST_METHODS} from '../../../constant';
+import {COMMON_URL_PREFIX, DEFAULT_PAGINATION, REQUEST_METHODS, REQUEST_TYPE} from '../../../constant';
 import {URLS} from '../constant';
 
 const useCronList = () => {
@@ -24,7 +24,11 @@ const useCronList = () => {
 
     const [addOrEditDrawerVisible, setAddOrEditDrawerVisible] = useState(false);
 
+    const [cronRecordVisible, setCronRecordVisible] = useState(false);
+
     const [editDetailId, setEditDetailId] = useState(null);
+
+    const [recordId, setRecordId] = useState(null);
 
     const [editing, setEditing] = useState(false);
 
@@ -116,13 +120,37 @@ const useCronList = () => {
         setEditDetailId(id);
     };
 
+    // 执行记录
+    const toggleCronRecord = record => {
+        const {cronExecute: {id}} = record;
+        setRecordId(id);
+        setCronRecordVisible(true);
+    };
+
     /* 手动切换定时任务启停状态
         任务停用启用逻辑 from product manager
         6.1 周期性任务可以正常停用和启用
         6.2 单次任务在任务没有执行前，可以停用。在任务执行完毕无能在启用
     */
-    const handleChangeCronByManual = (val, record) => {
-        // console.log(val, record);
+    const handleChangeCronByManual = async (val, record) => {
+        const {cronExecute: {id}} = record;
+        const params = new FormData();
+        params.append('openStatus', val ? 1 : 0);
+        const res = await request({
+            url: `${COMMON_URL_PREFIX}${URLS.getToggleCronStatusUrl(id)}`,
+            method: REQUEST_METHODS.PUT,
+            type: REQUEST_TYPE.FORM_DATA,
+            params,
+        });
+        requestCallback({
+            res,
+            callback() {
+                getList();
+            },
+            errorCallback() {
+                getList();
+            },
+        });
     };
 
     // Initialize 初始化
@@ -134,6 +162,11 @@ const useCronList = () => {
         }
     }, [searchValue, addOrEditDrawerVisible]);
 
+    useEffect(() => {
+        if (!cronRecordVisible) {
+            setRecordId(null);
+        }
+    }, [cronRecordVisible]);
     return {
         data,
         loading,
@@ -145,9 +178,15 @@ const useCronList = () => {
         handleAddCron,
         deleteCron,
         handleChangeCronByManual,
+        // edit
         editCron,
         editing,
         editDetailId,
+        // cronRecord
+        toggleCronRecord,
+        recordId,
+        cronRecordVisible,
+        setCronRecordVisible,
     };
 };
 

@@ -617,7 +617,7 @@ const useAddOrEdit = ({
             return;
         }
         getNoahDetail();
-    }, [params, getNoahDetail]);
+    }, [params, stageId]);
 
     return {
         title,

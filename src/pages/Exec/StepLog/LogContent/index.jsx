@@ -24,8 +24,9 @@ const LogContent = ({dataSource = []}) => {
             return;
         }
 
-        const {logUrl} = currentData;
+        const {logUrl, errorInfo} = currentData;
         if (!logUrl) {
+            setLogList(errorInfo.split('\n'));
             return;
         }
         const res = await fetch(logUrl);

@@ -74,6 +74,8 @@ const AddOrEditCron = props => {
 
     const initialValues = editValues || formikValues;
 
+    const isLoop = initialValues?.exePolicy === STRATEGIES.LOOP.value;
+
     const formFields = {
         taskName: {
             label: '任务名称',
@@ -103,7 +105,7 @@ const AddOrEditCron = props => {
         exePolicy: {
             label: '执行策略',
             name: 'exePolicy',
-            required: true,
+            // required: true,
             children: ({field, form: {values}}) => {
                 return (
                     <div className={cx('strategy-container')}>
@@ -121,13 +123,13 @@ const AddOrEditCron = props => {
                     </div>
                 );
             },
-            validate: yup.string().ensure().trim().required('请选择执行时间'),
+            validate: null,
         },
         // 日期选择
         datePicker: {
             label: '日期选择',
             name: 'datePicker',
-            required: true,
+            required: isLoop,
             children: ({field, form: {values}}) => {
                 const {exePolicy} = values;
                 const isLoop = exePolicy === STRATEGIES.LOOP.value;
@@ -165,16 +167,16 @@ const AddOrEditCron = props => {
                     />
                 );
             },
-            validate: yup
+            validate: isLoop ? yup
                 .array()
-                .min(1, '请至少选择选择一个日期'),
+                .min(1, '请至少选择选择一个日期') : null,
         },
         // 执行时间
         timerPicker: {
             label: '执行时间',
             name: 'timerPicker',
-            required: true,
-            hide: initialValues?.exePolicy === STRATEGIES.SINGLE.value,
+            required: isLoop,
+            hide: !isLoop,
             children: ({form: {values}}) => {
                 return (
                     <TimePicker
@@ -192,7 +194,7 @@ const AddOrEditCron = props => {
                     />
                 );
             },
-            validate: yup.string().required('请选择执行时间'),
+            validate: isLoop ? yup.string().required('请选择执行时间') : null,
         },
         // 作业方案
         workId: {

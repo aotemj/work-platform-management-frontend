@@ -167,7 +167,7 @@ const useAddNoahStep = ({
         //         },
         //     });
         // } else {
-            scriptList = TEMP_SCRIPTS;
+        scriptList = TEMP_SCRIPTS;
         // }
 
         setScripts(scriptList);

@@ -28,7 +28,7 @@ function* getUsersFromOne() {
     //         url: `${ONE_URL_PREFIX}${GLOBAL_URLS.GET_USERS}`,
     //     });
     // } else {
-        finalUsers = users;
+    finalUsers = users;
     // }
 
     const usersMap = new Map();

@@ -142,6 +142,7 @@ module.exports = (cliEnv = {}, argv) => {
         devServer: {
             hot: true,
             port: DEV_PORT,
+            host: '0.0.0.0',
             static: {
                 directory: path.resolve(__dirname, '../dist'),
             },

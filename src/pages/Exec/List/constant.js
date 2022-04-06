@@ -6,7 +6,6 @@ import {ReactComponent as NotStarted} from '../../../statics/icons/notstarted.sv
 import {ReactComponent as Warning} from '../../../statics/icons/warning-Circle-Fill.svg';
 import Iconfont from '../../../components/Iconfont';
 import cx from './index.less';
-// 忽略错误
 
 export const URLS = {
     // 获取分类

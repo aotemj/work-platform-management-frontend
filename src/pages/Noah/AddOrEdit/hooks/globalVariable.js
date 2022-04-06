@@ -114,7 +114,6 @@ const useGlobalVariable = ({
 
     // 更新全局变量
     const handleChangeGlobalVariable = useCallback((e, editing, originData, data) => {
-        console.log(editing);
         if (editing) {
             handleEditGlobalVariable(e, originData);
         } else {
