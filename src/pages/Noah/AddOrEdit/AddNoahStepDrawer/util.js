@@ -327,10 +327,10 @@ export const getFileDistribution = ({
                                 />
                             );
                         },
-                        validate: yup.array().min(1, '请选择文件来源').of(yup.object({
+                        validate: isFileDistribution ? (yup.array().min(1, '请选择文件来源').of(yup.object({
                             sourcePath: yup.string().ensure().required('请输入文件路径并选择相关服务器'),
                             sourceResourceName: yup.string().ensure().required('请输入文件路径并选择相关服务器'),
-                        })),
+                        }))) : null,
                     },
                 ],
             },

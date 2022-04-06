@@ -1,3 +1,5 @@
+import {propOr} from 'ramda';
+
 import {DEFAULT_STRING_VALUE, MAGE_BYTE_SCALE, MINUTE_STEP, SPLIT_SYMBOL, STEP_TYPES} from '../constant';
 import {UPDATE_FILE_STATUS} from '../pages/Noah/AddOrEdit/constants';
 
@@ -30,15 +32,11 @@ const deConvertFileSize = size => {
 
 const deConvertedStorageFileList = list => {
     return list.map((item, index) => {
-        const {
-            sourceResourceName = DEFAULT_STRING_VALUE,
-            sourcePath = DEFAULT_STRING_VALUE,
-        } = item;
         return {
             ...item,
             key: index,
-            sourcePath,
-            sourceResourceName,
+            sourcePath: propOr(DEFAULT_STRING_VALUE, 'sourcePath', item),
+            sourceResourceName: propOr(DEFAULT_STRING_VALUE, 'sourceResourceName', item),
         };
     });
 };
@@ -367,8 +365,6 @@ export const deConvertDataFromExecutionDetail = originData => {
                     const {
                         fileSource,
                         sourceUuid,
-                        sourceResourceName = DEFAULT_STRING_VALUE,
-                        sourcePath = DEFAULT_STRING_VALUE,
                         fileName,
                         storageFilePath,
                         storageFileUrl,
@@ -384,8 +380,8 @@ export const deConvertDataFromExecutionDetail = originData => {
                             id,
                             fileSource,
                             sourceUuid,
-                            sourceResourceName,
-                            sourcePath,
+                            sourcePath: propOr(DEFAULT_STRING_VALUE, 'sourcePath', item),
+                            sourceResourceName: propOr(DEFAULT_STRING_VALUE, 'sourceResourceName', item),
                             fileName,
                             storageFilePath,
                             storageFileUrl,

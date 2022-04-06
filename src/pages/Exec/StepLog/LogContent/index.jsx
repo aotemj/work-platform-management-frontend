@@ -6,7 +6,9 @@
 
 import cx from './index.less';
 import {useCallback, useEffect, useMemo, useState} from 'react';
+
 import SingleLineLog from './SingleLineLog';
+import {LOG_CONTENT_SEPARATOR} from '../../../../constant';
 
 const LogContent = ({dataSource = []}) => {
     const [activeId, setActiveId] = useState(null);
@@ -20,18 +22,19 @@ const LogContent = ({dataSource = []}) => {
     }, [activeId, dataSource]);
 
     const getLogContent = useCallback(async () => {
+        setLogList([]);
         if (!currentData) {
             return;
         }
 
         const {logUrl, errorInfo} = currentData;
         if (!logUrl) {
-            setLogList(errorInfo.split('\n'));
+            setLogList(errorInfo.split(LOG_CONTENT_SEPARATOR));
             return;
         }
         const res = await fetch(logUrl);
         const content = await res.text();
-        const logList = content.split('\n');
+        const logList = content.split(LOG_CONTENT_SEPARATOR);
         setLogList(logList);
     }, [currentData]);
 

@@ -92,3 +92,5 @@ export const MILLI_SECOND_STEP = 1000;
 export const HOUR_STEP = 24;
 export const MINUTE_STEP = 60;
 export const MAGE_BYTE_SCALE = 1024;
+
+export const LOG_CONTENT_SEPARATOR = '\n';
