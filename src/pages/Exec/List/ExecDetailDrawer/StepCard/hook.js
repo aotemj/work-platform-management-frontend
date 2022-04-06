@@ -73,17 +73,16 @@ const useStepCard = ({detail, getUsersFromOne, submitCallback, users, executionD
             label: isManualConfirm ? '审核时间：' : '结束时间：',
             value: formatTimeStamp(endTime),
         };
-        const tempArr = [
+
+        return [
             {
                 label: '开始时间：',
                 value: formatTimeStamp(beginTime),
             },
+            endTimeObj,
         ];
-        if (!isManualConfirm || (isManualConfirm && isNotPass)) {
-            tempArr.push(endTimeObj);
-        }
-        return tempArr;
-    }, [detail, isManualConfirm, isNotPass]);
+
+    }, [detail, isManualConfirm]);
 
     const consumeObj = {
         label: '耗时：',

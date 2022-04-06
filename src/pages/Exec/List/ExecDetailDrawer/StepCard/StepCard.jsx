@@ -46,8 +46,10 @@ const StepCard = props => {
         return (
             <div className={cx('exec-status')}>
                 <span
-                    className={cx('exec-step-card', `status-${detail?.ignoreError
-                    ? IGNORE_ERROR.styleLabel : detail?.runStatus}`)}
+                    className={cx(
+                        'exec-step-card',
+                        `status-${detail?.ignoreError
+                            ? IGNORE_ERROR.styleLabel : detail?.runStatus}`)}
                 >
                     {runStatusLabel}
                 </span>
