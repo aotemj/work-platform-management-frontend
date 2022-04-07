@@ -123,14 +123,19 @@ export function convertFileSize(fileSize) {
 }
 
 // 换算总耗时
-export function convertConsumeTime(executionDetail) {
+export function convertConsumeTime(executionDetail, needDefaultDate = true) {
     if (!executionDetail) {
         return;
     }
     let {consumeTime = null, beginTime} = executionDetail;
-    if (!consumeTime && beginTime) {
-        consumeTime = (Date.now() - beginTime) / MILLI_SECOND_STEP;
+    if (needDefaultDate) {
+        if (!consumeTime && beginTime) {
+            consumeTime = (Date.now() - beginTime) / MILLI_SECOND_STEP;
+        }
+    } else if (!consumeTime) {
+        return DEFAULT_STRING_VALUE;
     }
+
     const {
         dayTime,
         hourTime,

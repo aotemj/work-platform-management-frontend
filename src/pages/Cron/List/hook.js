@@ -39,7 +39,7 @@ const useCronList = () => {
         try {
             const res = await request({
                 url: `${COMMON_URL_PREFIX}${URLS.CRON_LIST_URL}`,
-                params: params,
+                params,
             });
             const {status, data, msg} = res;
             if (!status) {

@@ -42,18 +42,15 @@ const DateRangePicker = ({handleChangeDate, dateRange = 31}) => {
             endTime,
         });
     };
-
+    // 时间段选择做多31天
     return (
-        <>
-            {/* 时间段选择做多31天 */}
-            <RangePicker
-                value={hackValue || value}
-                disabledDate={disabledDate}
-                onCalendarChange={val => setDates(val)}
-                onChange={val => onDateChange(val)}
-                onOpenChange={onOpenChange}
-            />
-        </>
+        <RangePicker
+            value={hackValue || value}
+            disabledDate={disabledDate}
+            onCalendarChange={val => setDates(val)}
+            onChange={val => onDateChange(val)}
+            onOpenChange={onOpenChange}
+        />
     );
 };
 
