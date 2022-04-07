@@ -1,12 +1,15 @@
 // 执行记录
-import {Drawer, Table} from '@osui/ui';
+import {Drawer, Table, Spin} from '@osui/ui';
 import {useEffect, useState} from 'react';
 
 import DateRangePicker from '../../../../components/DateRangePicker';
-import {COMMON_URL_PREFIX} from '../../../../constant';
+import {COMMON_URL_PREFIX, DEFAULT_STRING_VALUE} from '../../../../constant';
 import {request} from '../../../../request/fetch';
 import {URLS} from '../../constant';
-import {requestCallback} from '../../../../utils';
+import {formatTimeStamp, requestCallback} from '../../../../utils';
+import StatusTag from '../../../../components/StatusTag';
+import cx from './index.less';
+import {RUN_STATUSES} from '../../../Exec/List/constant';
 
 const CronRecord = ({handleChangeDate, visible, recordId, onClose}) => {
 
@@ -34,20 +37,35 @@ const CronRecord = ({handleChangeDate, visible, recordId, onClose}) => {
     const recordProps = {
         columns: [
             {
-                tile: 'ID',
+                title: 'ID',
                 dataIndex: 'id',
             },
             {
-                tile: '任务状态',
-                dataIndex: 'status',
+                title: '任务状态',
+                dataIndex: 'runStatus',
+                align: 'center',
+                render(status) {
+                    return (
+                        <div className={cx('run-status')}>
+                            {RUN_STATUSES.get(status).icon}
+                            <StatusTag status={status} />
+                        </div>
+                    );
+                },
             },
             {
-                tile: '开始时间',
+                title: '开始时间',
                 dataIndex: 'beginTime',
+                render(val) {
+                    return formatTimeStamp(val);
+                },
             },
             {
-                tile: '耗时',
+                title: '耗时',
                 dataIndex: 'consumeTime',
+                render(val) {
+                    return val || DEFAULT_STRING_VALUE;
+                },
             },
         ],
         dataSource,
@@ -64,7 +82,9 @@ const CronRecord = ({handleChangeDate, visible, recordId, onClose}) => {
             {/* <DateRangePicker */}
             {/*     handleChangeDate={handleChangeDate} */}
             {/* /> */}
-            {visible && <Table {...recordProps} />}
+            <Spin spinning={false}>
+                {visible && <Table {...recordProps} />}
+            </Spin>
         </Drawer>
     );
 };

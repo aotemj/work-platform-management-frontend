@@ -209,6 +209,7 @@ const AddOrEditCron = props => {
                     }),
                     getPopupContainer: triggerNode => triggerNode.parentNode,
                     className: cx('noah-list-select'),
+                    optionFilterProp: 'label',
                     placeholder: '请选择脚本',
                     showSearch: true,
                     allowClear: true,

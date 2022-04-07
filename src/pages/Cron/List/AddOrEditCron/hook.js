@@ -117,6 +117,7 @@ const useAddOrEditCron = ({
 
     const closingVisibleCallback = () => {
         setFormikValues(defaultFormikValues);
+        setSelectAll(false);
         setEditValues(null);
     };
 
