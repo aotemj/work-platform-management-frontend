@@ -110,7 +110,7 @@ const useAddOrEditCron = ({
 
             return `${secondValue} ${minuteValue} ${hourValue} ${dayValue} ${monthValue} ${weekValue}`;
         } else if (exePolicy === SINGLE.value) {
-            return `${timerPicker}`;
+            return formikValues.exeCron;
         }
 
     };
