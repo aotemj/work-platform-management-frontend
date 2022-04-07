@@ -31,14 +31,14 @@ const DateRangePicker = ({handleChangeDate, dateRange = 31}) => {
 
     const onDateChange = val => {
         setValue(val);
-        let beginTime = '';
+        let startTime = '';
         let endTime = '';
         if (val) {
-            beginTime = Date.parse(`${moment(val[0]).format('YYYY-MM-DD')} 00:00:00`);
+            startTime = Date.parse(`${moment(val[0]).format('YYYY-MM-DD')} 00:00:00`);
             endTime = Date.parse(`${moment(val[1]).format('YYYY-MM-DD')} 23:59:59`);
         }
         handleChangeDate({
-            beginTime,
+            startTime,
             endTime,
         });
     };

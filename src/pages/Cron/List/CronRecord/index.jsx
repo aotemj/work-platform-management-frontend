@@ -16,14 +16,14 @@ import {RUN_STATUSES} from '../../../Exec/List/constant';
 const CronRecord = ({visible, recordId, onClose}) => {
 
     const defaultSearchValue = {
-        beginTime: '', endTime: '',
+        startTime: '', endTime: '',
     };
     const [dataSource, setDataSource] = useState([]);
     const [searchValue, setSearchValue] = useState(defaultSearchValue);
 
-    const handleChangeDate = debounce(500)(({beginTime, endTime}) => {
+    const handleChangeDate = debounce(500)(({startTime, endTime}) => {
         setSearchValue(value => ({
-            ...value, beginTime, endTime,
+            ...value, startTime, endTime,
         }));
     });
 
