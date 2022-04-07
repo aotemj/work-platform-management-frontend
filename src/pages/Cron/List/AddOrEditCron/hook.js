@@ -1,6 +1,5 @@
 import {useCallback, useEffect, useState} from 'react';
 import moment from 'moment';
-import {debounce} from 'lodash/fp';
 
 import {CRON_DATE_WEEKS, STRATEGIES, URLS} from '../../constant';
 import {deConvertParams} from '../../../../utils/convertNoahDetail';
@@ -25,7 +24,6 @@ const useAddOrEditCron = ({
     editing,
     getNoahList,
     getNoahWorkPlanDetail,
-    getCategoryList,
     setVisible,
     visible,
     editDetailId,
@@ -36,17 +34,7 @@ const useAddOrEditCron = ({
     const [convertedNoahDetail, setConvertedNoahDetail] = useState(null);
     const [selectAll, setSelectAll] = useState(false);
     const [indeterminate, setIndeterminate] = useState(false);
-    // 搜索及列表请求参数
-    const [searchValue, setSearchValue] = useState({
-        beginTime: '', endTime: '',
-    });
 
-    // 日期变化 beginTime endTime
-    const handleChangeDate = debounce(500)(({beginTime, endTime}) => {
-        setSearchValue(value => ({
-            ...value, beginTime, endTime,
-        }));
-    });
     const setFormValues = e => {
         return editing ? setEditValues(e) : setFormikValues(e);
     };
@@ -110,7 +98,7 @@ const useAddOrEditCron = ({
 
             return `${secondValue} ${minuteValue} ${hourValue} ${dayValue} ${monthValue} ${weekValue}`;
         } else if (exePolicy === SINGLE.value) {
-            return formikValues.exeCron;
+            return values.timerPicker;
         }
 
     };
@@ -118,6 +106,7 @@ const useAddOrEditCron = ({
     const closingVisibleCallback = () => {
         setFormikValues(defaultFormikValues);
         setSelectAll(false);
+        setIndeterminate(false);
         setEditValues(null);
     };
 
@@ -176,8 +165,7 @@ const useAddOrEditCron = ({
             taskName,
             workId,
         } = originalData;
-        const [minute, hour, week] = exeCron.split(' ');
-
+        const [, minute, hour, , , week] = exeCron.split(' ');
         let timerPicker = moment().valueOf();
         let datePicker = [];
         const {LOOP, SINGLE} = STRATEGIES;
@@ -190,7 +178,6 @@ const useAddOrEditCron = ({
             datePicker = isAllSelect
                 ? CRON_DATE_WEEKS.map(item => item.value)
                 : week.split(SPLIT_SYMBOL).map(item => Number(item));
-
             setSelectAll(isAllSelect);
             setIndeterminate(isAllSelect ? false : !!selectLength && selectLength < allLength);
 
@@ -253,7 +240,6 @@ const useAddOrEditCron = ({
             // currentPage,
             // pageSize,
         });
-        getCategoryList();
     }, []);
 
     useEffect(() => {
@@ -267,7 +253,6 @@ const useAddOrEditCron = ({
         setDisabled,
         formikValues,
         editValues,
-        handleChangeDate,
         handleChangeNoah,
         convertedNoahDetail,
         handleChangeDatePicker,

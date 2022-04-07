@@ -19,7 +19,7 @@ const title = '定时任务';
 
 const CronList = props => {
     const {
-        noahList, noahTotal, noahDetail, categories, categoryMap, getNoahList, getNoahWorkPlanDetail, getCategoryList,
+        noahList, noahTotal, noahDetail, categories, categoryMap, getNoahList, getNoahWorkPlanDetail,
     } = props;
     const {
         data,
@@ -172,7 +172,6 @@ const CronList = props => {
         categoryMap,
         getNoahList,
         getNoahWorkPlanDetail,
-        getCategoryList,
     };
 
     const cronRecordProps = {

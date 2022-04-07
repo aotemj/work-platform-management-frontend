@@ -12,6 +12,7 @@ import AddOrEditNoah from '../pages/Noah/AddOrEdit/index';
 import ExecList from '../pages/Exec/List/index';
 import CronList from '../pages/Cron/List/index';
 import ExecLog from '../pages/Exec/StepLog';
+import DiskSpace from '../pages/DiskSpace';
 
 /**
  * 创建通用路由
@@ -64,6 +65,10 @@ export const routes = {
     CRON_LIST: {
         url: 'cron/list',
         component: <CronList />,
+    },
+    DISK_SPACE: {
+        url: 'disk/space',
+        component: <DiskSpace />,
     },
 };
 

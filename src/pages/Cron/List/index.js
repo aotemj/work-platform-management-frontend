@@ -2,7 +2,7 @@ import {connect} from 'react-redux';
 import {compose} from 'lodash/fp';
 
 import CronList from './CronList';
-import {GET_NOAH_DETAIL_S, GET_NOAH_LIST_S, UPDATE_CATEGORY_LIST_S} from '../../../sagas/types';
+import {GET_NOAH_DETAIL_S, GET_NOAH_LIST_S} from '../../../sagas/types';
 
 const mapStateToProps = ({
     noahList,
@@ -24,10 +24,6 @@ const mapDispatchToProps = dispatch => ({
     }),
     getNoahWorkPlanDetail: payload => dispatch({
         type: GET_NOAH_DETAIL_S,
-        payload,
-    }),
-    getCategoryList: payload => dispatch({
-        type: UPDATE_CATEGORY_LIST_S,
         payload,
     }),
 });

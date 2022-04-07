@@ -1,7 +1,7 @@
 import {propOr} from 'ramda';
 
 import cx from './index.less';
-import {DEFAULT_STRING_VALUE, DELETE_SYMBOL, SPLIT_SYMBOL} from '../../../../../constant';
+import {DEFAULT_STRING_VALUE, DELETE_SYMBOL} from '../../../../../constant';
 import GlobalVariableItem from '../../../../Noah/AddOrEdit/GlobalVariableItem';
 import StepItem from '../../../../Noah/AddOrEdit/StepItem';
 
@@ -16,7 +16,7 @@ const NoahItem = ({
 );
 const NoahDetail = ({
     noahDetail,
-    categoryMap,
+    noahOriginalDetail,
 }) => {
     const filterDeleteSymbol = item => item.status !== DELETE_SYMBOL;
 
@@ -27,11 +27,9 @@ const NoahDetail = ({
         content: propOr(DEFAULT_STRING_VALUE, 'name', noahDetail),
     };
 
-    const categoryIds = propOr([], 'category', noahDetail);
-
     const categoryObj = {
         label: '方案分类',
-        content: categoryIds.map(id => categoryMap?.[id]?.name).join(SPLIT_SYMBOL),
+        content: noahOriginalDetail?.workPlan?.typeNames,
     };
     const descriptionObj = {
         label: '方案描述',

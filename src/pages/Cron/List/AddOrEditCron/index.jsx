@@ -18,10 +18,8 @@ const AddOrEditCron = props => {
         noahList,
         noahTotal,
         noahDetail,
-        categoryMap,
         getNoahList,
         getNoahWorkPlanDetail,
-        getCategoryList,
         editDetailId,
     } = props;
     const {
@@ -45,7 +43,6 @@ const AddOrEditCron = props => {
         editDetailId,
         getNoahList,
         getNoahWorkPlanDetail,
-        getCategoryList,
         setVisible,
         visible,
     });
@@ -121,15 +118,13 @@ const AddOrEditCron = props => {
             },
             validate: null,
         },
-        // 日期选择
-        datePicker: {
+        datePickerForLoop: {
             label: '日期选择',
             name: 'datePicker',
             required: isLoop,
+            hide: !isLoop,
             children: ({field, form: {values}}) => {
-                const {exePolicy} = values;
-                const isLoop = exePolicy === STRATEGIES.LOOP.value;
-                return isLoop ? (
+                return (
                     <div className={cx('data-picker-container')}>
                         <Checkbox
                             indeterminate={indeterminate}
@@ -141,14 +136,26 @@ const AddOrEditCron = props => {
                         <Checkbox.Group
                             options={CRON_DATE_WEEKS}
                             {...field}
-                            defaultValue={[CRON_DATE_WEEKS[0].value]}
+                            defaultValue={editing ? values.datePicker : [CRON_DATE_WEEKS[0].value]}
                             value={initialValues.datePicker}
                             onChange={e => handleChangeDatePicker(e, values)}
                         />
                     </div>
-                ) : (
+                );
+            },
+            validate: yup
+                .array()
+                .min(1, '请至少选择选择一个日期'),
+        },
+        datePickerForSingle: {
+            label: '日期选择',
+            name: 'timePicker',
+            required: !isLoop,
+            hide: isLoop,
+            children: ({form: {values}}) => {
+                return (
                     <DatePicker
-                        defaultValue={moment()}
+                        defaultValue={editing ? moment(Number(values.timerPicker)) : moment()}
                         className={cx('single-picker')}
                         allowClear={false}
                         showTime
@@ -156,16 +163,13 @@ const AddOrEditCron = props => {
                         onOk={e => {
                             setFormValues({
                                 ...values,
-                                exeCron: e.valueOf(),
+                                timerPicker: e.valueOf(),
                             });
                         }}
                         format={STRATEGIES.SINGLE.format}
                     />
                 );
             },
-            validate: isLoop ? yup
-                .array()
-                .min(1, '请至少选择选择一个日期') : null,
         },
         // 执行时间
         timerPicker: {
@@ -179,7 +183,7 @@ const AddOrEditCron = props => {
                         allowClear={false}
                         showNow={false}
                         suffixIcon={null}
-                        defaultValue={moment()}
+                        defaultValue={editing ? moment(Number(values.timerPicker)) : moment()}
                         format={'HH:mm'}
                         onOk={e => {
                             setFormValues({
@@ -200,7 +204,7 @@ const AddOrEditCron = props => {
             children: ({field, form: {values}}) => {
                 const noahDetailProps = {
                     noahDetail: convertedNoahDetail,
-                    categoryMap,
+                    noahOriginalDetail: noahDetail,
                 };
                 const workPlanSelectProps = {
                     options: noahList?.map(item => {
@@ -229,7 +233,7 @@ const AddOrEditCron = props => {
     };
 
     const formikProps = {
-        handleSubmit: () => handleSubmit(formRef.current.values),
+        handleSubmit,
         initialValues,
         disabled,
         setDisabled,
@@ -249,7 +253,7 @@ const AddOrEditCron = props => {
             onClose={onClose}
             visible={visible}
         >
-            <FormikComp {...formikProps} />
+            {visible && <FormikComp {...formikProps} />}
         </Drawer>
     );
 };
