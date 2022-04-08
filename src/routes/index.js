@@ -12,7 +12,7 @@ import AddOrEditNoah from '../pages/Noah/AddOrEdit/index';
 import ExecList from '../pages/Exec/List/index';
 import CronList from '../pages/Cron/List/index';
 import ExecLog from '../pages/Exec/StepLog';
-import DiskSpace from '../pages/DiskSpace';
+import DiskSpace from '../pages/DiskSpace/index';
 
 /**
  * 创建通用路由

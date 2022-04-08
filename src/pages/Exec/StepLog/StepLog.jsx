@@ -3,11 +3,10 @@ import {Table, Typography, Spin} from '@osui/ui';
 import cx from './index.less';
 import Header from './Header';
 import {ReactComponent as PrivilegeManagement} from '../../../statics/icons/Privilege-management.svg';
-// import {ReactComponent as ReadyRun} from '../../../statics/icons/readyrun.svg';
 
 import {convertConsumeTime} from '../../../utils';
 import LogContent from './LogContent/index';
-import {RUN_STATUSES} from '../List/constant';
+import {FAILED, RUN_STATUSES} from '../List/constant';
 import AddNoahStepDrawer from '../../Noah/AddOrEdit/AddNoahStepDrawer/index';
 import useAddOrEdit from '../../Noah/AddOrEdit/hook';
 import useStepLog from './hook';
@@ -70,9 +69,15 @@ const ExecLog = props => {
                 // status
                 width: '10%',
                 title: <PrivilegeManagement />,
-                dataIndex: 'runStatus',
-                render(val) {
-                    return <span className={cx('run-status')}>{RUN_STATUSES.get(val).icon}</span>;
+                dataIndex: 'allTaskSuccess',
+                render(val, record) {
+                    // 由于当前存在合并主机情况，所以需要先判断是否全部任务成功(allTaskSuccess 为 true)， 如果不成功则显示失败
+                    const {runStatus} = record;
+                    return (
+                        <span className={cx('run-status')}>
+                            {RUN_STATUSES.get(val ? runStatus : FAILED.value).icon}
+                        </span>
+                    );
                 },
             },
         ],

@@ -19,7 +19,7 @@ const useStepLog = (executionDetail, getExecutionDetail) => {
 
     const dataSource = useMemo(() => {
         return stageTriggerItemList?.map(item => {
-            const {stageTriggerItemParams, consumeTime, logShowList, runStatus, errorInfo} = item;
+            const {stageTriggerItemParams, consumeTime, logShowList, runStatus, errorInfo, allTaskSuccess} = item;
             const targetResource = stageTriggerItemParams?.targetResource;
             const id = stageTriggerItemParams.id;
             return targetResource && logShowList ? {
@@ -30,6 +30,7 @@ const useStepLog = (executionDetail, getExecutionDetail) => {
                 logShowList,
                 runStatus,
                 errorInfo,
+                allTaskSuccess,
             } : null;
         }).filter(Boolean);
     }, [stageTriggerItemList]);
