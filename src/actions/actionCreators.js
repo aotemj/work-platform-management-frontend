@@ -4,6 +4,7 @@ import {
     GET_USERS_FROM_ONE,
     UPDATE_NOAH_DETAIL,
     UPDATE_CATEGORY_LIST,
+    UPDATE_DISK_SPACE_INFO,
 } from './actionTypes';
 
 export const getUsersFromOne_A = payload => ({
@@ -28,5 +29,10 @@ export const getNoahDetail_A = payload => ({
 
 export const updateCategories_A = payload => ({
     type: UPDATE_CATEGORY_LIST,
+    payload,
+});
+
+export const updateDiskSpaceInfo_A = payload => ({
+    type: UPDATE_DISK_SPACE_INFO,
     payload,
 });

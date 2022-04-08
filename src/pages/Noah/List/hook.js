@@ -3,7 +3,7 @@ import {message, Modal} from '@osui/ui';
 import {debounce} from 'lodash/fp';
 import {useNavigate} from 'react-router-dom';
 
-import {getContainerDOM, getUrlPrefixReal} from '../../../utils';
+import {diskWarning, getContainerDOM, getUrlPrefixReal} from '../../../utils';
 import {DROP_DOWN_MENU, URLS} from './constants';
 import {
     DEFAULT_PAGINATION,
@@ -15,9 +15,14 @@ import {
 } from '../../../constant';
 import {routes} from '../../../routes';
 import {request} from '../../../request/fetch';
-// TODO 接口未提供，暂未联调
-// 存储空间已占用95%！，请删除历史方案和定时任务，清理纸盘空间，否则无法创建执行方案
-const useNoahList = ({getNoahList, noahList: list, noahTotal: total}) => {
+
+const useNoahList = ({
+    getNoahList,
+    noahList: list,
+    noahTotal: total,
+    updateDiskSpaceInfo,
+    diskSpaceInfo,
+}) => {
     const navigate = useNavigate();
     const jumpTimer = useRef();
     const [batchSpin, setBatchSpin] = useState(false);
@@ -229,9 +234,14 @@ const useNoahList = ({getNoahList, noahList: list, noahTotal: total}) => {
         getList();
     }, [shouldUpdate]);
 
+    useEffect(() => {
+        diskWarning(diskSpaceInfo);
+    }, [diskSpaceInfo]);
+
     // initialize
     useEffect(() => {
         getNoahTypes();
+        updateDiskSpaceInfo();
         return () => {
             clearTimeout(jumpTimer);
         };

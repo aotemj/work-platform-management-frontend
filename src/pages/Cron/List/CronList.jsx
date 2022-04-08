@@ -19,7 +19,15 @@ const title = '定时任务';
 
 const CronList = props => {
     const {
-        noahList, noahTotal, noahDetail, categories, categoryMap, getNoahList, getNoahWorkPlanDetail,
+        noahList,
+        noahTotal,
+        noahDetail,
+        categories,
+        categoryMap,
+        getNoahList,
+        getNoahWorkPlanDetail,
+        diskSpaceInfo,
+        updateDiskSpaceInfo,
     } = props;
     const {
         data,
@@ -39,7 +47,10 @@ const CronList = props => {
         setCronRecordVisible,
         recordId,
         toggleCronRecord,
-    } = useCronList();
+    } = useCronList({
+        diskSpaceInfo,
+        updateDiskSpaceInfo,
+    });
 
     const tableOperations = [
         {

@@ -3,13 +3,15 @@ import {message, Modal} from '@osui/ui';
 import {reject, anyPass, isEmpty, isNil} from 'ramda';
 import {debounce} from 'lodash/fp';
 
-import {getContainerDOM, requestCallback} from '../../../utils';
+import {diskWarning, getContainerDOM, requestCallback} from '../../../utils';
 import {request} from '../../../request/fetch';
 import {COMMON_URL_PREFIX, DEFAULT_PAGINATION, REQUEST_METHODS, REQUEST_TYPE} from '../../../constant';
 import {URLS} from '../constant';
-// TODO 接口未提供，暂未联调
-// 存储空间已占用95%！，请删除历史方案和定时任务，清理纸盘空间，否则无法创建执行方案
-const useCronList = () => {
+
+const useCronList = ({
+    diskSpaceInfo,
+    updateDiskSpaceInfo,
+}) => {
     // Table加载状态
     const [loading, setLoading] = useState(false);
     // Table显示数据
@@ -163,6 +165,13 @@ const useCronList = () => {
         }
     }, [searchValue, addOrEditDrawerVisible]);
 
+    useEffect(() => {
+        diskWarning(diskSpaceInfo);
+    }, [diskSpaceInfo]);
+
+    useEffect(() => {
+        updateDiskSpaceInfo();
+    }, []);
     useEffect(() => {
         if (!cronRecordVisible) {
             setRecordId(null);

@@ -2,7 +2,6 @@ import {ReactComponent as ReadyRun} from '../../../statics/icons/readyrun.svg';/
 import {ReactComponent as CloseCircle} from '../../../statics/icons/closecircle.svg';// 执行失败
 import {ReactComponent as CheckCircle} from '../../../statics/icons/checkcircle.svg';// 初始化、执行成功
 import {ReactComponent as Suspend} from '../../../statics/icons/suspend.svg';// 执行暂停
-import {ReactComponent as NotStarted} from '../../../statics/icons/notstarted.svg';// 待确认
 import {ReactComponent as Warning} from '../../../statics/icons/warning-Circle-Fill.svg';
 import Iconfont from '../../../components/Iconfont';
 import cx from './index.less';
@@ -22,6 +21,7 @@ export const URLS = {
     CONFIRM_MANUAL_RESULT: '/rest/v1/execute/stage-confirm',
     // 分页获取执行列表
     EXEC_LIST_URL: '/rest/v1/execute/infos',
+    DISK_SPACE_INFO: '/rest/v1/file',
 };
 
 // 执行状态 1：待执行；2：执行中；3：执行失败；4：执行成功；5：执行暂停；

@@ -4,6 +4,7 @@ import {
     GET_NOAH_LIST,
     GET_USERS_FROM_ONE,
     UPDATE_CATEGORY_LIST,
+    UPDATE_DISK_SPACE_INFO,
 } from '../actions/actionTypes';
 
 const initialState = {
@@ -24,6 +25,8 @@ const initialState = {
         list: [],
         map: {},
     },
+    // 磁盘占用信息
+    diskSpaceInfo: null,
 };
 
 export default (state = initialState, action) => {
@@ -55,6 +58,11 @@ export default (state = initialState, action) => {
             return {
                 ...state,
                 categories,
+            };
+        case UPDATE_DISK_SPACE_INFO:
+            return {
+                ...state,
+                diskSpaceInfo: action.payload,
             };
         default: {
             return state;

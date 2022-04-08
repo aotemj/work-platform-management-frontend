@@ -100,6 +100,10 @@ export function getUrlPrefixReal() {
     return `${PREFIX}/${PROJECT_ROUTE}`;
 }
 
+export const byteToGage = size => {
+    return (size / Math.pow(MAGE_BYTE_SCALE, 3)).toFixed(2);
+};
+
 /**
  * 转换为 MB
  * @param fileSize 单位 byte
@@ -116,7 +120,7 @@ export function convertFileSize(fileSize) {
         size = fileSize / doubleUnit;
         symbol = 'Mb';
     } else {
-        size = fileSize / treblingUnit;
+        size = byteToGage(fileSize);
         symbol = 'Gb';
     }
     return `${size.toFixed(2)}${symbol}`;
@@ -170,6 +174,20 @@ export function requestCallback({
         errorCallback && errorCallback(data);
     }
 }
+
+export const diskWarning = diskSpaceInfo => {
+    if (!diskSpaceInfo) {
+        return;
+    }
+    let {diskFreeSize, diskUsedWarnRatio, diskTotalSize} = diskSpaceInfo;
+
+    const freeRatio = diskFreeSize / diskTotalSize;
+    if (freeRatio < 0.5) {
+        const warningMessage = `磁盘剩余空间还剩 ${(freeRatio * 100).toFixed(2)}% ，请及时清理历史任务和定时任务。如果超过
+            ${diskUsedWarnRatio * 100}% 磁盘占用，用户将无法创建作业方案和定时任务！`;
+        message.warning(warningMessage);
+    }
+};
 
 
 

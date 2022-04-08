@@ -14,7 +14,7 @@ import {MAX_DISPLAY_LENGTH, SPLIT_SYMBOL} from '../../../constant';
 const title = '作业管理';
 
 const NoahList = props => {
-    const {getNoahList, noahList, noahTotal} = props;
+    const {getNoahList, noahList, noahTotal, updateDiskSpaceInfo, diskSpaceInfo} = props;
     const {
         data,
         handlePaginationChange,
@@ -36,7 +36,7 @@ const NoahList = props => {
         addNoah,
         setNoahType,
         batchSpin,
-    } = useNoahList({getNoahList, noahList, noahTotal});
+    } = useNoahList({getNoahList, noahList, noahTotal, updateDiskSpaceInfo, diskSpaceInfo});
 
     const tableOperations = [
         {

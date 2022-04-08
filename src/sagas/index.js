@@ -6,6 +6,7 @@ import {
     getUsersFromOne_A,
     getNoahDetail_A,
     updateCategories_A,
+    updateDiskSpaceInfo_A,
 } from '../actions/actionCreators.js';
 import {users} from '../temp/users';
 import {
@@ -14,9 +15,10 @@ import {
     GET_NOAH_DETAIL_S,
     GET_NOAH_LIST_S,
     GET_USER_FROM_ONE_S,
+    UPDATE_DISK_SPACE_INFO_S,
 } from './types';
 import {request} from '../request/fetch';
-import {REQUEST_CODE, COMMON_URL_PREFIX, GLOBAL_URLS, ONE_URL_PREFIX, IS_PROD} from '../constant';
+import {REQUEST_CODE, COMMON_URL_PREFIX} from '../constant';
 import {URLS} from '../pages/Exec/List/constant';
 
 // 获取用户信息
@@ -128,6 +130,18 @@ function* getCategoryList() {
     }
 }
 
+function* updateDiskSpaceInfo() {
+    const res = yield request({
+        url: `${COMMON_URL_PREFIX}${URLS.DISK_SPACE_INFO}`,
+    });
+    const {data, status} = res;
+    if (!status) {
+        yield put(
+            updateDiskSpaceInfo_A(data),
+        );
+    }
+}
+
 export default function* () {
     yield all([
         takeLatest(GET_USER_FROM_ONE_S, getUsersFromOne),
@@ -135,5 +149,6 @@ export default function* () {
         takeLatest(GET_NOAH_LIST_S, getNoahList),
         takeLatest(GET_NOAH_DETAIL_S, getNoahWorkPlanDetail),
         takeLatest(UPDATE_CATEGORY_LIST_S, getCategoryList),
+        takeLatest(UPDATE_DISK_SPACE_INFO_S, updateDiskSpaceInfo),
     ]);
 };
