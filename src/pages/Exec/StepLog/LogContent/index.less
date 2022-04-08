@@ -29,4 +29,32 @@
     .content {
         height: 100%;
     }
+
+    :global(.log-collapse) {
+        background: transparent !important;
+
+        :global(.log-panel) {
+            background: transparent !important;
+
+            :global(.ant-collapse-header) {
+                background: transparent !important;
+                color: #FFF;
+
+                :global(.ant-collapse-arrow) {
+                    background: transparent !important;
+
+                    :global(.osui-icon) {
+                        color: #FFF !important;
+                    }
+                }
+            }
+
+            :global(.ant-collapse-content) {
+                background: transparent !important;
+                color: #FFF;
+                padding-left: 10px;
+                box-sizing: border-box;
+            }
+        }
+    }
 }

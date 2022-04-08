@@ -129,8 +129,12 @@ export function convertConsumeTime(executionDetail, needDefaultDate = true) {
     }
     let {consumeTime = null, beginTime} = executionDetail;
     if (needDefaultDate) {
-        if (!consumeTime && beginTime) {
-            consumeTime = (Date.now() - beginTime) / MILLI_SECOND_STEP;
+        if (!consumeTime) {
+            if (beginTime) {
+                consumeTime = (Date.now() - beginTime) / MILLI_SECOND_STEP;
+            } else {
+                return DEFAULT_STRING_VALUE;
+            }
         }
     } else if (!consumeTime) {
         return DEFAULT_STRING_VALUE;

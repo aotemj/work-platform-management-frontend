@@ -1,15 +1,12 @@
 import {useParams} from 'react-router-dom';
-import {useEffect, useMemo} from 'react';
-
-import {IS_PROD} from '../../../constant';
-import {DEVELOP_SA_LOG_PREFIX, SA_LOG_PREFIX} from './constant';
+import {useEffect, useMemo, useState} from 'react';
 
 /**
  * 步骤日志 hook
  */
 const useStepLog = (executionDetail, getExecutionDetail) => {
     const params = useParams();
-
+    const [loading, setLoading] = useState(false);
     const getExecuteId = () => {
         const {executeId} = params;
         getExecutionDetail(executeId);
@@ -22,28 +19,36 @@ const useStepLog = (executionDetail, getExecutionDetail) => {
 
     const dataSource = useMemo(() => {
         return stageTriggerItemList?.map(item => {
-            const {stageTriggerItemParams, consumeTime, logUrl, runStatus, errorInfo} = item;
+            const {stageTriggerItemParams, consumeTime, logShowList, runStatus, errorInfo} = item;
             const targetResource = stageTriggerItemParams?.targetResource;
             const id = stageTriggerItemParams.id;
-
-            return targetResource ? {
+            return targetResource && logShowList ? {
                 key: id,
                 id: id,
                 IP: targetResource?.targetResourceName,
                 consumeTime,
-                logUrl: IS_PROD ? logUrl : logUrl?.replace(SA_LOG_PREFIX, DEVELOP_SA_LOG_PREFIX),
+                logShowList,
                 runStatus,
                 errorInfo,
             } : null;
-        });
+        }).filter(Boolean);
     }, [stageTriggerItemList]);
+    const errorInfo = useMemo(() => {
+        if (!dataSource.length) {
+            return stageTriggerItemList[0]?.errorInfo;
+        }
+        return '';
 
+    }, [dataSource, stageTriggerItemList]);
     useEffect(() => {
         getExecuteId();
     }, []);
     return {
         dataSource,
         params,
+        errorInfo,
+        loading,
+        setLoading,
     };
 };
 

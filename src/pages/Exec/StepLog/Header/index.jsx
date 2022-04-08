@@ -8,34 +8,58 @@ import HeaderDetailItem from '../../components/HeaderDetailItem';
 import {convertConsumeTime, formatTimeStamp} from '../../../../utils';
 import {FAILED, RUN_STATUSES} from '../../List/constant';
 import {entirelyRetry, neglectErrors} from '../../List/ExecDetailDrawer/util';
-import {MILLI_SECOND_STEP} from '../../../../constant';
+import {LOG_CONTENT_SEPARATOR, MILLI_SECOND_STEP, PROMISE_STATUS} from '../../../../constant';
+import {transformLogUrl} from '../constant';
 
 const Header = ({executionDetail, params, dataSource, setAddStepDrawerVisible}) => {
     const navigate = useNavigate();
     const downloadTimer = useRef();
     const downloadButtonDisable = useMemo(() => {
-        const availableLength =  dataSource.map(item => item.logUrl || false).filter(Boolean).length;
-        return !availableLength;
+        const length = dataSource.length;
+        let availableCount = 0;
+        for (let i = 0; i < length; i++) {
+            const {errorInfo} = dataSource[i];
+            if (!errorInfo) {
+                return false;
+            }
+        }
+
+        return !availableCount;
     }, [dataSource]);
     // 下载日志
     const downloadLog = async () => {
         const promises = dataSource.map(item => {
-            const {logUrl: url, IP} = item;
-            if (!url) {
+            const {logShowList, IP} = item;
+            if (!logShowList) {
                 return false;
             }
-            return fetch(url, {
-                headers: {
-                    IP,
-                },
-            }).then(async res => {
-                const content = await res.text();
-                fileDownload(content, `${IP}.log`);
-                return content;
+            return Promise.allSettled(logShowList.map(async logItem => {
+                const {logUrl} = logItem;
+                return fetch(transformLogUrl(logUrl)).then(
+                    async res => {
+                        const content = await res.text();
+                        return {
+                            content,
+                            IP,
+                        };
+                    },
+                );
+            })).then(res => {
+                let contentList  = [];
+                let {IP} = res[0].value;
+                let length = res.length;
+                for (let i = 0; i < length; i++) {
+                    const {status, value: {content}} = res[i];
+                    if (status === PROMISE_STATUS.FULFILLED) {
+                        contentList.push(content);
+                    }
+                }
+                fileDownload(contentList.join(LOG_CONTENT_SEPARATOR), `${IP}.log`);
+                return res;
             });
         }).filter(Boolean);
         const res = await Promise.allSettled(promises);
-        const failedCount = res.filter(item => item.status !== 'fulfilled').length;
+        const failedCount = res.filter(item => item.status !== PROMISE_STATUS.FULFILLED).length;
         const length = res.length;
 
         downloadTimer.current = setTimeout(() => {

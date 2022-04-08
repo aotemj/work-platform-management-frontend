@@ -312,7 +312,9 @@ export const deConvertDataFromExecutionDetail = originData => {
             let targetPath;
             let timeoutValue;
 
-            stageTriggerItemList.forEach(item => {
+            let length = stageTriggerItemList.length;
+            for (let i = 0; i < length; i++) {
+                const item = stageTriggerItemList[i];
                 {
                     const {
                         stageTriggerItemParams,
@@ -320,11 +322,15 @@ export const deConvertDataFromExecutionDetail = originData => {
                     const {targetResource} = stageTriggerItemParams;
                     const {
                         id,
-                        // stageId,
                         targetUuid,
                         targetResourceName,
                         status,
                     } = targetResource;
+
+                    // 当前元素内部有 id 为 null 的元素，不需要进行数据处理，单纯是为了在页面左侧显示对应的主机列表，不熟悉勿动！
+                    if (!id) {
+                        continue;
+                    }
 
                     if (!targetResourceListMap[id]) {
                         targetResourceList.push({
@@ -394,7 +400,7 @@ export const deConvertDataFromExecutionDetail = originData => {
                     }
 
                 }
-            });
+            }
             return {
                 ...commonParams,
                 transmissionMode,

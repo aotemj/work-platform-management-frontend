@@ -4,19 +4,23 @@
  * @constructor
  */
 
-import cx from './index.less';
 import {useCallback, useEffect, useMemo, useState} from 'react';
+import {Collapse} from '@osui/ui';
 
 import SingleLineLog from './SingleLineLog';
-import {LOG_CONTENT_SEPARATOR} from '../../../../constant';
+import {LOG_CONTENT_SEPARATOR, PROMISE_STATUS} from '../../../../constant';
+import cx from './index.less';
+import {transformLogUrl} from '../constant';
 
-const LogContent = ({dataSource = []}) => {
+
+const {Panel} = Collapse;
+
+const LogContent = ({dataSource = [], errorInfo: originErrorInfo, updateLoading}) => {
     const [activeId, setActiveId] = useState(null);
     const [logList, setLogList] = useState([]);
     const handleChangeActiveId = useCallback(item => {
         setActiveId(item.key);
     }, []);
-
     const currentData = useMemo(() => {
         return dataSource.filter(item => item.key === activeId)[0];
     }, [activeId, dataSource]);
@@ -27,15 +31,22 @@ const LogContent = ({dataSource = []}) => {
             return;
         }
 
-        const {logUrl, errorInfo} = currentData;
-        if (!logUrl) {
-            setLogList(errorInfo.split(LOG_CONTENT_SEPARATOR));
+        const {logShowList} = currentData;
+        if (!logShowList || !logShowList.length) {
             return;
         }
-        const res = await fetch(logUrl);
-        const content = await res.text();
-        const logList = content.split(LOG_CONTENT_SEPARATOR);
-        setLogList(logList);
+
+        updateLoading(true);
+        const resList  = await Promise.allSettled(logShowList.map(async logItem => {
+            const {logUrl} = logItem;
+            const res = await fetch(transformLogUrl(logUrl));
+            return {
+                ...logItem,
+                content: await res.text(),
+            };
+        }));
+        setLogList(resList.filter(item => item.status === PROMISE_STATUS.FULFILLED) || []);
+        updateLoading(false);
     }, [currentData]);
 
     useEffect(() => {
@@ -48,29 +59,62 @@ const LogContent = ({dataSource = []}) => {
         getLogContent();
     }, [activeId]);
 
+    const LogItem = ({logContent = ''}) => {
+        return logContent.split(LOG_CONTENT_SEPARATOR)
+            .map(item => <SingleLineLog content={item} key={item} />);
+    };
+
+    const hasMultiLogs = logList.length > 1;
+    const onlyOneLog = logList.length === 1;
+
+    const firstLog = logList[0];
     return (
         <div className={cx('log-container')}>
-            <div className={cx('header')}>
+            {
+                dataSource.length && (
+                    <div className={cx('header')}>
+                        {
+                            dataSource.map(item => {
+                                return (
+                                    <div
+                                        onClick={() => handleChangeActiveId(item)}
+                                        className={cx('log-item-title', activeId === item.key ? 'active' : null)}
+                                        key={item.key}
+                                    >
+                                        {item.IP}
+                                    </div>
+                                );
+                            })
+                        }
+                    </div>
+                )
+            }
+            <div className={cx('content')}>
+
+                {/* 人力紧张 日志简单化处理，后期有需求再迭代 */}
+
                 {
-                    dataSource.map(item => {
+                    hasMultiLogs && logList.map(item => {
+                        const {
+                            value: {
+                                content,
+                                filePath,
+                            },
+                        } = item;
                         return (
-                            <div
-                                onClick={() => handleChangeActiveId(item)}
-                                className={cx('log-item-title', activeId === item.key ? 'active' : null)}
-                                key={item.key}
-                            >
-                                {item.IP}
-                            </div>
+                            <Collapse className={cx('log-collapse')} key={filePath}>
+                                <Panel header={filePath} className={cx('log-panel')}>
+                                    <LogItem logContent={content} />
+                                </Panel>
+                            </Collapse>
                         );
                     })
                 }
-            </div>
-            <div className={cx('content')}>
-                {/* 人力紧张 日志简单化处理，后期有需求再迭代 */}
                 {
-                    logList.map(item => {
-                        return <SingleLineLog key={item} content={item} />;
-                    })
+                    onlyOneLog && (<LogItem logContent={firstLog.value.content} />)
+                }
+                {
+                    !hasMultiLogs && !onlyOneLog && <LogItem logContent={originErrorInfo} />
                 }
             </div>
         </div>

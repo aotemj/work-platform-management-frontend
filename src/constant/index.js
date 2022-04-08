@@ -94,3 +94,9 @@ export const MINUTE_STEP = 60;
 export const MAGE_BYTE_SCALE = 1024;
 
 export const LOG_CONTENT_SEPARATOR = '\n';
+
+export const PROMISE_STATUS = {
+    FULFILLED: 'fulfilled',
+    REJECTED: 'rejected',
+    PENDING: 'pending',
+};

@@ -1,4 +1,4 @@
-import {Table, Typography} from '@osui/ui';
+import {Table, Typography, Spin} from '@osui/ui';
 
 import cx from './index.less';
 import Header from './Header';
@@ -43,6 +43,9 @@ const ExecLog = props => {
     const {
         dataSource,
         params,
+        errorInfo,
+        loading,
+        setLoading,
     } = useStepLog(executionDetail, getExecutionDetail);
 
     const sideTableProps = {
@@ -94,19 +97,25 @@ const ExecLog = props => {
         users,
     };
     return (
-        <div className={cx('step-log')}>
-            <Header {...headerProps} />
-            <div className={cx('bottom')}>
-                <div className={cx('side-bar')}>
-                    <div className={cx('title')}>详情</div>
-                    <Table {...sideTableProps} />
+        <Spin spinning={loading}>
+            <div className={cx('step-log')}>
+                <Header {...headerProps} />
+                <div className={cx('bottom')}>
+                    <div className={cx('side-bar')}>
+                        <div className={cx('title')}>详情</div>
+                        <Table {...sideTableProps} />
+                    </div>
+                    <div className={cx('log-content')}>
+                        <LogContent
+                            dataSource={dataSource}
+                            errorInfo={errorInfo}
+                            updateLoading={setLoading}
+                        />
+                    </div>
                 </div>
-                <div className={cx('log-content')}>
-                    <LogContent dataSource={dataSource} />
-                </div>
+                <AddNoahStepDrawer {...noahStepProps} />
             </div>
-            <AddNoahStepDrawer {...noahStepProps} />
-        </div>
+        </Spin>
     );
 };
 
