@@ -4,6 +4,7 @@ import {getCompanyId, getSpaceId} from './getRouteIds';
 import {
     CONTAINER_DOM_ID,
     DEFAULT_STRING_VALUE,
+    GET_DATA_TYPES,
     HOUR_STEP,
     MAGE_BYTE_SCALE,
     MILLI_SECOND_STEP,
@@ -71,19 +72,6 @@ export const getDateTime = dateTimeStamp => {
         secondTime,
     };
 };
-
-export function debounce(fn, delay = MILLI_SECOND_STEP) {
-    let timer = null;
-    return function (...rest) {
-        if (timer) {
-            clearTimeout(timer);
-        }
-        timer = setTimeout(() => {
-            fn.apply(this, rest);
-            timer = null;
-        }, delay);
-    };
-}
 
 export function getContainerDOM() {
     return document.getElementById(CONTAINER_DOM_ID);
@@ -175,20 +163,51 @@ export function requestCallback({
     }
 }
 
-export const diskWarning = diskSpaceInfo => {
+export const TYPE_MESSAGES = {
+    APP: 'app',
+    DISK_SPACE: 'diskSpace',
+};
+export const diskWarning = (diskSpaceInfo, type = 'app') => {
     if (!diskSpaceInfo) {
         return;
     }
-    let {diskFreeSize, diskUsedWarnRatio, diskTotalSize} = diskSpaceInfo;
+    let {diskFreeSize, diskUsedWarnRatio, diskTotalSize, overstep} = diskSpaceInfo;
 
     const freeRatio = diskFreeSize / diskTotalSize;
-    if (freeRatio < 0.5) {
-        const warningMessage = `磁盘剩余空间还剩 ${(freeRatio * 100).toFixed(2)}% ，请及时清理历史任务和定时任务。如果超过
-            ${diskUsedWarnRatio * 100}% 磁盘占用，用户将无法创建作业方案和定时任务！`;
-        message.warning(warningMessage);
+    const {APP, DISK_SPACE} = TYPE_MESSAGES;
+    const typeMessages = {
+        [APP]: `存储空间已占用${(freeRatio * 100).toFixed(2)}%！，请删除历史方案和定时任务，清理磁盘空间，否则无法创建执行方案！`,
+        [DISK_SPACE]: `磁盘剩余空间还剩 ${(freeRatio * 100).toFixed(2)}% ，
+        请及时清理历史任务和定时任务。如果超过 ${diskUsedWarnRatio * 100}% 磁盘占用，用户将无法创建作业方案和定时任务！`,
+    };
+
+    if (overstep) {
+        message.warning(typeMessages[type]);
     }
 };
 
+export const updateCategoryMap = list => {
+    const length = list.length;
+    const map = {};
+    for (let i = 0; i < length; i++) {
+        const {name = '', id} = list[i];
+        map[name] = list[i];
+        map[id] = list[i];
+    }
+    return map;
+};
+
+export const categoryOnPopupScrollCallback = ((e, {getCategoryList, categoryCurrentPage}) => {
+    e.persist();
+    // 判断滑动到底部
+    const {scrollTop, scrollHeight, clientHeight} = e.target;
+    if (Math.ceil(scrollTop + clientHeight) >= scrollHeight) {
+        getCategoryList({
+            currentPage: categoryCurrentPage + 1,
+            type: GET_DATA_TYPES.MORE,
+        });
+    }
+});
 
 
 

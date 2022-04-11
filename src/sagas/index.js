@@ -18,7 +18,7 @@ import {
     UPDATE_DISK_SPACE_INFO_S,
 } from './types';
 import {request} from '../request/fetch';
-import {REQUEST_CODE, COMMON_URL_PREFIX} from '../constant';
+import {REQUEST_CODE, COMMON_URL_PREFIX, PROMISE_STATUS, GET_DATA_TYPES, DEFAULT_PAGINATION} from '../constant';
 import {URLS} from '../pages/Exec/List/constant';
 
 // 获取用户信息
@@ -93,39 +93,32 @@ function* getNoahWorkPlanDetail({payload}) {
         yield put(getNoahDetail_A(data));
     }
 }
-const updateCategoryMap = list => {
-    const length = list.length;
-    const map = {};
-    for (let i = 0; i < length; i++) {
-        const {name = '', id} = list[i];
-        map[name] = list[i];
-        map[id] = list[i];
-    }
-    return map;
-};
 
-function* getCategoryList() {
-
+function* getCategoryList({payload = {currentPage: 1}}) {
+    const {INIT} = GET_DATA_TYPES;
+    const {type = INIT, currentPage} = payload;
     const res = yield request({
         url: `${COMMON_URL_PREFIX}${URLS.CATEGORIES}`,
         params: {
             // currentPage	当前页	query	false   integer(int32)
             // name	名称，模糊查询	query	false   string
             // pageSize	每页数据条数	query	false   integer(int32)
-
-            currentPage: 1,
+            currentPage,
             name: '',
-            pageSize: 100000,
+            pageSize: DEFAULT_PAGINATION.pageSize,
         },
     });
     const {data, status} = res;
     if (!status) {
+        const {list, currentPage} = data;
+
         yield put(
             updateCategories_A({
                 categories: {
-                    list: data.list,
-                    map: updateCategoryMap(data.list),
+                    list,
+                    currentPage,
                 },
+                type,
             }));
     }
 }
@@ -134,12 +127,23 @@ function* updateDiskSpaceInfo() {
     const res = yield request({
         url: `${COMMON_URL_PREFIX}${URLS.DISK_SPACE_INFO}`,
     });
-    const {data, status} = res;
-    if (!status) {
-        yield put(
-            updateDiskSpaceInfo_A(data),
-        );
-    }
+    const res1 = yield request({
+        url: `${COMMON_URL_PREFIX}${URLS.CHECK_DISK_SPACE}`,
+    });
+    const resList = yield Promise.allSettled([res, res1]);
+    let info = {};
+    resList.forEach(res => {
+        const {value, status} = res;
+        if (status === PROMISE_STATUS.FULFILLED) {
+            info = {
+                ...info,
+                ...value?.data,
+            };
+        }
+    });
+    yield put(
+        updateDiskSpaceInfo_A(info),
+    );
 }
 
 export default function* () {

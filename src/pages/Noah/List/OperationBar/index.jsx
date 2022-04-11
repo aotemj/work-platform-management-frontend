@@ -1,22 +1,25 @@
 import {Button, Dropdown, Input, Menu, Select} from '@osui/ui';
-import React from 'react';
+import {debounce} from 'lodash/fp';
 
 import cx from '../index.less';
 import {DROP_DOWN_MENU} from '../constants';
 import {ReactComponent as IconSearch} from '../../../../statics/icons/search.svg';
+import {categoryOnPopupScrollCallback} from '../../../../utils';
 
 const OperationBar = ({
     handleChange,
-    noahTypes = [],
     handleMenuClick,
     handleChangeInput,
     noahType,
     addNoah,
     setNoahType,
+    categories,
+    getCategoryList,
+    categoryCurrentPage,
 }) => {
 
     const typeSelectProps = {
-        options: noahTypes.map(project => {
+        options: categories.map(project => {
             const {name, id, tags} = project;
             return {label: name, value: id, key: id, tags};
         }),
@@ -28,9 +31,12 @@ const OperationBar = ({
         onClear: () => {
             setNoahType(null);
         },
-        // optionFilterProp: isFilterFromTags ? 'tags' : 'label',
-        // optionFilterProp: 'label',
-        // mode: 'multiple',
+        onPopupScroll: debounce(250)(e => {
+            categoryOnPopupScrollCallback(e, {
+                getCategoryList,
+                categoryCurrentPage,
+            });
+        }),
         onChange: handleChange,
         value: noahType,
     };

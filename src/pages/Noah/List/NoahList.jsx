@@ -14,7 +14,16 @@ import {MAX_DISPLAY_LENGTH, SPLIT_SYMBOL} from '../../../constant';
 const title = '作业管理';
 
 const NoahList = props => {
-    const {getNoahList, noahList, noahTotal, updateDiskSpaceInfo, diskSpaceInfo} = props;
+    const {
+        getNoahList,
+        noahList,
+        noahTotal,
+        updateDiskSpaceInfo,
+        diskSpaceInfo,
+        categories,
+        getCategoryList,
+        categoryCurrentPage,
+    } = props;
     const {
         data,
         handlePaginationChange,
@@ -30,13 +39,19 @@ const NoahList = props => {
         // 删除作业
         removeNoah,
         handleChangeInput,
-        noahTypes,
         noahType,
         // onNoahSelectClear,
         addNoah,
         setNoahType,
         batchSpin,
-    } = useNoahList({getNoahList, noahList, noahTotal, updateDiskSpaceInfo, diskSpaceInfo});
+    } = useNoahList({
+        getNoahList,
+        noahList,
+        noahTotal,
+        updateDiskSpaceInfo,
+        diskSpaceInfo,
+        getCategoryList,
+    });
 
     const tableOperations = [
         {
@@ -152,12 +167,14 @@ const NoahList = props => {
     };
     const operationBarProps = {
         noahType,
-        noahTypes,
+        categories,
         handleChange,
         handleChangeInput,
         handleMenuClick,
         addNoah,
         setNoahType,
+        getCategoryList,
+        categoryCurrentPage,
     };
     return (
         <Spin spinning={batchSpin} tip={'正在批量操作，请稍后'} size={'large'}>

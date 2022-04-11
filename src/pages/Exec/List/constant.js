@@ -22,6 +22,7 @@ export const URLS = {
     // 分页获取执行列表
     EXEC_LIST_URL: '/rest/v1/execute/infos',
     DISK_SPACE_INFO: '/rest/v1/file',
+    CHECK_DISK_SPACE: '/rest/v1/file/checkDisk',
 };
 
 // 执行状态 1：待执行；2：执行中；3：执行失败；4：执行成功；5：执行暂停；

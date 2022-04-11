@@ -6,6 +6,8 @@ import {
     UPDATE_CATEGORY_LIST,
     UPDATE_DISK_SPACE_INFO,
 } from '../actions/actionTypes';
+import {GET_DATA_TYPES} from '../constant';
+import {updateCategoryMap} from '../utils';
 
 const initialState = {
     users: {
@@ -24,6 +26,7 @@ const initialState = {
     categories: {
         list: [],
         map: {},
+        currentPage: 1,
     },
     // 磁盘占用信息
     diskSpaceInfo: null,
@@ -53,12 +56,28 @@ export default (state = initialState, action) => {
                 ...state,
                 noahDetail: action.payload,
             };
-        case UPDATE_CATEGORY_LIST:
-            const {categories} = action.payload;
+        case UPDATE_CATEGORY_LIST: {
+            const {INIT, MORE} = GET_DATA_TYPES;
+            const {categories, type = INIT} = action.payload;
+            const {list} = categories;
+            let {currentPage: originCurrent, list: originList} = state.categories;
+            let finalList = list;
+            let currentPage = originCurrent;
+            if (type === MORE) {
+                finalList = [...originList, ...list];
+                currentPage += 1;
+            }
+
             return {
                 ...state,
-                categories,
+                categories: {
+                    list: finalList,
+                    map: updateCategoryMap(finalList),
+                    currentPage,
+                },
             };
+        }
+
         case UPDATE_DISK_SPACE_INFO:
             return {
                 ...state,

@@ -11,7 +11,7 @@ import {LabelLayout, UniversalTransition} from 'echarts/features';
 import {CanvasRenderer} from 'echarts/renderers';
 
 import cx from './index.less';
-import {byteToGage, diskWarning} from '../../../utils';
+import {byteToGage, diskWarning, TYPE_MESSAGES} from '../../../utils';
 
 echarts.use([
     PieChart,
@@ -69,7 +69,7 @@ const PieCharts = ({diskSpaceInfo}) => {
             return;
         }
         let {diskUsedSize, diskFreeSize} = diskSpaceInfo;
-        diskWarning(diskSpaceInfo);
+        diskWarning(diskSpaceInfo, TYPE_MESSAGES.DISK_SPACE);
         updateChartOption({diskFreeSize, diskUsedSize});
     }, [diskSpaceInfo]);
     useEffect(() => {

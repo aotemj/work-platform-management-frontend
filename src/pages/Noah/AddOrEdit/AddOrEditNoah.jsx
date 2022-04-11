@@ -8,6 +8,7 @@
 import * as yup from 'yup';
 import {Button, Input, PageHeader, Select} from '@osui/ui';
 import {IconPlusOutlined} from '@osui/icons';
+import {debounce} from 'lodash/fp';
 
 import cx from './index.less';
 import SelectAll from '../../../components/SelectAll';
@@ -19,6 +20,7 @@ import AddGlobalVariableDrawer from './AddGlobalVariableDrawer';
 import StepItem from './StepItem';
 import AddNoahStepDrawer from './AddNoahStepDrawer/index';
 import {DELETE_SYMBOL} from '../../../constant';
+import {categoryOnPopupScrollCallback} from '../../../utils';
 
 const {Option} = Select;
 
@@ -43,7 +45,7 @@ const AddOrEditNoah = props => {
     const {
         getNoahWorkPlanDetail,
         noahDetail,
-        categories: {list: categories, map: categoryMap},
+        categories: {list: categories, map: categoryMap, currentPage: categoryCurrentPage},
         getCategoryList,
         updateCategory,
         updateNoahDetail,
@@ -141,6 +143,9 @@ const AddOrEditNoah = props => {
                     className={cx('category-dropdown')}
                     dropdownRender={originNode => dropdownRender(originNode, handleAddCategory, values)}
                     placeholder="请选择或新增作业分类"
+                    onPopupScroll={debounce(250)(e => {
+                        categoryOnPopupScrollCallback(e, {getCategoryList, categoryCurrentPage});
+                    })}
                     maxTagCount={Math.min(categories.length, formFields.category.DEFAULT_TAG_MAX_COUNT)}
                     {...field}
                 >

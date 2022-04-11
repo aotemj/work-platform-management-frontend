@@ -1,8 +1,9 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {message} from '@osui/ui';
 import {reject, anyPass, isEmpty, isNil} from 'ramda';
+import {debounce} from 'lodash/fp';
 
-import {debounce, requestCallback} from '../../../utils';
+import {requestCallback} from '../../../utils';
 import {request} from '../../../request/fetch';
 import {
     DEFAULT_PAGINATION,
@@ -65,30 +66,30 @@ const useExecList = getExecutionDetail => {
     }, [searchValue]);
 
     // 更新currentPage、pageSize
-    const handlePaginationChange = debounce((currentPage = 1, pageSize = 10) => {
+    const handlePaginationChange = debounce(500)((currentPage = 1, pageSize = 10) => {
         setSearchValue(value => ({
             ...value,
             currentPage,
             pageSize,
         }));
-    }, 500);
+    });
 
     // 输入关键字筛选 userName
-    const handleChangeInput = debounce(e => {
+    const handleChangeInput = debounce(500)(e => {
         setSearchValue(value => ({
             ...value,
             userName: e,
         }));
-    }, 500);
+    });
 
     // 日期变化 beginTime endTime
-    const handleChangeDate = debounce(({beginTime, endTime}) => {
+    const handleChangeDate = debounce(500)(({beginTime, endTime}) => {
         setSearchValue(value => ({
             ...value,
             beginTime,
             endTime,
         }));
-    }, 500);
+    });
 
     const getDetailId = () => {
         const search = new URL(window.location.href).search;

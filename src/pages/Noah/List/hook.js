@@ -22,6 +22,7 @@ const useNoahList = ({
     noahTotal: total,
     updateDiskSpaceInfo,
     diskSpaceInfo,
+    getCategoryList,
 }) => {
     const navigate = useNavigate();
     const jumpTimer = useRef();
@@ -38,8 +39,6 @@ const useNoahList = ({
     const [selectRows, setSelectRows] = useState([]);
 
     const [shouldUpdate, setShouldUpdate] = useState(false);
-
-    const [noahTypes, setNoahTypes] = useState([]);
 
     const updateData = newData => {
         setData({
@@ -71,21 +70,6 @@ const useNoahList = ({
         setShouldUpdate(false);
     };
 
-    // 获取类型列表 // 暂时不做分页
-    const getNoahTypes = async () => {
-        const res = await request({
-            url: `${COMMON_URL_PREFIX}${URLS.CATEGORY}`,
-            params: {
-                currentPage: 1,
-                name: '',
-                pageSize: 1000,
-            },
-        });
-        const {code, data: {list}} = res;
-        if (code === REQUEST_CODE.SUCCESS) {
-            setNoahTypes(list);
-        }
-    };
     // 单个执行作业
     const executeNoah = useCallback(async noahItem => {
         navigate(routes.NOAH_PRE_EXECUTING.getUrl(noahItem.id));
@@ -240,7 +224,7 @@ const useNoahList = ({
 
     // initialize
     useEffect(() => {
-        getNoahTypes();
+        getCategoryList();
         updateDiskSpaceInfo();
         return () => {
             clearTimeout(jumpTimer);
@@ -263,8 +247,6 @@ const useNoahList = ({
         editNoah,
         // 删除作业
         removeNoah,
-        // 筛选类型列表
-        noahTypes,
         // 当前选中类型
         noahType,
         addNoah,

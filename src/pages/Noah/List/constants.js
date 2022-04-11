@@ -10,8 +10,6 @@ export const DROP_DOWN_MENU = {
 };
 
 export const URLS = {
-    // 分类列表
-    CATEGORY: '/rest/v1/work-group/list',
     // 单个删除
     INDIVIDUAL_DELETE: '/rest/v1/work-plan/', // '/rest/v1/work-plan/{id}'
     // 批量删除
