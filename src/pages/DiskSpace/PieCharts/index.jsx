@@ -61,7 +61,7 @@ const PieCharts = ({diskSpaceInfo}) => {
                 },
             ],
         };
-        chart.current.setOption(option);
+        chart.current?.setOption(option);
     };
 
     useEffect(() => {
@@ -75,7 +75,7 @@ const PieCharts = ({diskSpaceInfo}) => {
     useEffect(() => {
         chart.current = echarts.init(ref.current, null, {renderer: 'canvas'});
         window.onresize = function () {
-            chart.current.resize();
+            chart.current?.resize();
         };
     }, []);
 
