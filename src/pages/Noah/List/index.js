@@ -13,15 +13,13 @@ const mapStateToProps = ({
     users,
     noah,
     diskSpaceInfo,
-    categories: {list, map, currentPage: categoryCurrentPage},
+    categories,
 }) => {
     return {
         users,
         noah,
         diskSpaceInfo,
-        categories: list,
-        categoryMap: map,
-        categoryCurrentPage,
+        categories,
     };
 };
 

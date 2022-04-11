@@ -19,20 +19,28 @@ import {
     UPDATE_DISK_SPACE_INFO_S,
 } from './types';
 import {request} from '../request/fetch';
-import {REQUEST_CODE, COMMON_URL_PREFIX, PROMISE_STATUS, TYPES_OF_FEATING, DEFAULT_PAGINATION} from '../constant';
+import {
+    REQUEST_CODE,
+    COMMON_URL_PREFIX,
+    PROMISE_STATUS,
+    TYPES_OF_FEATING,
+    DEFAULT_PAGINATION,
+    IS_PROD,
+    GLOBAL_URLS,
+} from '../constant';
 import {URLS} from '../pages/Exec/List/constant';
 
 // 获取用户信息
 function* getUsersFromOne() {
     let finalUsers = [];
     // TODO 生产环境动态化
-    // if (IS_PROD) {
-    //     finalUsers = yield request({
-    //         url: `${ONE_URL_PREFIX}${GLOBAL_URLS.GET_USERS}`,
-    //     });
-    // } else {
-    finalUsers = users;
-    // }
+    if (IS_PROD) {
+        finalUsers = yield request({
+            url: `${GLOBAL_URLS.GET_USERS}`,
+        });
+    } else {
+        finalUsers = users;
+    }
 
     const usersMap = new Map();
 
@@ -73,7 +81,6 @@ function* getNoahList({payload}) {
     });
 
     const {code, data: result} = res;
-
     if (code === REQUEST_CODE.SUCCESS) {
         const {list = [], total, currentPage} = result;
 
@@ -103,13 +110,12 @@ function* getCategoryList({payload = {currentPage: 1}}) {
         url: `${COMMON_URL_PREFIX}${URLS.CATEGORIES}`,
         params: {
             currentPage,
-            name: '',
             pageSize: DEFAULT_PAGINATION.pageSize,
-            ...omit(['type', payload]),
+            ...omit(['type'], payload),
         },
     });
-    const {data, status} = res;
-    if (!status) {
+    const {data, code} = res;
+    if (code === REQUEST_CODE.SUCCESS) {
         const {list, currentPage} = data;
 
         yield put(

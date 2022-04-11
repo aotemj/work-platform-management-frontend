@@ -9,7 +9,7 @@ import {getCompanyId, getSpaceId} from '../../../../../utils/getRouteIds';
 import {request} from '../../../../../request/fetch';
 import cx from './index.less';
 import {agents, labels} from '../../../../../temp/agents';
-import {COMMON_URL_PREFIX, IS_PROD} from '../../../../../constant';
+import {IS_PROD, PIPE_URL_PREFIX} from '../../../../../constant';
 
 const getAgentMap = agents => {
     const tempMap = {};
@@ -157,7 +157,7 @@ const TargetServer = ({
         // setOriginDataUpdated(true);
 
         return request({
-            url: getURlWithPrefix(COMMON_URL_PREFIX, URLS.AGENTS),
+            url: getURlWithPrefix(PIPE_URL_PREFIX, URLS.AGENTS),
             params: {
                 // companyId: 'xly-poc',
                 companyId,
@@ -182,7 +182,7 @@ const TargetServer = ({
     // pageSize     页大小
     const fetchLabels = async () => {
         return request({
-            url: getURlWithPrefix(COMMON_URL_PREFIX, URLS.LABELS),
+            url: getURlWithPrefix(PIPE_URL_PREFIX, URLS.LABELS),
             params: {
                 // groupName: 'xly-poc',
                 // groupName: spaceId,
@@ -207,23 +207,22 @@ const TargetServer = ({
         let tempAgents;
         let tempLabels;
         // TODO 正式上线后逻辑改为正常模式
-        // if (IS_PROD) {
-        //     setLoading(true);
-        //     const [agentRes, labelRes] = await Promise.all([fetchAgents(), fetchLabels()]);
-        //     const {status: agentStatus, entities: {agents = []}} = agentRes;
-        //     setLoading(false);
-        //
-        //     const {status: labelStatus, list: labels} = labelRes;
-        //
-        //     if (!agentStatus && !labelStatus) {
-        //         tempAgents = agents;
-        //         tempLabels = labels;
-        //
-        //     }
-        // } else {
+        if (IS_PROD) {
+            setLoading(true);
+            const [agentRes, labelRes] = await Promise.all([fetchAgents(), fetchLabels()]);
+            const {status: agentStatus, entities: {agents = []}} = agentRes;
+            setLoading(false);
+
+            const {status: labelStatus, list: labels} = labelRes;
+
+            if (!agentStatus && !labelStatus) {
+                tempAgents = agents;
+                tempLabels = labels;
+            }
+        } else {
             tempAgents = agents;
             tempLabels = labels;
-        // }
+        }
         const {labelMap, tempLabels: treeData, agentMap, agentMapByUuid} = formatData(tempAgents, tempLabels, type);
         setTreeData(treeData.filter(item => item));
         setAgentMap(agentMap);
@@ -302,7 +301,7 @@ const TargetServer = ({
             dropdownClassName={cx('agent-select-tree-dropdown')}
             onFocus={resetUserInputError}
             disabled={disabled}
-            dropdownRender={(originNode, props) => {
+            dropdownRender={originNode => {
                 return (
                     <>
                         <div className={cx('dropdown-custom-content')}>

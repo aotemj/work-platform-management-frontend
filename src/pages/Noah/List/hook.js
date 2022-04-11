@@ -231,9 +231,15 @@ const useNoahList = ({
         diskWarning(diskSpaceInfo);
     }, [diskSpaceInfo]);
 
+    useEffect(() => {
+        getCategoryList({
+            currentPage: 1,
+            name: categorySearchName,
+        });
+    }, [categorySearchName]);
+
     // initialize
     useEffect(() => {
-        getCategoryList();
         updateDiskSpaceInfo();
         return () => {
             clearTimeout(jumpTimer);

@@ -13,22 +13,21 @@ const OperationBar = ({
     noahType,
     addNoah,
     setNoahType,
-    categories,
+    categories: {list, currentPage: categoryCurrentPage},
     getCategoryList,
-    categoryCurrentPage,
     onCategorySearchCallback,
     categorySearchName,
 }) => {
-
     const typeSelectProps = {
-        options: categories.map(project => {
-            const {name, id, tags} = project;
-            return {label: name, value: id, key: id, tags};
+        options: list.map(project => {
+            const {name, id} = project;
+            return {label: name, value: id, key: id};
         }),
         getPopupContainer: triggerNode => triggerNode.parentNode,
         className: cx('noah-list-select'),
         placeholder: '搜索作业类型',
         showSearch: true,
+        filterOption: false,
         onSearch: onCategorySearchCallback,
         allowClear: true,
         onClear: () => {
@@ -43,7 +42,7 @@ const OperationBar = ({
                 },
             });
         }),
-        onChange: handleChange,
+        onSelect: handleChange,
         value: noahType,
     };
 

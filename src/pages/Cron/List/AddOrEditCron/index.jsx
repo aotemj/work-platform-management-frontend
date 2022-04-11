@@ -217,7 +217,7 @@ const AddOrEditCron = props => {
                     getPopupContainer: triggerNode => triggerNode.parentNode,
                     className: cx('noah-list-select'),
                     optionFilterProp: 'label',
-                    placeholder: '请选择脚本',
+                    placeholder: '请选择作业方案',
                     showSearch: true,
                     allowClear: true,
                     onSearch: onNoahSelectSearch,

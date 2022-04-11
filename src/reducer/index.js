@@ -79,6 +79,8 @@ export default (state = initialState, action) => {
                 currentPage += 1;
             }
 
+            // console.log(finalList);
+
             return {
                 ...state,
                 categories: {

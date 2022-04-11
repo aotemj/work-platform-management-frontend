@@ -8,7 +8,7 @@ import {
     SCRIPTS_ORIGIN,
     NOTICE_APPROACHES, LOADING,
 } from '../constants';
-import {DEFAULT_STRING_VALUE, STEP_TYPES, COMMON_URL_PREFIX, IS_PROD} from '../../../../constant';
+import {DEFAULT_STRING_VALUE, STEP_TYPES, IS_PROD} from '../../../../constant';
 import {request} from '../../../../request/fetch';
 import {GLOBAL_URLS} from '../../../../constant/index';
 import {TEMP_SCRIPTS} from '../../../../temp/scripts';
@@ -60,7 +60,6 @@ const useAddNoahStep = ({
     stepEditingValue,
     setStepEditingValue,
     getUsersFromOne,
-    editing,
 }) => {
 
     const [formikValues, setFormikValues] = useState(defaultFormikValues);
@@ -157,18 +156,18 @@ const useAddNoahStep = ({
     const getScriptsFromPipe = useCallback(async () => {
         let scriptList = [];
         // TODO 生产环境动态化
-        // if (IS_PROD) {
-        //     scriptList = await request({
-        //         url: `${COMMON_URL_PREFIX}${GLOBAL_URLS.GET_SCRIPTS}`,
-        //         params: {
-        //             _offset: 0,
-        //             _limit: 10,
-        //             keyword: '',
-        //         },
-        //     });
-        // } else {
-        scriptList = TEMP_SCRIPTS;
-        // }
+        if (IS_PROD) {
+            scriptList = await request({
+                url: `${GLOBAL_URLS.GET_SCRIPTS}`,
+                params: {
+                    _offset: 0,
+                    _limit: 10,
+                    keyword: '',
+                },
+            });
+        } else {
+            scriptList = TEMP_SCRIPTS;
+        }
 
         setScripts(scriptList);
         const tempMap = {};
