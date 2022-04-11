@@ -11,15 +11,13 @@ import {
 
 const mapStateToProps = ({
     users,
-    noahList,
-    noahTotal,
+    noah,
     diskSpaceInfo,
     categories: {list, map, currentPage: categoryCurrentPage},
 }) => {
     return {
         users,
-        noahList,
-        noahTotal,
+        noah,
         diskSpaceInfo,
         categories: list,
         categoryMap: map,

@@ -5,14 +5,12 @@ import CronList from './CronList';
 import {GET_NOAH_DETAIL_S, GET_NOAH_LIST_S, UPDATE_DISK_SPACE_INFO_S} from '../../../sagas/types';
 
 const mapStateToProps = ({
-    noahList,
-    noahTotal,
+    noah,
     noahDetail,
     categories: {list, map},
     diskSpaceInfo,
 }) => ({
-    noahList,
-    noahTotal,
+    noah,
     noahDetail,
     categories: list,
     categoryMap: map,

@@ -19,8 +19,7 @@ const title = '定时任务';
 
 const CronList = props => {
     const {
-        noahList,
-        noahTotal,
+        noah,
         noahDetail,
         categories,
         categoryMap,
@@ -176,8 +175,7 @@ const CronList = props => {
         },
         editDetailId,
         editing,
-        noahList,
-        noahTotal,
+        noah,
         noahDetail,
         categories,
         categoryMap,

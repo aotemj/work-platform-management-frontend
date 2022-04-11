@@ -1,8 +1,9 @@
 import {put, all, takeLatest} from 'redux-saga/effects';
+import {omit} from 'ramda';
 
 import {
     getExecutionDetail_A,
-    getNoahList_A,
+    updateNoahList_A,
     getUsersFromOne_A,
     getNoahDetail_A,
     updateCategories_A,
@@ -18,7 +19,7 @@ import {
     UPDATE_DISK_SPACE_INFO_S,
 } from './types';
 import {request} from '../request/fetch';
-import {REQUEST_CODE, COMMON_URL_PREFIX, PROMISE_STATUS, GET_DATA_TYPES, DEFAULT_PAGINATION} from '../constant';
+import {REQUEST_CODE, COMMON_URL_PREFIX, PROMISE_STATUS, TYPES_OF_FEATING, DEFAULT_PAGINATION} from '../constant';
 import {URLS} from '../pages/Exec/List/constant';
 
 // 获取用户信息
@@ -61,25 +62,26 @@ function* getExecutionDetail({payload}) {
 
 // 获取作业方案列表
 function* getNoahList({payload}) {
+    const {INIT} = TYPES_OF_FEATING;
+    const {type = INIT, pageSize = DEFAULT_PAGINATION.pageSize} = payload;
     const res = yield request({
-        // currentPage	当前页	query	false   integer(int32)
-        // name	方案名称	query	false   string
-        // pageSize	每页数据条数	query	false   integer(int32)
-        // typeId	方案分类ID	query	false   integer(int32)
-        // useTemp	是否为临时方案	query	false   integer(int32)
-        // userName	创建人用户名	query	false   string
         url: `${COMMON_URL_PREFIX}${URLS.LIST}`,
-        params: payload,
+        params: {
+            pageSize,
+            ...omit(['type'], payload),
+        },
     });
 
     const {code, data: result} = res;
 
     if (code === REQUEST_CODE.SUCCESS) {
-        const {list = [], total} = result;
+        const {list = [], total, currentPage} = result;
 
-        yield put(getNoahList_A({
-            noahList: list.map(item => ({...item, key: item.id})),
-            noahTotal: total,
+        yield put(updateNoahList_A({
+            type,
+            list: list.map(item => ({...item, key: item.id})),
+            total: total,
+            currentPage,
         }));
     }
 }
@@ -95,17 +97,15 @@ function* getNoahWorkPlanDetail({payload}) {
 }
 
 function* getCategoryList({payload = {currentPage: 1}}) {
-    const {INIT} = GET_DATA_TYPES;
+    const {INIT} = TYPES_OF_FEATING;
     const {type = INIT, currentPage} = payload;
     const res = yield request({
         url: `${COMMON_URL_PREFIX}${URLS.CATEGORIES}`,
         params: {
-            // currentPage	当前页	query	false   integer(int32)
-            // name	名称，模糊查询	query	false   string
-            // pageSize	每页数据条数	query	false   integer(int32)
             currentPage,
             name: '',
             pageSize: DEFAULT_PAGINATION.pageSize,
+            ...omit(['type', payload]),
         },
     });
     const {data, status} = res;

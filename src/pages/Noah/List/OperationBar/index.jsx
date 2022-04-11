@@ -4,7 +4,7 @@ import {debounce} from 'lodash/fp';
 import cx from '../index.less';
 import {DROP_DOWN_MENU} from '../constants';
 import {ReactComponent as IconSearch} from '../../../../statics/icons/search.svg';
-import {categoryOnPopupScrollCallback} from '../../../../utils';
+import {loadMoreCallBackByScrolling} from '../../../../utils';
 
 const OperationBar = ({
     handleChange,
@@ -16,6 +16,8 @@ const OperationBar = ({
     categories,
     getCategoryList,
     categoryCurrentPage,
+    onCategorySearchCallback,
+    categorySearchName,
 }) => {
 
     const typeSelectProps = {
@@ -27,14 +29,18 @@ const OperationBar = ({
         className: cx('noah-list-select'),
         placeholder: '搜索作业类型',
         showSearch: true,
+        onSearch: onCategorySearchCallback,
         allowClear: true,
         onClear: () => {
             setNoahType(null);
         },
         onPopupScroll: debounce(250)(e => {
-            categoryOnPopupScrollCallback(e, {
-                getCategoryList,
-                categoryCurrentPage,
+            loadMoreCallBackByScrolling(e, {
+                dispatch: getCategoryList,
+                currentPage: categoryCurrentPage,
+                params: {
+                    name: categorySearchName,
+                },
             });
         }),
         onChange: handleChange,

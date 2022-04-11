@@ -2,12 +2,14 @@ import {Drawer, Input, Radio, DatePicker, Select, Checkbox, TimePicker} from '@o
 import * as yup from 'yup';
 import moment from 'moment';
 import {useRef} from 'react';
+import {debounce} from 'lodash/fp';
 
 import cx from './index.less';
 import FormikComp from '../../../../components/FormikComp';
 import useAddOrEditCron from './hook';
 import {CRON_DATE_WEEKS, STRATEGIES} from '../../constant';
 import NoahDetail from './NoahDetail';
+import {loadMoreCallBackByScrolling} from '../../../../utils';
 
 const AddOrEditCron = props => {
     const {
@@ -15,8 +17,7 @@ const AddOrEditCron = props => {
         setVisible,
         onClose,
         editing,
-        noahList,
-        noahTotal,
+        noah,
         noahDetail,
         getNoahList,
         getNoahWorkPlanDetail,
@@ -35,9 +36,10 @@ const AddOrEditCron = props => {
         indeterminate,
         setFormValues,
         handleSubmit,
+        onNoahSelectSearch,
+        noahSearchName,
     } = useAddOrEditCron({
-        noahList,
-        noahTotal,
+        noah,
         noahDetail,
         editing,
         editDetailId,
@@ -48,6 +50,7 @@ const AddOrEditCron = props => {
     });
 
     let formRef = useRef();
+    const {list, currentPage} = noah;
 
     const Title = () => {
         return (
@@ -207,7 +210,7 @@ const AddOrEditCron = props => {
                     noahOriginalDetail: noahDetail,
                 };
                 const workPlanSelectProps = {
-                    options: noahList?.map(item => {
+                    options: list?.map(item => {
                         const {name, id} = item;
                         return {label: name, value: id, key: id};
                     }),
@@ -217,7 +220,13 @@ const AddOrEditCron = props => {
                     placeholder: '请选择脚本',
                     showSearch: true,
                     allowClear: true,
+                    onSearch: onNoahSelectSearch,
                     onChange: e => handleChangeNoah(e, values),
+                    onPopupScroll: debounce(250)(e => {
+                        loadMoreCallBackByScrolling(
+                            e,
+                            {dispatch: getNoahList, currentPage, params: {name: noahSearchName}});
+                    }),
                 };
 
                 return (

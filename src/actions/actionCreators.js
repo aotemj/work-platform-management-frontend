@@ -1,6 +1,6 @@
 import {
     GET_EXECUTION_DETAIL,
-    GET_NOAH_LIST,
+    UPDATE_NOAH_LIST,
     GET_USERS_FROM_ONE,
     UPDATE_NOAH_DETAIL,
     UPDATE_CATEGORY_LIST,
@@ -17,8 +17,8 @@ export const getExecutionDetail_A = payload => ({
     payload,
 });
 
-export const getNoahList_A = payload => ({
-    type: GET_NOAH_LIST,
+export const updateNoahList_A = payload => ({
+    type: UPDATE_NOAH_LIST,
     payload,
 });
 

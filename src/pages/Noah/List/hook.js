@@ -18,8 +18,10 @@ import {request} from '../../../request/fetch';
 
 const useNoahList = ({
     getNoahList,
-    noahList: list,
-    noahTotal: total,
+    noah: {
+        list,
+        total,
+    },
     updateDiskSpaceInfo,
     diskSpaceInfo,
     getCategoryList,
@@ -29,9 +31,10 @@ const useNoahList = ({
     const [batchSpin, setBatchSpin] = useState(false);
     const [data, setData] = useState({DEFAULT_PAGINATION, list, total});
     // 方案名过滤
-    const [searchValue, setSearchValue] = useState('');
+    const [noahName, setNoahName] = useState('');
     // 方案类型过滤
     const [noahType, setNoahType] = useState(null);
+
     const [loading, setLoading] = useState(false);
     // 批量选择 key
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
@@ -39,6 +42,8 @@ const useNoahList = ({
     const [selectRows, setSelectRows] = useState([]);
 
     const [shouldUpdate, setShouldUpdate] = useState(false);
+
+    const [categorySearchName, setCategorySearchName] = useState('');
 
     const updateData = newData => {
         setData({
@@ -62,7 +67,7 @@ const useNoahList = ({
         await getNoahList({
             currentPage: current,
             pageSize,
-            name: searchValue,
+            name: noahName,
             // typeId: noahType === allType.id ? '' : noahType,
             typeId: noahType,
         });
@@ -190,7 +195,7 @@ const useNoahList = ({
 
     // 作业类型筛选 change event
     const handleChangeInput = e => {
-        setSearchValue(e);
+        setNoahName(e);
     };
 
     // 更新页码
@@ -202,10 +207,14 @@ const useNoahList = ({
         setShouldUpdate(true);
     });
 
+    const onCategorySearchCallback = debounce(250)(e => {
+        setCategorySearchName(e);
+    });
+
     // 根据关键字、类型重置页码
     useEffect(() => {
         handlePaginationChange(1);
-    }, [searchValue, noahType]);
+    }, [noahName, noahType]);
 
     useEffect(() => {
         updateData({
@@ -252,6 +261,8 @@ const useNoahList = ({
         addNoah,
         setNoahType,
         batchSpin,
+        onCategorySearchCallback,
+        categorySearchName,
     };
 };
 

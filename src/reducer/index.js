@@ -1,12 +1,12 @@
 import {
     GET_EXECUTION_DETAIL,
     UPDATE_NOAH_DETAIL,
-    GET_NOAH_LIST,
+    UPDATE_NOAH_LIST,
     GET_USERS_FROM_ONE,
     UPDATE_CATEGORY_LIST,
     UPDATE_DISK_SPACE_INFO,
 } from '../actions/actionTypes';
-import {GET_DATA_TYPES} from '../constant';
+import {TYPES_OF_FEATING} from '../constant';
 import {updateCategoryMap} from '../utils';
 
 const initialState = {
@@ -16,10 +16,11 @@ const initialState = {
     },
     // 执行详情
     executionDetail: null,
-    // 作业方案列表
-    noahList: [],
-    // 作业方案 total
-    noahTotal: 0,
+    noah: {
+        list: [],
+        total: 0,
+        currentPage: 1,
+    },
     // 作业方案详情
     noahDetail: null,
     // 作业分类
@@ -33,6 +34,8 @@ const initialState = {
 };
 
 export default (state = initialState, action) => {
+    const {INIT, MORE} = TYPES_OF_FEATING;
+
     switch (action.type) {
         case GET_USERS_FROM_ONE:
             return {
@@ -44,12 +47,21 @@ export default (state = initialState, action) => {
                 ...state,
                 executionDetail: action.payload,
             };
-        case GET_NOAH_LIST:
-            const {noahList, noahTotal} = action.payload;
+        case UPDATE_NOAH_LIST:
+            let {list, total, type = INIT, currentPage} = action.payload;
+            let {currentPage: originCurrent, list: originList} = state.noah;
+            let finalList = list;
+            if (type === MORE) {
+                finalList = [...originList, ...list];
+                currentPage = originCurrent + 1;
+            }
             return {
                 ...state,
-                noahList,
-                noahTotal,
+                noah: {
+                    list: finalList,
+                    currentPage,
+                    total,
+                },
             };
         case UPDATE_NOAH_DETAIL:
             return {
@@ -57,7 +69,6 @@ export default (state = initialState, action) => {
                 noahDetail: action.payload,
             };
         case UPDATE_CATEGORY_LIST: {
-            const {INIT, MORE} = GET_DATA_TYPES;
             const {categories, type = INIT} = action.payload;
             const {list} = categories;
             let {currentPage: originCurrent, list: originList} = state.categories;

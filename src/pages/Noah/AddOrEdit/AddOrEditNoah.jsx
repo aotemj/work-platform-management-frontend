@@ -20,7 +20,7 @@ import AddGlobalVariableDrawer from './AddGlobalVariableDrawer';
 import StepItem from './StepItem';
 import AddNoahStepDrawer from './AddNoahStepDrawer/index';
 import {DELETE_SYMBOL} from '../../../constant';
-import {categoryOnPopupScrollCallback} from '../../../utils';
+import {loadMoreCallBackByScrolling} from '../../../utils';
 
 const {Option} = Select;
 
@@ -144,7 +144,7 @@ const AddOrEditNoah = props => {
                     dropdownRender={originNode => dropdownRender(originNode, handleAddCategory, values)}
                     placeholder="请选择或新增作业分类"
                     onPopupScroll={debounce(250)(e => {
-                        categoryOnPopupScrollCallback(e, {getCategoryList, categoryCurrentPage});
+                        loadMoreCallBackByScrolling(e, {dispatch: getCategoryList, currentPage: categoryCurrentPage});
                     })}
                     maxTagCount={Math.min(categories.length, formFields.category.DEFAULT_TAG_MAX_COUNT)}
                     {...field}

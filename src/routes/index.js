@@ -22,6 +22,10 @@ import DiskSpace from '../pages/DiskSpace/index';
  * @returns {JSX.Element}
  */
 
+/**
+ * 可以自动补全相关route的参数
+ * @type {import("react-router-dom").BrowserRouterProps[]}
+ */
 
 const getRoute = ({url, addProjectId = false, component}) => {
     const URL_PREFIX_TEMP = addProjectId ? `:companyId/:projectId/${PROJECT_ROUTE}` : `:companyId/${PROJECT_ROUTE}`;

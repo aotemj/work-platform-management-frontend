@@ -1,5 +1,6 @@
 import {useCallback, useEffect, useState} from 'react';
 import moment from 'moment';
+import {debounce} from 'lodash/fp';
 
 import {CRON_DATE_WEEKS, STRATEGIES, URLS} from '../../constant';
 import {deConvertParams} from '../../../../utils/convertNoahDetail';
@@ -34,6 +35,7 @@ const useAddOrEditCron = ({
     const [convertedNoahDetail, setConvertedNoahDetail] = useState(null);
     const [selectAll, setSelectAll] = useState(false);
     const [indeterminate, setIndeterminate] = useState(false);
+    const [noahSearchName, setNoahSearchName] = useState('');
 
     const setFormValues = e => {
         return editing ? setEditValues(e) : setFormikValues(e);
@@ -219,6 +221,11 @@ const useAddOrEditCron = ({
             },
         });
     };
+
+    const onNoahSelectSearch = debounce(250)(e => {
+        setNoahSearchName(e);
+    });
+
     useEffect(() => {
         if (editDetailId) {
             getCronDetail(editDetailId);
@@ -235,18 +242,15 @@ const useAddOrEditCron = ({
     }, [noahDetail]);
 
     useEffect(() => {
-        // TODO 滑动加载更多
-        getNoahList({
-            // currentPage,
-            // pageSize,
-        });
-    }, []);
-
-    useEffect(() => {
         if (!visible) {
             closingVisibleCallback();
+        } else {
+            getNoahList({
+                currentPage: 1,
+                name: noahSearchName,
+            });
         }
-    }, [visible]);
+    }, [visible, noahSearchName]);
 
     return {
         disabled,
@@ -263,6 +267,8 @@ const useAddOrEditCron = ({
         handleSubmit,
         handleRemove,
         visible,
+        onNoahSelectSearch,
+        noahSearchName,
     };
 };
 

@@ -4,7 +4,7 @@ import {getCompanyId, getSpaceId} from './getRouteIds';
 import {
     CONTAINER_DOM_ID,
     DEFAULT_STRING_VALUE,
-    GET_DATA_TYPES,
+    TYPES_OF_FEATING,
     HOUR_STEP,
     MAGE_BYTE_SCALE,
     MILLI_SECOND_STEP,
@@ -197,14 +197,15 @@ export const updateCategoryMap = list => {
     return map;
 };
 
-export const categoryOnPopupScrollCallback = ((e, {getCategoryList, categoryCurrentPage}) => {
+export const loadMoreCallBackByScrolling = ((e, {dispatch, currentPage: categoryCurrentPage, params}) => {
     e.persist();
     // 判断滑动到底部
     const {scrollTop, scrollHeight, clientHeight} = e.target;
     if (Math.ceil(scrollTop + clientHeight) >= scrollHeight) {
-        getCategoryList({
+        dispatch({
             currentPage: categoryCurrentPage + 1,
-            type: GET_DATA_TYPES.MORE,
+            type: TYPES_OF_FEATING.MORE,
+            ...params,
         });
     }
 });

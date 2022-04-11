@@ -16,8 +16,7 @@ const title = '作业管理';
 const NoahList = props => {
     const {
         getNoahList,
-        noahList,
-        noahTotal,
+        noah,
         updateDiskSpaceInfo,
         diskSpaceInfo,
         categories,
@@ -44,10 +43,11 @@ const NoahList = props => {
         addNoah,
         setNoahType,
         batchSpin,
+        onCategorySearchCallback,
+        categorySearchName,
     } = useNoahList({
         getNoahList,
-        noahList,
-        noahTotal,
+        noah,
         updateDiskSpaceInfo,
         diskSpaceInfo,
         getCategoryList,
@@ -175,6 +175,8 @@ const NoahList = props => {
         setNoahType,
         getCategoryList,
         categoryCurrentPage,
+        onCategorySearchCallback,
+        categorySearchName,
     };
     return (
         <Spin spinning={batchSpin} tip={'正在批量操作，请稍后'} size={'large'}>
