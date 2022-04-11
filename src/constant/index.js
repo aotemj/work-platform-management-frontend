@@ -11,8 +11,7 @@ export const IS_PROD = process.env.NODE_ENV === 'production';
 
 export const PROJECT_ROUTE = '_noah';
 
-export const PUBLIC_PATH = '/assets/noah/';
-// export const PUBLIC_PATH = '/';
+export const PUBLIC_PATH = '/';
 
 // common pagination
 export const DEFAULT_PAGINATION = {
@@ -99,4 +98,9 @@ export const PROMISE_STATUS = {
     FULFILLED: 'fulfilled',
     REJECTED: 'rejected',
     PENDING: 'pending',
+};
+
+export const TYPES_OF_FEATING = {
+    INIT: 'init',
+    MORE: 'more',
 };
