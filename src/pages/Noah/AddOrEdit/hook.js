@@ -237,7 +237,6 @@ const useAddOrEdit = ({
     }, [categoryMap, convertAdditionCategories, detailFromServer]);
 
     const convertCategory = useCallback((category = []) => {
-        console.log(category);
         const groupRelList = clone(category);
 
         if (category?.[0] === SYMBOL_FOR_ALL) {

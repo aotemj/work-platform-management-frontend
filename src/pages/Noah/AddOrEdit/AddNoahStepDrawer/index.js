@@ -9,9 +9,10 @@ const mapStateToProps = ({users}) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-    updateUserFromOne: () => {
+    updateUserFromOne: payload => {
         dispatch({
             type: UPDATE_USER_FROM_ONE_S,
+            payload,
         });
     },
 });

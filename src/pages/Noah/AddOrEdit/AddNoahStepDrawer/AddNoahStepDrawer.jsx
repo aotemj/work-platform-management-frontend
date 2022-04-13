@@ -195,6 +195,7 @@ const AddNoahStepDrawer = ({
             editing,
             usersFromOne,
             isViewing,
+            updateUserFromOne,
         });
         switch (type) {
             case STEP_TYPES.EXECUTE_SCRIPT.value:

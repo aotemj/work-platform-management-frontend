@@ -10,6 +10,8 @@ import FileSource from '../FileSource';
 import TargetServer from './TargetServer';
 import {ReactComponent as IconRemark} from '../../../../statics/icons/remark.svg';
 import SelectAll from '../../../../components/SelectAll';
+import {debounce} from 'lodash/fp';
+import {loadMoreCallBackByScrolling} from '../../../../utils';
 
 const {Option} = Select;
 const {TextArea} = Input;
@@ -408,7 +410,8 @@ export const getFileDistribution = ({
 export const getManualConfirmFields = ({
     isFileDistribution,
     isScriptExecute,
-    usersFromOne,
+    usersFromOne: {list = [], currentPage: usersCurrentPage},
+    updateUserFromOne,
 }) => {
     const isManualConfirm = !isFileDistribution && !isScriptExecute;
 
@@ -458,10 +461,13 @@ export const getManualConfirmFields = ({
                 <SelectAll
                     className={cx('category-dropdown')}
                     placeholder="请选择通知人员"
+                    onPopupScroll={debounce(250)(e => {
+                        loadMoreCallBackByScrolling(e, {dispatch: updateUserFromOne, currentPage: usersCurrentPage});
+                    })}
                     {...field}
                 >
                     {
-                        usersFromOne?.list.map(item => {
+                        list.map(item => {
                             return (
                                 <Option
                                     // value={Number(item.userId)}
