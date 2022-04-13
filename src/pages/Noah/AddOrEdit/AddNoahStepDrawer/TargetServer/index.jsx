@@ -164,7 +164,7 @@ const TargetServer = ({
                 type,
                 workspaceId: 'xly-poc',
                 // workspaceId: companyId,
-                groupName: spaceId,
+                groupName: spaceId ? spaceId : companyId,
                 // groupName: 'iPipe',
                 groupType,
             },
@@ -185,7 +185,7 @@ const TargetServer = ({
             params: {
                 // groupName: 'xly-poc',
                 // groupName: spaceId,
-                groupName: '',
+                groupName: spaceId ? spaceId : companyId,
                 groupType,
                 currentPage: '0',
                 pageSize: '10000',
