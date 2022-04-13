@@ -5,13 +5,20 @@ import {getCompanyId, getSpaceId} from '../utils/getRouteIds';
 const service = axios.create({
     // timeout: 30000,
 });
+
+const companyId = getCompanyId();
+const projectId = getSpaceId();
+
+// 判断是企业路由吗？
+const groupType = !projectId ? 1 : 2;
+
 service.interceptors.request.use(
     config => {
         // TODO 临时数据，发版需要去掉
-        config.headers['HEADER-USERINFO'] = 'eyJ1U05DcmVhdGVkIjoiMSIsInNBTUFjY291bnROYW1lIjoiemhhbmdzYW4ifQ==';
-        config.headers['Company-Uuid'] = 'osc';
-        config.headers['Group-Name'] = 'osc';
-        config.headers['Group-Type'] = 1;
+        // config.headers['HEADER-USERINFO'] = 'eyJ1U05DcmVhdGVkIjoiMSIsInNBTUFjY291bnROYW1lIjoiemhhbmdzYW4ifQ==';
+        // config.headers['Company-Uuid'] = 'osc';
+        config.headers['Group-Name'] = projectId ? projectId : companyId;
+        config.headers['Group-Type'] = groupType;
         return config;
     },
     error => {

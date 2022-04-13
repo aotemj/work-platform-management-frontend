@@ -3,13 +3,12 @@ import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {clone} from 'ramda';
 
 import {AGENT_STATUS, AGENT_TERMINAL_TYPE, LABEL_TYPE, URLS, GROUP_TYPES} from '../../constants';
-import {getURlWithPrefix} from '../../../../../utils';
 import {debounce} from 'lodash/fp';
 import {getCompanyId, getSpaceId} from '../../../../../utils/getRouteIds';
 import {request} from '../../../../../request/fetch';
 import cx from './index.less';
-import {agents, labels} from '../../../../../temp/agents';
-import {IS_PROD, PIPE_URL_PREFIX} from '../../../../../constant';
+// import {agents, labels} from '../../../../../temp/agents';
+// import {IS_PROD, PIPE_URL_PREFIX} from '../../../../../constant';
 
 const getAgentMap = agents => {
     const tempMap = {};
@@ -157,7 +156,7 @@ const TargetServer = ({
         // setOriginDataUpdated(true);
 
         return request({
-            url: getURlWithPrefix(PIPE_URL_PREFIX, URLS.AGENTS),
+            url: URLS.AGENTS,
             params: {
                 // companyId: 'xly-poc',
                 companyId,
@@ -182,7 +181,7 @@ const TargetServer = ({
     // pageSize     页大小
     const fetchLabels = async () => {
         return request({
-            url: getURlWithPrefix(PIPE_URL_PREFIX, URLS.LABELS),
+            url: URLS.LABELS,
             params: {
                 // groupName: 'xly-poc',
                 // groupName: spaceId,
@@ -207,22 +206,22 @@ const TargetServer = ({
         let tempAgents;
         let tempLabels;
         // TODO 正式上线后逻辑改为正常模式
-        if (IS_PROD) {
-            setLoading(true);
-            const [agentRes, labelRes] = await Promise.all([fetchAgents(), fetchLabels()]);
-            const {status: agentStatus, entities: {agents = []}} = agentRes;
-            setLoading(false);
+        // if (IS_PROD) {
+        setLoading(true);
+        const [agentRes, labelRes] = await Promise.all([fetchAgents(), fetchLabels()]);
+        const {status: agentStatus, entities: {agents = []}} = agentRes;
+        setLoading(false);
 
-            const {status: labelStatus, list: labels} = labelRes;
+        const {status: labelStatus, list: labels} = labelRes;
 
-            if (!agentStatus && !labelStatus) {
-                tempAgents = agents;
-                tempLabels = labels;
-            }
-        } else {
+        if (!agentStatus && !labelStatus) {
             tempAgents = agents;
             tempLabels = labels;
         }
+        // } else {
+        //     tempAgents = agents;
+        //     tempLabels = labels;
+        // }
         const {labelMap, tempLabels: treeData, agentMap, agentMapByUuid} = formatData(tempAgents, tempLabels, type);
         setTreeData(treeData.filter(item => item));
         setAgentMap(agentMap);
