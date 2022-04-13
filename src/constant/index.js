@@ -52,9 +52,7 @@ export const DEFAULT_STRING_VALUE = '--';
 
 export const COMMON_URL_PREFIX = IS_PROD ? '/api/noah' : '/api';
 
-export const PIPE_URL_PREFIX = '/';
-
-export const USERS_URL_PREFIX = 'api';
+export const GLOBAL_URL_PREFIX = IS_PROD ? '/noah' : '/api';
 
 export const REQUEST_CODE = {
     SUCCESS: 200,
@@ -62,8 +60,10 @@ export const REQUEST_CODE = {
 
 export const GLOBAL_URLS = {
     GET_USERS: (() =>
-        `/api/facade/${getCompanyId()}/rest/v2/companies/${getCompanyId()}/users`)(),
-    GET_SCRIPTS: '/api/ipipe/script-tasks/rest/v1/script-tasks',
+        `/user/${getCompanyId()}/rest/v1/companies/${getCompanyId()}/users`)(),
+    GET_SCRIPTS: '/script/rest/v1/script-tasks',
+    LABELS: '/resource/sa/rest/v3/labels',
+    AGENTS: '/resource/sa/rest/v1/agents',
 };
 
 export const SPLIT_SYMBOL = ',';

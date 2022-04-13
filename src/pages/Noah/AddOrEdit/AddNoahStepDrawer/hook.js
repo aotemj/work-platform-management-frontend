@@ -1,14 +1,15 @@
 import {useCallback, useEffect, useState} from 'react';
 import {message, Modal} from '@osui/ui';
+import {omit} from 'ramda';
 
-import {getContainerDOM} from '../../../../utils';
+import {getContainerDOM, getURlWithPrefix} from '../../../../utils';
 import {
     RUNNING_ENVIRONMENT,
     SCRIPT_TYPES,
     SCRIPTS_ORIGIN,
     NOTICE_APPROACHES, LOADING,
 } from '../constants';
-import {DEFAULT_STRING_VALUE, STEP_TYPES, IS_PROD} from '../../../../constant';
+import {DEFAULT_STRING_VALUE, STEP_TYPES, IS_PROD, GLOBAL_URL_PREFIX} from '../../../../constant';
 import {request} from '../../../../request/fetch';
 import {GLOBAL_URLS} from '../../../../constant/index';
 import {TEMP_SCRIPTS} from '../../../../temp/scripts';
@@ -154,17 +155,20 @@ const useAddNoahStep = ({
     }, [handleAddTargetServer, handleEditTargetServer]);
 
     const getScriptsFromPipe = useCallback(async () => {
-        let scriptList = [];
-        // TODO 生产环境动态化
+        let scriptObj;
+        let scriptList;
         if (IS_PROD) {
-            scriptList = await request({
-                url: `${GLOBAL_URLS.GET_SCRIPTS}`,
+            scriptObj = await request({
+                url: getURlWithPrefix(GLOBAL_URL_PREFIX, GLOBAL_URLS.GET_SCRIPTS),
                 params: {
                     _offset: 0,
                     _limit: 10,
                     keyword: '',
                 },
             });
+            scriptObj = omit(['status', 'msg'], scriptObj);
+            scriptObj.length = Object.keys(scriptObj).length;
+            scriptList = Array.from(scriptObj);
         } else {
             scriptList = TEMP_SCRIPTS;
         }

@@ -25,22 +25,27 @@ import {
     PROMISE_STATUS,
     TYPES_OF_FEATING,
     DEFAULT_PAGINATION,
-    IS_PROD,
-    GLOBAL_URLS,
+    GLOBAL_URLS, IS_PROD, GLOBAL_URL_PREFIX,
 } from '../constant';
 import {URLS} from '../pages/Exec/List/constant';
+import {getURlWithPrefix} from '../utils';
 
 // 获取用户信息
 function* getUsersFromOne() {
-    let finalUsers = [];
-    // TODO 生产环境动态化
+    let finalUserObj;
+    let finalUsers;
     if (IS_PROD) {
-        finalUsers = yield request({
-            url: `${GLOBAL_URLS.GET_USERS}`,
+        // TODO 生产环境动态化
+        finalUserObj = yield request({
+            url: getURlWithPrefix(GLOBAL_URL_PREFIX, GLOBAL_URLS.GET_USERS),
         });
+        finalUserObj = omit(['status', 'msg'], finalUserObj);
+        finalUserObj.length = Object.keys(finalUserObj).length;
+        finalUsers = Array.from(finalUserObj);
     } else {
         finalUsers = users;
     }
+
 
     const usersMap = new Map();
 
