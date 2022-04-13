@@ -50,7 +50,7 @@ export const LevelIconMap = {
 
 export const DEFAULT_STRING_VALUE = '--';
 
-export const COMMON_URL_PREFIX = IS_PROD ? '/noah/api' : '/api';
+export const COMMON_URL_PREFIX = IS_PROD ? '/api/noah' : '/api';
 
 export const PIPE_URL_PREFIX = '/';
 
