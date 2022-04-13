@@ -77,8 +77,8 @@ export const AGENT_TERMINAL_TYPE = {
 };
 
 export const URLS = {
-    LABELS: '/noah/resource/sa_server/sa/rest/v3/labels',
-    AGENTS: '/noah/resource/sa_server/sa/rest/v1/agents',
+    LABELS: '/noah/resource/sa/rest/v3/labels',
+    AGENTS: '/noah/resource/sa/rest/v1/agents',
     ADD_NOAH_WORK_PLAN: '/rest/v1/work-plan/',
     // 新增分类
     ADD_CATEGORIES: '/rest/v1/work-group',
