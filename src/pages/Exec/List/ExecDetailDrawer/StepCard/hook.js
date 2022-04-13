@@ -219,7 +219,7 @@ const useStepCard = ({detail, updateUserFromOne, submitCallback, users, executio
     }, [detail, ignoreError, stageConfirmResult]);
 
     useEffect(() => {
-        updateUserFromOne();
+        updateUserFromOne({});
     }, []);
     return {
         timeDetails,

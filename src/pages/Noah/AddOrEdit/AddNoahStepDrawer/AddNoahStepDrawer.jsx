@@ -38,6 +38,8 @@ const AddNoahStepDrawer = ({
         setUserInputError,
         scripts,
         handleChangeImportScript,
+        handleSearchInformUser,
+        handleSearchScript,
     } = useAddNoahStep({
         onClose,
         handleChangeStep,
@@ -154,6 +156,8 @@ const AddNoahStepDrawer = ({
             placeholder: '请选择脚本',
             showSearch: true,
             allowClear: true,
+            filterOption: false,
+            onSearch: handleSearchScript,
             disabled: isViewing,
             onChange: handleChangeImportScript,
             value: formData.chooseScript,
@@ -195,6 +199,8 @@ const AddNoahStepDrawer = ({
             editing,
             usersFromOne,
             isViewing,
+            updateUserFromOne,
+            handleSearchInformUser,
         });
         switch (type) {
             case STEP_TYPES.EXECUTE_SCRIPT.value:

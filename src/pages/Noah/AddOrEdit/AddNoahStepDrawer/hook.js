@@ -1,6 +1,7 @@
 import {useCallback, useEffect, useState} from 'react';
 import {message, Modal} from '@osui/ui';
 import {omit} from 'ramda';
+import {debounce} from 'lodash/fp';
 
 import {getContainerDOM, getURlWithPrefix} from '../../../../utils';
 import {
@@ -15,6 +16,7 @@ import {
     IS_PROD,
     GLOBAL_URL_PREFIX,
     DEFAULT_PAGINATION,
+    TYPES_OF_FEATING,
 } from '../../../../constant';
 import {request} from '../../../../request/fetch';
 import {GLOBAL_URLS} from '../../../../constant/index';
@@ -81,6 +83,10 @@ const useAddNoahStep = ({
     const [scripts, setScripts] = useState([]);
 
     const [scriptsMap, setScriptsMap] = useState({});
+
+    const [searchUserName, setSearchUserName] = useState('');
+
+    const [searchScriptName, setSearchScriptName] = useState('');
 
     // 本地文件如果还处于上传中，则禁止保存
     const checkStorageListAvailable = useCallback(e => {
@@ -161,21 +167,29 @@ const useAddNoahStep = ({
         }
     }, [handleAddTargetServer, handleEditTargetServer]);
 
-    const getScriptsFromPipe = useCallback(async (currentPage = 0) => {
+    const getScriptsFromPipe = async (payload = {}) => {
+        const {INIT, MORE} = TYPES_OF_FEATING;
+        const {currentPage = 0, type = INIT} = payload;
         let scriptObj;
         let scriptList;
         if (IS_PROD) {
+            const {pageSize} = DEFAULT_PAGINATION;
             scriptObj = await request({
                 url: getURlWithPrefix(GLOBAL_URL_PREFIX, GLOBAL_URLS.GET_SCRIPTS),
                 params: {
-                    _offset: currentPage,
-                    _limit: DEFAULT_PAGINATION.pageSize,
-                    keyword: '',
+                    _offset: currentPage * pageSize,
+                    _limit: pageSize,
+                    keyword: searchScriptName,
                 },
             });
             scriptObj = omit(['status', 'msg'], scriptObj);
             scriptObj.length = Object.keys(scriptObj).length;
-            scriptList = Array.from(scriptObj);
+            const newScripts = Array.from(scriptObj);
+            if (type === MORE) {
+                scriptList = [...scripts, newScripts];
+            } else {
+                scriptList = newScripts;
+            }
         } else {
             scriptList = TEMP_SCRIPTS;
         }
@@ -186,7 +200,7 @@ const useAddNoahStep = ({
             tempMap[item.id] = item;
         });
         setScriptsMap(tempMap);
-    }, []);
+    };
 
     const handleChangeImportScript = useCallback(e => {
         const currentScript = scriptsMap[e];
@@ -209,12 +223,27 @@ const useAddNoahStep = ({
 
     }, [formikValues, scriptsMap, setStepEditingValue, stepEditingValue]);
 
+    const handleSearchInformUser = debounce(250)(e => {
+        setSearchUserName(e);
+    });
+
+    const handleSearchScript = debounce(250)(e => {
+        setSearchScriptName(e);
+    });
+
     useEffect(() => {
         const {value} = STEP_TYPES.MANUAL_CONFIRM;
         if (visible && (stepEditingValue?.type === value || formikValues.type === value)) {
-            updateUserFromOne();
+            updateUserFromOne({});
         }
     }, [visible, stepEditingValue?.type, formikValues.type]);
+
+    useEffect(() => {
+        updateUserFromOne({
+            currentPage: 0,
+            name: searchUserName,
+        });
+    }, [searchUserName]);
 
     useEffect(() => {
         if (formikValues.type === STEP_TYPES.MANUAL_CONFIRM.value) {
@@ -229,9 +258,16 @@ const useAddNoahStep = ({
     useEffect(() => {
         const {value} = SCRIPTS_ORIGIN.IMPORT_SCRIPTS;
         if (formikValues.scriptOrigin === value || stepEditingValue?.scriptOrigin === value) {
-            getScriptsFromPipe();
+            getScriptsFromPipe({});
         }
     }, [formikValues.scriptOrigin, stepEditingValue?.scriptOrigin]);
+
+    useEffect(() => {
+        getScriptsFromPipe({
+            currentPage: 0,
+        });
+    }, [searchScriptName]);
+
     return {
         formikValues,
         setFormikValues,
@@ -245,6 +281,9 @@ const useAddNoahStep = ({
         scripts,
         scriptsMap,
         handleChangeImportScript,
+        handleSearchInformUser,
+        handleSearchScript,
+        searchScriptName,
     };
 };
 export default useAddNoahStep;

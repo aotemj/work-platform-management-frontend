@@ -35,22 +35,22 @@ import {getURlWithPrefix} from '../utils';
 // 获取用户信息
 function* updateUserFromOne({payload}) {
     const {INIT} = TYPES_OF_FEATING;
-    const {currentPage = 0, type = INIT} = payload;
+    const {currentPage = 0, type = INIT, name} = payload;
     let finalUserObj;
     let finalUsers;
     if (IS_PROD) {
-    // TODO 生产环境动态化
+        const {pageSize}  = DEFAULT_PAGINATION;
         finalUserObj = yield request({
             url: getURlWithPrefix(GLOBAL_URL_PREFIX, GLOBAL_URLS.GET_USERS),
             params: {
                 applyStatus: '',
-                name: '',
+                name,
                 userType: 'USER',
                 groupId: '',
                 directoryId: '',
                 title: '',
-                _offset: currentPage,
-                _limit: DEFAULT_PAGINATION.pageSize,
+                _offset: currentPage * pageSize,
+                _limit: pageSize,
             },
         });
         finalUserObj = omit(['status', 'msg'], finalUserObj);
@@ -71,6 +71,7 @@ function* updateUserFromOne({payload}) {
         list: finalUsers,
         map: usersMap,
         type,
+        currentPage,
     }));
 }
 

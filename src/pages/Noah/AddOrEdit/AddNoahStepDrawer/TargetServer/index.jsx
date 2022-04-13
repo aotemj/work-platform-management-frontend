@@ -1,9 +1,9 @@
 import {Radio, Spin, TreeSelect} from '@osui/ui';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {clone} from 'ramda';
+import {debounce} from 'lodash/fp';
 
 import {AGENT_STATUS, AGENT_TERMINAL_TYPE, LABEL_TYPE, GROUP_TYPES} from '../../constants';
-import {debounce} from 'lodash/fp';
 import {getCompanyId, getSpaceId} from '../../../../../utils/getRouteIds';
 import {request} from '../../../../../request/fetch';
 import cx from './index.less';
@@ -160,7 +160,7 @@ const TargetServer = ({
             url: getURlWithPrefix(GLOBAL_URL_PREFIX, GLOBAL_URLS.AGENTS),
             params: {
                 // companyId: 'xly-poc',
-                companyId,
+                companyUuid: companyId,
                 // linux, windows
                 type,
                 workspaceId: 'xly-poc',
@@ -184,14 +184,13 @@ const TargetServer = ({
         return request({
             url: getURlWithPrefix(GLOBAL_URL_PREFIX, GLOBAL_URLS.LABELS),
             params: {
-                // groupName: 'xly-poc',
-                // groupName: spaceId,
+                companyUuid: companyId,
                 groupName: spaceId ? spaceId : companyId,
                 groupType,
                 currentPage: '0',
+                // TreeSelect 无法监听 scroll 事件， 暂时不做分页处理
                 pageSize: '10000',
                 workspaceId: spaceId,
-                // labelName: updateType ? '' : labelName,
                 labelName,
                 labelLevel: '',
             },
@@ -206,7 +205,6 @@ const TargetServer = ({
         setTreeData([]);
         let tempAgents;
         let tempLabels;
-        // TODO 正式上线后逻辑改为正常模式
         if (IS_PROD) {
             setLoading(true);
             const [agentRes, labelRes] = await Promise.all([fetchAgents(), fetchLabels()]);
@@ -278,11 +276,8 @@ const TargetServer = ({
 
     useEffect(() => {
         setNeedUpdate(true);
-    }, [labelName]);
+    }, [labelName, type]);
 
-    useEffect(() => {
-        setNeedUpdate(true);
-    }, [type]);
     return (
         <TreeSelect
             showSearch

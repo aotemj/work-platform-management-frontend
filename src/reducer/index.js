@@ -40,12 +40,27 @@ export default (state = initialState, action) => {
     switch (action.type) {
         case UPDATE_USERS_FROM_ONE:
         {
+            let {type = INIT, list, currentPage} = action.payload;
+            let {currentPage: originCurrent, list: originList} = state.users;
+            let finalList = list;
+            if (type === MORE) {
+                finalList = [...originList, ...list];
+                currentPage = originCurrent + 1;
+            }
+            const usersMap = new Map();
+            let length = finalList.length;
+            for (let i = 0; i < length; i++) {
+                const {userId} = finalList[i];
+                usersMap.set(userId, finalList[i]);
+            }
 
-
-            const {type = INIT} = action.payload;
             return {
                 ...state,
-                users: action.payload,
+                users: {
+                    list: finalList,
+                    currentPage,
+                    map: usersMap,
+                },
             };
         }
 
@@ -85,8 +100,6 @@ export default (state = initialState, action) => {
                 finalList = [...originList, ...list];
                 currentPage += 1;
             }
-
-            // console.log(finalList);
 
             return {
                 ...state,

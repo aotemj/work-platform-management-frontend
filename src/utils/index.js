@@ -197,13 +197,13 @@ export const updateCategoryMap = list => {
     return map;
 };
 
-export const loadMoreCallBackByScrolling = ((e, {dispatch, currentPage: categoryCurrentPage, params}) => {
+export const loadMoreCallBackByScrolling = ((e, {dispatch, currentPage, params}) => {
     e.persist();
     // 判断滑动到底部
     const {scrollTop, scrollHeight, clientHeight} = e.target;
     if (Math.ceil(scrollTop + clientHeight) >= scrollHeight) {
         dispatch({
-            currentPage: categoryCurrentPage + 1,
+            currentPage: currentPage + 1,
             type: TYPES_OF_FEATING.MORE,
             ...params,
         });
