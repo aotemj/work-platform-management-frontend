@@ -17,7 +17,7 @@ import NoPassReasonModal from './NoPassReasonModal';
 import {IGNORE_ERROR, RUNNING} from '../../constant';
 
 const StepCard = props => {
-    const {users, detail, getUsersFromOne, submitCallback, executionDetail, stepId} = props;
+    const {users, detail, updateUserFromOne, submitCallback, executionDetail, stepId} = props;
 
     const {
         consumeObj,
@@ -36,7 +36,7 @@ const StepCard = props => {
         runStatusLabel,
     } = useStepCard({
         detail,
-        getUsersFromOne,
+        updateUserFromOne,
         submitCallback,
         users,
         executionDetail,

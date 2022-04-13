@@ -2,7 +2,7 @@ import {
     GET_EXECUTION_DETAIL,
     UPDATE_NOAH_DETAIL,
     UPDATE_NOAH_LIST,
-    GET_USERS_FROM_ONE,
+    UPDATE_USERS_FROM_ONE,
     UPDATE_CATEGORY_LIST,
     UPDATE_DISK_SPACE_INFO,
 } from '../actions/actionTypes';
@@ -13,6 +13,7 @@ const initialState = {
     users: {
         list: [],
         map: new Map(),
+        currentPage: 0,
     },
     // 执行详情
     executionDetail: null,
@@ -37,11 +38,17 @@ export default (state = initialState, action) => {
     const {INIT, MORE} = TYPES_OF_FEATING;
 
     switch (action.type) {
-        case GET_USERS_FROM_ONE:
+        case UPDATE_USERS_FROM_ONE:
+        {
+
+
+            const {type = INIT} = action.payload;
             return {
                 ...state,
                 users: action.payload,
             };
+        }
+
         case GET_EXECUTION_DETAIL:
             return {
                 ...state,

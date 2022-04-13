@@ -8,7 +8,8 @@ import {getCompanyId, getSpaceId} from '../../../../../utils/getRouteIds';
 import {request} from '../../../../../request/fetch';
 import cx from './index.less';
 import {getURlWithPrefix} from '../../../../../utils';
-import {GLOBAL_URL_PREFIX, GLOBAL_URLS} from '../../../../../constant';
+import {GLOBAL_URL_PREFIX, GLOBAL_URLS, IS_PROD} from '../../../../../constant';
+import {agents, labels} from '../../../../../temp/agents';
 
 const getAgentMap = agents => {
     const tempMap = {};
@@ -206,22 +207,22 @@ const TargetServer = ({
         let tempAgents;
         let tempLabels;
         // TODO 正式上线后逻辑改为正常模式
-        // if (IS_PROD) {
-        setLoading(true);
-        const [agentRes, labelRes] = await Promise.all([fetchAgents(), fetchLabels()]);
-        const {status: agentStatus, entities: {agents = []}} = agentRes;
-        setLoading(false);
+        if (IS_PROD) {
+            setLoading(true);
+            const [agentRes, labelRes] = await Promise.all([fetchAgents(), fetchLabels()]);
+            const {status: agentStatus, entities: {agents = []}} = agentRes;
+            setLoading(false);
 
-        const {status: labelStatus, list: labels} = labelRes;
+            const {status: labelStatus, list: labels} = labelRes;
 
-        if (!agentStatus && !labelStatus) {
+            if (!agentStatus && !labelStatus) {
+                tempAgents = agents;
+                tempLabels = labels;
+            }
+        } else {
             tempAgents = agents;
             tempLabels = labels;
         }
-        // } else {
-        //     tempAgents = agents;
-        //     tempLabels = labels;
-        // }
         const {labelMap, tempLabels: treeData, agentMap, agentMapByUuid} = formatData(tempAgents, tempLabels, type);
         setTreeData(treeData.filter(item => item));
         setAgentMap(agentMap);

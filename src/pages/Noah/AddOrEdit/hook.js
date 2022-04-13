@@ -145,7 +145,7 @@ const useAddOrEdit = ({
         const id = Date.now();
         const newCategory = {
             name,
-            id,
+            timeStamp: id,
         };
         updateCategory({
             categories: {
@@ -157,7 +157,7 @@ const useAddOrEdit = ({
             },
         });
         message.success('添加成功');
-        addCategoryCallback({name, id});
+        addCategoryCallback({name});
         return true;
     }, [categoryMap, updateCategory, categories, addCategoryCallback]);
 
@@ -237,7 +237,7 @@ const useAddOrEdit = ({
     }, [categoryMap, convertAdditionCategories, detailFromServer]);
 
     const convertCategory = useCallback((category = []) => {
-
+        console.log(category);
         const groupRelList = clone(category);
 
         if (category?.[0] === SYMBOL_FOR_ALL) {

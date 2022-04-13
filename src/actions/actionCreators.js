@@ -1,14 +1,14 @@
 import {
     GET_EXECUTION_DETAIL,
     UPDATE_NOAH_LIST,
-    GET_USERS_FROM_ONE,
+    UPDATE_USERS_FROM_ONE,
     UPDATE_NOAH_DETAIL,
     UPDATE_CATEGORY_LIST,
     UPDATE_DISK_SPACE_INFO,
 } from './actionTypes';
 
-export const getUsersFromOne_A = payload => ({
-    type: GET_USERS_FROM_ONE,
+export const updateUsersFromOne_A = payload => ({
+    type: UPDATE_USERS_FROM_ONE,
     payload,
 });
 

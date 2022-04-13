@@ -23,7 +23,7 @@ const AddNoahStepDrawer = ({
     setStepEditingValue,
     // editing
     isViewing,
-    getUsersFromOne,
+    updateUserFromOne,
     users: usersFromOne,
 }) => {
     const {
@@ -43,7 +43,8 @@ const AddNoahStepDrawer = ({
         handleChangeStep,
         stepEditingValue,
         setStepEditingValue,
-        getUsersFromOne,
+        updateUserFromOne,
+        visible,
     });
 
     const editing = useMemo(() => {

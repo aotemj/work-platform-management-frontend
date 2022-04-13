@@ -2,16 +2,16 @@ import {connect} from 'react-redux';
 import {compose} from 'lodash/fp';
 
 import StepCard from './StepCard';
-import {GET_USER_FROM_ONE_S} from '../../../../../sagas/types';
+import {UPDATE_USER_FROM_ONE_S} from '../../../../../sagas/types';
 
 const mapStateToProps = ({users}) => ({
     users,
 });
 
 const mapDispatchToProps = dispatch => ({
-    getUsersFromOne: () => {
+    updateUserFromOne: () => {
         dispatch({
-            type: GET_USER_FROM_ONE_S,
+            type: UPDATE_USER_FROM_ONE_S,
         });
     },
 });

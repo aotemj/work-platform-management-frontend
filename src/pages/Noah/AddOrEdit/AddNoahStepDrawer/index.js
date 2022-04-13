@@ -1,7 +1,7 @@
 import {connect} from 'react-redux';
 import {compose} from 'lodash/fp';
 
-import {GET_USER_FROM_ONE_S} from '../../../../sagas/types';
+import {UPDATE_USER_FROM_ONE_S} from '../../../../sagas/types';
 import AddNoahStepDrawer from './AddNoahStepDrawer';
 
 const mapStateToProps = ({users}) => ({
@@ -9,9 +9,9 @@ const mapStateToProps = ({users}) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-    getUsersFromOne: () => {
+    updateUserFromOne: () => {
         dispatch({
-            type: GET_USER_FROM_ONE_S,
+            type: UPDATE_USER_FROM_ONE_S,
         });
     },
 });

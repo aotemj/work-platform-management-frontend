@@ -4,7 +4,7 @@ import {omit} from 'ramda';
 import {
     getExecutionDetail_A,
     updateNoahList_A,
-    getUsersFromOne_A,
+    updateUsersFromOne_A,
     getNoahDetail_A,
     updateCategories_A,
     updateDiskSpaceInfo_A,
@@ -15,7 +15,7 @@ import {
     GET_EXECUTION_DETAIL_S,
     GET_NOAH_DETAIL_S,
     GET_NOAH_LIST_S,
-    GET_USER_FROM_ONE_S,
+    UPDATE_USER_FROM_ONE_S,
     UPDATE_DISK_SPACE_INFO_S,
 } from './types';
 import {request} from '../request/fetch';
@@ -25,19 +25,33 @@ import {
     PROMISE_STATUS,
     TYPES_OF_FEATING,
     DEFAULT_PAGINATION,
-    GLOBAL_URLS, IS_PROD, GLOBAL_URL_PREFIX,
+    GLOBAL_URLS,
+    IS_PROD,
+    GLOBAL_URL_PREFIX,
 } from '../constant';
 import {URLS} from '../pages/Exec/List/constant';
 import {getURlWithPrefix} from '../utils';
 
 // 获取用户信息
-function* getUsersFromOne() {
+function* updateUserFromOne({payload}) {
+    const {INIT} = TYPES_OF_FEATING;
+    const {currentPage = 0, type = INIT} = payload;
     let finalUserObj;
     let finalUsers;
     if (IS_PROD) {
-        // TODO 生产环境动态化
+    // TODO 生产环境动态化
         finalUserObj = yield request({
             url: getURlWithPrefix(GLOBAL_URL_PREFIX, GLOBAL_URLS.GET_USERS),
+            params: {
+                applyStatus: '',
+                name: '',
+                userType: 'USER',
+                groupId: '',
+                directoryId: '',
+                title: '',
+                _offset: currentPage,
+                _limit: DEFAULT_PAGINATION.pageSize,
+            },
         });
         finalUserObj = omit(['status', 'msg'], finalUserObj);
         finalUserObj.length = Object.keys(finalUserObj).length;
@@ -46,7 +60,6 @@ function* getUsersFromOne() {
         finalUsers = users;
     }
 
-
     const usersMap = new Map();
 
     for (let i = 0; i < users.length; i++) {
@@ -54,9 +67,10 @@ function* getUsersFromOne() {
         usersMap.set(userId, users[i]);
     }
 
-    yield put(getUsersFromOne_A({
+    yield put(updateUsersFromOne_A({
         list: finalUsers,
         map: usersMap,
+        type,
     }));
 }
 
@@ -159,7 +173,7 @@ function* updateDiskSpaceInfo() {
 
 export default function* () {
     yield all([
-        takeLatest(GET_USER_FROM_ONE_S, getUsersFromOne),
+        takeLatest(UPDATE_USER_FROM_ONE_S, updateUserFromOne),
         takeLatest(GET_EXECUTION_DETAIL_S, getExecutionDetail),
         takeLatest(GET_NOAH_LIST_S, getNoahList),
         takeLatest(GET_NOAH_DETAIL_S, getNoahWorkPlanDetail),

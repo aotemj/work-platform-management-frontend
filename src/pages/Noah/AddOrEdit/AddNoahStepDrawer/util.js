@@ -458,7 +458,6 @@ export const getManualConfirmFields = ({
                 <SelectAll
                     className={cx('category-dropdown')}
                     placeholder="请选择通知人员"
-                    maxTagCount={Math.min(usersFromOne?.list.length, 3)}
                     {...field}
                 >
                     {

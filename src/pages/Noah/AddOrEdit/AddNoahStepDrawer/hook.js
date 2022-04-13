@@ -9,7 +9,13 @@ import {
     SCRIPTS_ORIGIN,
     NOTICE_APPROACHES, LOADING,
 } from '../constants';
-import {DEFAULT_STRING_VALUE, STEP_TYPES, IS_PROD, GLOBAL_URL_PREFIX} from '../../../../constant';
+import {
+    DEFAULT_STRING_VALUE,
+    STEP_TYPES,
+    IS_PROD,
+    GLOBAL_URL_PREFIX,
+    DEFAULT_PAGINATION,
+} from '../../../../constant';
 import {request} from '../../../../request/fetch';
 import {GLOBAL_URLS} from '../../../../constant/index';
 import {TEMP_SCRIPTS} from '../../../../temp/scripts';
@@ -60,7 +66,8 @@ const useAddNoahStep = ({
     handleChangeStep,
     stepEditingValue,
     setStepEditingValue,
-    getUsersFromOne,
+    updateUserFromOne,
+    visible,
 }) => {
 
     const [formikValues, setFormikValues] = useState(defaultFormikValues);
@@ -154,15 +161,15 @@ const useAddNoahStep = ({
         }
     }, [handleAddTargetServer, handleEditTargetServer]);
 
-    const getScriptsFromPipe = useCallback(async () => {
+    const getScriptsFromPipe = useCallback(async (currentPage = 0) => {
         let scriptObj;
         let scriptList;
         if (IS_PROD) {
             scriptObj = await request({
                 url: getURlWithPrefix(GLOBAL_URL_PREFIX, GLOBAL_URLS.GET_SCRIPTS),
                 params: {
-                    _offset: 0,
-                    _limit: 10,
+                    _offset: currentPage,
+                    _limit: DEFAULT_PAGINATION.pageSize,
                     keyword: '',
                 },
             });
@@ -203,8 +210,11 @@ const useAddNoahStep = ({
     }, [formikValues, scriptsMap, setStepEditingValue, stepEditingValue]);
 
     useEffect(() => {
-        getUsersFromOne();
-    }, []);
+        const {value} = STEP_TYPES.MANUAL_CONFIRM;
+        if (visible && (stepEditingValue?.type === value || formikValues.type === value)) {
+            updateUserFromOne();
+        }
+    }, [visible, stepEditingValue?.type, formikValues.type]);
 
     useEffect(() => {
         if (formikValues.type === STEP_TYPES.MANUAL_CONFIRM.value) {

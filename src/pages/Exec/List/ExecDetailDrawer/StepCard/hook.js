@@ -17,7 +17,7 @@ import {request} from '../../../../../request/fetch';
 import {routes} from '../../../../../routes';
 import {entirelyRetry, neglectErrors} from '../util';
 
-const useStepCard = ({detail, getUsersFromOne, submitCallback, users, executionDetail}) => {
+const useStepCard = ({detail, updateUserFromOne, submitCallback, users, executionDetail}) => {
     const navigate = useNavigate();
     const [noPassVisible, setNoPassVisible] = useState(false);
     const name = useMemo(() => {
@@ -219,7 +219,7 @@ const useStepCard = ({detail, getUsersFromOne, submitCallback, users, executionD
     }, [detail, ignoreError, stageConfirmResult]);
 
     useEffect(() => {
-        getUsersFromOne();
+        updateUserFromOne();
     }, []);
     return {
         timeDetails,

@@ -136,7 +136,6 @@ const AddOrEditNoah = props => {
             ...defaultField,
             name: 'category',
             label: '分类',
-            DEFAULT_TAG_MAX_COUNT: Math.min(categories.length, 3),
             children: ({field, form: {values}}) => (
                 <SelectAll
                     disabled={isExecuting}
@@ -146,7 +145,6 @@ const AddOrEditNoah = props => {
                     onPopupScroll={debounce(250)(e => {
                         loadMoreCallBackByScrolling(e, {dispatch: getCategoryList, currentPage: categoryCurrentPage});
                     })}
-                    maxTagCount={Math.min(categories.length, formFields.category.DEFAULT_TAG_MAX_COUNT)}
                     {...field}
                 >
                     {

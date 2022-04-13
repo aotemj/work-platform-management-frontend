@@ -4,7 +4,7 @@ import {compose} from 'lodash/fp';
 import NoahList from './NoahList';
 import {
     GET_NOAH_LIST_S,
-    GET_USER_FROM_ONE_S,
+    UPDATE_USER_FROM_ONE_S,
     UPDATE_CATEGORY_LIST_S,
     UPDATE_DISK_SPACE_INFO_S,
 } from '../../../sagas/types';
@@ -24,7 +24,7 @@ const mapStateToProps = ({
 };
 
 const mapDispatchToProps = (dispatch, {}) => ({
-    getUsersFromOne: () => dispatch({type: GET_USER_FROM_ONE_S}),
+    updateUserFromOne: () => dispatch({type: UPDATE_USER_FROM_ONE_S}),
     getNoahList: payload => {
         dispatch({
             type: GET_NOAH_LIST_S,
