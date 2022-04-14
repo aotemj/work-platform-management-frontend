@@ -97,15 +97,13 @@ const useAddOrEditCron = ({
                 weekValue = datePicker.join(SPLIT_SYMBOL);
             }
 
-            const date = new Date(timerPicker);
+            const date = new Date(Number(timerPicker));
             hourValue = date.getHours();
             minuteValue = date.getMinutes();
-
             return `${secondValue} ${minuteValue} ${hourValue} ${dayValue} ${monthValue} ${weekValue}`;
         } else if (exePolicy === SINGLE.value) {
-            return values.timerPicker;
+            return String(values.timerPicker);
         }
-
     };
 
     const closingVisibleCallback = () => {
