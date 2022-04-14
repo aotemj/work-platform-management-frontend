@@ -4,7 +4,7 @@ import {getCompanyId, getSpaceId} from './getRouteIds';
 import {
     CONTAINER_DOM_ID,
     DEFAULT_STRING_VALUE,
-    TYPES_OF_FEATING,
+    TYPES_OF_FETCHING,
     HOUR_STEP,
     MAGE_BYTE_SCALE,
     MILLI_SECOND_STEP,
@@ -205,7 +205,7 @@ export const loadMoreCallBackByScrolling = ((e, {dispatch, currentPage, params})
     if (Math.ceil(scrollTop + clientHeight) >= scrollHeight) {
         dispatch({
             currentPage: currentPage + 1,
-            type: TYPES_OF_FEATING.MORE,
+            type: TYPES_OF_FETCHING.MORE,
             ...params,
         });
     }

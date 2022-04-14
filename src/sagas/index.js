@@ -23,7 +23,7 @@ import {
     REQUEST_CODE,
     COMMON_URL_PREFIX,
     PROMISE_STATUS,
-    TYPES_OF_FEATING,
+    TYPES_OF_FETCHING,
     DEFAULT_PAGINATION,
     GLOBAL_URLS,
     IS_PROD,
@@ -34,7 +34,7 @@ import {getURlWithPrefix} from '../utils';
 
 // 获取用户信息
 function* updateUserFromOne({payload}) {
-    const {INIT} = TYPES_OF_FEATING;
+    const {INIT} = TYPES_OF_FETCHING;
     const {currentPage = 0, type = INIT, name} = payload;
     let finalUserObj;
     let finalUsers;
@@ -90,7 +90,7 @@ function* getExecutionDetail({payload}) {
 
 // 获取作业方案列表
 function* getNoahList({payload}) {
-    const {INIT} = TYPES_OF_FEATING;
+    const {INIT} = TYPES_OF_FETCHING;
     const {type = INIT, pageSize = DEFAULT_PAGINATION.pageSize} = payload;
     const res = yield request({
         url: `${COMMON_URL_PREFIX}${URLS.LIST}`,
@@ -124,7 +124,7 @@ function* getNoahWorkPlanDetail({payload}) {
 }
 
 function* getCategoryList({payload = {currentPage: 1}}) {
-    const {INIT} = TYPES_OF_FEATING;
+    const {INIT} = TYPES_OF_FETCHING;
     const {type = INIT, currentPage} = payload;
     const res = yield request({
         url: `${COMMON_URL_PREFIX}${URLS.CATEGORIES}`,

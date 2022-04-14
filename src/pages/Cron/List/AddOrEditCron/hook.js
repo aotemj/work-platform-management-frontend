@@ -8,6 +8,7 @@ import {deConvertParams} from '../../../../utils/convertNoahDetail';
 import {
     COMMON_URL_PREFIX,
     DEFAULT_PAGINATION,
+    PAGE_SIZE_OF_NO_PAGINATION,
     REQUEST_METHODS,
     SPLIT_SYMBOL,
     SYMBOL_FOR_ALL,
@@ -260,7 +261,7 @@ const useAddOrEditCron = ({
                 currentPage: 1,
                 name: noahSearchName,
                 // 解决编辑模式下作业id回显问题
-                pageSize: editing ? 10000 : DEFAULT_PAGINATION.pageSize,
+                pageSize: editing ? PAGE_SIZE_OF_NO_PAGINATION : DEFAULT_PAGINATION.pageSize,
             });
         }
     }, [visible, noahSearchName]);

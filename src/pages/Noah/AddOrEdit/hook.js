@@ -19,6 +19,8 @@ import {
     COMMON_URL_PREFIX,
     MINUTE_STEP,
     MAGE_BYTE_SCALE,
+    DEFAULT_PAGINATION,
+    PAGE_SIZE_OF_NO_PAGINATION,
 } from '../../../constant';
 import {routes} from '../../../routes';
 import {deConvertDataFromExecutionDetail, deConvertParams} from '../../../utils/convertNoahDetail';
@@ -610,7 +612,9 @@ const useAddOrEdit = ({
 
     // initial
     useEffect(() => {
-        getCategoryList();
+        getCategoryList({
+            pageSize: editing ? PAGE_SIZE_OF_NO_PAGINATION : DEFAULT_PAGINATION.pageSize,
+        });
         return () => {
             updateNoahDetail(null);
         };

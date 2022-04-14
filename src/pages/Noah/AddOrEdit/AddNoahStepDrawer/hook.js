@@ -16,7 +16,7 @@ import {
     IS_PROD,
     GLOBAL_URL_PREFIX,
     DEFAULT_PAGINATION,
-    TYPES_OF_FEATING,
+    TYPES_OF_FETCHING,
 } from '../../../../constant';
 import {request} from '../../../../request/fetch';
 import {GLOBAL_URLS} from '../../../../constant/index';
@@ -168,7 +168,7 @@ const useAddNoahStep = ({
     }, [handleAddTargetServer, handleEditTargetServer]);
 
     const getScriptsFromPipe = async (payload = {}) => {
-        const {INIT, MORE} = TYPES_OF_FEATING;
+        const {INIT, MORE} = TYPES_OF_FETCHING;
         const {currentPage = 0, type = INIT} = payload;
         let scriptObj;
         let scriptList;

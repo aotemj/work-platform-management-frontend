@@ -8,7 +8,7 @@ import {getCompanyId, getSpaceId} from '../../../../../utils/getRouteIds';
 import {request} from '../../../../../request/fetch';
 import cx from './index.less';
 import {getURlWithPrefix} from '../../../../../utils';
-import {GLOBAL_URL_PREFIX, GLOBAL_URLS, IS_PROD} from '../../../../../constant';
+import {GLOBAL_URL_PREFIX, GLOBAL_URLS, IS_PROD, PAGE_SIZE_OF_NO_PAGINATION} from '../../../../../constant';
 import {agents, labels} from '../../../../../temp/agents';
 
 const getAgentMap = agents => {
@@ -189,7 +189,7 @@ const TargetServer = ({
                 groupType,
                 currentPage: '0',
                 // TreeSelect 无法监听 scroll 事件， 暂时不做分页处理
-                pageSize: '10000',
+                pageSize: PAGE_SIZE_OF_NO_PAGINATION,
                 workspaceId: spaceId,
                 labelName,
                 labelLevel: '',

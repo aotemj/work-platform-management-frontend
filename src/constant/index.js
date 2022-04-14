@@ -102,7 +102,9 @@ export const PROMISE_STATUS = {
     PENDING: 'pending',
 };
 
-export const TYPES_OF_FEATING = {
+export const TYPES_OF_FETCHING = {
     INIT: 'init',
     MORE: 'more',
 };
+
+export const PAGE_SIZE_OF_NO_PAGINATION = 100000;

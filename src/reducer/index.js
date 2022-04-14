@@ -6,7 +6,7 @@ import {
     UPDATE_CATEGORY_LIST,
     UPDATE_DISK_SPACE_INFO,
 } from '../actions/actionTypes';
-import {TYPES_OF_FEATING} from '../constant';
+import {TYPES_OF_FETCHING} from '../constant';
 import {updateCategoryMap} from '../utils';
 
 const initialState = {
@@ -35,7 +35,7 @@ const initialState = {
 };
 
 export default (state = initialState, action) => {
-    const {INIT, MORE} = TYPES_OF_FEATING;
+    const {INIT, MORE} = TYPES_OF_FETCHING;
 
     switch (action.type) {
         case UPDATE_USERS_FROM_ONE:
