@@ -1,11 +1,11 @@
 import {useNavigate} from 'react-router-dom';
 import {useCallback, useEffect, useMemo, useRef} from 'react';
-import {PageHeader, Button, message} from '@osui/ui';
+import {PageHeader, Button} from '@osui/ui';
 import fileDownload from 'js-file-download';
 
 import cx from '../index.less';
 import HeaderDetailItem from '../../components/HeaderDetailItem';
-import {convertConsumeTime, formatTimeStamp} from '../../../../utils';
+import {convertConsumeTime, formatTimeStamp, Toast} from '../../../../utils';
 import {FAILED, RUN_STATUSES} from '../../List/constant';
 import {entirelyRetry, neglectErrors} from '../../List/ExecDetailDrawer/util';
 import {LOG_CONTENT_SEPARATOR, MILLI_SECOND_STEP, PROMISE_STATUS} from '../../../../constant';
@@ -64,9 +64,9 @@ const Header = ({executionDetail, params, dataSource, setAddStepDrawerVisible}) 
 
         downloadTimer.current = setTimeout(() => {
             if (failedCount < length) {
-                message.success(`当前日志下载完成，成功${length - failedCount}个，失败${failedCount}个`);
+                Toast.success(`当前日志下载完成，成功${length - failedCount}个，失败${failedCount}个`);
             } else if (failedCount === length) {
-                message.error('当前日志下载失败');
+                Toast.error('当前日志下载失败');
             }
         }, [MILLI_SECOND_STEP]);
 

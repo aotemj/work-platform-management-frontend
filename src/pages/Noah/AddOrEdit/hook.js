@@ -1,10 +1,10 @@
 import {useNavigate, useParams} from 'react-router-dom';
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
-import {message, Modal} from '@osui/ui';
+import {Modal} from '@osui/ui';
 import {clone, isNil, omit, pickBy, prop} from 'ramda';
 import {debounce} from 'lodash/fp';
 
-import {getContainerDOM, getUrlPrefixReal} from '../../../utils';
+import {getContainerDOM, getUrlPrefixReal, Toast} from '../../../utils';
 import useGlobalVariable from './hooks/globalVariable';
 import {request} from '../../../request/fetch';
 import {URLS, UPDATE_FILE_STATUS, BOOLEAN_FROM_SERVER, ERROR_MSG} from './constants';
@@ -140,7 +140,7 @@ const useAddOrEdit = ({
     // 新增分类不进行入库操作，只在前端做暂存
     const handleSubmitAddCategory = useCallback(({name}) => {
         if (categoryMap[name]) {
-            message.error(ERROR_MSG.CATEGORY_ALREADY_EXIST);
+            Toast.error(ERROR_MSG.CATEGORY_ALREADY_EXIST);
             return false;
         }
 
@@ -158,7 +158,7 @@ const useAddOrEdit = ({
                 },
             },
         });
-        message.success('添加成功');
+        Toast.success('添加成功');
         addCategoryCallback({name});
         return true;
     }, [categoryMap, updateCategory, categories, addCategoryCallback]);
@@ -436,7 +436,7 @@ const useAddOrEdit = ({
         });
         const {status} = res;
         if (!status) {
-            message.success('操作成功');
+            Toast.success('操作成功');
             navigate(`${getUrlPrefixReal()}/${routes.NOAH_LIST.url}`);
         }
     });
@@ -574,7 +574,7 @@ const useAddOrEdit = ({
         });
         const {code, data} = res;
         if (code === REQUEST_CODE.SUCCESS) {
-            message.success('操作成功');
+            Toast.success('操作成功');
 
             navigate(`${getUrlPrefixReal()}/${routes.EXEC_LIST.url}?id=${data?.id}`);
         }

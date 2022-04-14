@@ -108,3 +108,9 @@ export const TYPES_OF_FETCHING = {
 };
 
 export const PAGE_SIZE_OF_NO_PAGINATION = 100000;
+
+export const MESSAGE_TYPES = {
+    SUCCESS: 'success',
+    ERROR: 'error',
+    WARNING: 'warning',
+};

@@ -1,9 +1,9 @@
 import {useCallback, useEffect, useMemo, useState} from 'react';
-import {message, Modal} from '@osui/ui';
+import {Modal} from '@osui/ui';
 import {prop} from 'ramda';
 import {useNavigate} from 'react-router-dom';
 
-import {convertConsumeTime, formatTimeStamp, getContainerDOM} from '../../../../../utils';
+import {convertConsumeTime, formatTimeStamp, getContainerDOM, Toast} from '../../../../../utils';
 import {
     DEFAULT_STRING_VALUE,
     REQUEST_CODE,
@@ -105,7 +105,7 @@ const useStepCard = ({detail, updateUserFromOne, submitCallback, users, executio
         });
         const {code} = res;
         if (code === REQUEST_CODE.SUCCESS) {
-            message.success('操作成功');
+            Toast.success('操作成功');
             setNoPassVisible(false);
             submitCallback();
         }

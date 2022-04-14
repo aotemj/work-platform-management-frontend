@@ -1,7 +1,7 @@
 import {useCallback, useEffect, useState} from 'react';
 import {clone, omit} from 'ramda';
-import {message, Modal} from '@osui/ui';
-import {getContainerDOM} from '../../../../utils';
+import {Modal} from '@osui/ui';
+import {getContainerDOM, Toast} from '../../../../utils';
 import {ERROR_MSG, GLOBAL_VARIABLE_TYPES} from '../constants';
 import {DELETE_SYMBOL} from '../../../../constant';
 
@@ -85,7 +85,7 @@ const useGlobalVariable = ({
         });
         // reset
         resetForm();
-        message.success('保存成功');
+        Toast.success('保存成功');
         handleChangeVariable(tempArr);
     }, [globalVariables, handleChangeVariable, variableMap]);
 
@@ -93,7 +93,7 @@ const useGlobalVariable = ({
     const handleAddGlobalVariable = useCallback(e => {
         const {name} = e;
         if (variableMap[name]) {
-            return message.error(ERROR_MSG.VARIABLE_ALREADY_EXIST);
+            return Toast.error(ERROR_MSG.VARIABLE_ALREADY_EXIST);
         }
         const item = {
             ...e,
@@ -107,7 +107,7 @@ const useGlobalVariable = ({
             ...variableMap,
             [name]: item,
         });
-        message.success('添加成功');
+        Toast.success('添加成功');
         resetForm();
         handleChangeVariable(newVariables);
     }, [globalVariables, handleChangeVariable, variableMap]);

@@ -1,9 +1,9 @@
 import {useCallback, useEffect, useState} from 'react';
-import {message, Modal} from '@osui/ui';
+import {Modal} from '@osui/ui';
 import {omit} from 'ramda';
 import {debounce} from 'lodash/fp';
 
-import {getContainerDOM, getURlWithPrefix} from '../../../../utils';
+import {getContainerDOM, getURlWithPrefix, Toast} from '../../../../utils';
 import {
     RUNNING_ENVIRONMENT,
     SCRIPT_TYPES,
@@ -99,7 +99,7 @@ const useAddNoahStep = ({
             // 本地上传文件
             if (sourcePath === DEFAULT_STRING_VALUE) {
                 if (status === LOADING.value) {
-                    message.error('当前有本地文件未上传完成，请等待上传成功后保存');
+                    Toast.error('当前有本地文件未上传完成，请等待上传成功后保存');
                     return false;
                 }
                 continue;
@@ -108,7 +108,7 @@ const useAddNoahStep = ({
 
             // 服务器文件
             if (tempMap[`${sourcePath}${DEFAULT_STRING_VALUE}${sourceResourceName}`]) {
-                message.error('请勿填写一台主机上的相同路径');
+                Toast.error('请勿填写一台主机上的相同路径');
                 return false;
             }
             tempMap[`${sourcePath}${DEFAULT_STRING_VALUE}${sourceResourceName}`] = 1;

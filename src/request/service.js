@@ -1,6 +1,7 @@
 import axios from 'axios';
 import {message} from '@osui/ui';
 import {getCompanyId, getSpaceId} from '../utils/getRouteIds';
+import {Toast} from '../utils';
 
 const service = axios.create({
     // timeout: 30000,
@@ -41,7 +42,7 @@ service.interceptors.response.use(
                 msg: msg || response.data.msg,
             });
         }
-        message.error(msg || response.data.msg);
+        Toast.error(msg || response.data.msg);
         return Promise.resolve({
             ...other,
             status: -1,
@@ -85,7 +86,7 @@ service.interceptors.response.use(
                 break;
         }
         if (msg) {
-            message.error(msg);
+            Toast.error(msg);
         }
         return Promise.resolve({
             status: -1,

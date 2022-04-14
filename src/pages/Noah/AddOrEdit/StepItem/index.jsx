@@ -5,7 +5,7 @@
  */
 
 import {useState} from 'react';
-import {Button, Switch, Spin, message} from '@osui/ui';
+import {Button, Switch, Spin} from '@osui/ui';
 import {throttle} from 'lodash/fp';
 
 import IconFont from '../../../../components/Iconfont';
@@ -13,6 +13,7 @@ import cx from './index.less';
 import {EXECUTING_STATUS, URLS} from '../constants';
 import {REQUEST_CODE, REQUEST_METHODS, REQUEST_TYPE, COMMON_URL_PREFIX} from '../../../../constant';
 import {request} from '../../../../request/fetch';
+import {Toast} from '../../../../utils';
 
 const StepItem = props => {
     const {name, handleClose, handleEdit, disabled, id: stageId, openStatus} = props;
@@ -47,7 +48,7 @@ const StepItem = props => {
         setLoading(false);
         const {code} = res;
         if (code === REQUEST_CODE.SUCCESS) {
-            message.success('操作成功');
+            Toast.success('操作成功');
             setChecked(e);
         }
     });

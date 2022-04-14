@@ -1,9 +1,9 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
-import {message, Modal} from '@osui/ui';
+import {Modal} from '@osui/ui';
 import {reject, anyPass, isEmpty, isNil} from 'ramda';
 import {debounce} from 'lodash/fp';
 
-import {getContainerDOM, requestCallback} from '../../../utils';
+import {getContainerDOM, requestCallback, Toast} from '../../../utils';
 import {request} from '../../../request/fetch';
 import {
     DEFAULT_PAGINATION,
@@ -56,7 +56,7 @@ const useExecList = getExecutionDetail => {
                     current: currentPage,
                 }));
             } else {
-                message.error(msg);
+                Toast.error(msg);
             }
         } catch (e) {
             console.error(e);
@@ -121,7 +121,7 @@ const useExecList = getExecutionDetail => {
         } catch (e) {
             clearTimeout(loopTimer.current);
             setExecuteDetailVisible(false);
-            message.error('获取详情失败');
+            Toast.error('获取详情失败');
         }
     }, [currentExecutionId, getExecutionDetail]);
 

@@ -1,9 +1,9 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
-import {message, Modal} from '@osui/ui';
+import {Modal} from '@osui/ui';
 import {debounce} from 'lodash/fp';
 import {useNavigate} from 'react-router-dom';
 
-import {diskWarning, getContainerDOM, getUrlPrefixReal} from '../../../utils';
+import {diskWarning, getContainerDOM, getUrlPrefixReal, Toast} from '../../../utils';
 import {DROP_DOWN_MENU, URLS} from './constants';
 import {
     DEFAULT_PAGINATION,
@@ -95,7 +95,7 @@ const useNoahList = ({
         });
         const {code} = res;
         if (code === REQUEST_CODE.SUCCESS) {
-            message.success('操作成功');
+            Toast.success('操作成功');
             setShouldUpdate(true);
         }
     }, []);
@@ -107,7 +107,7 @@ const useNoahList = ({
         });
         const {code} = res;
         if (code === REQUEST_CODE.SUCCESS) {
-            message.success('操作成功');
+            Toast.success('操作成功');
             setShouldUpdate(true);
         }
     }, []);
@@ -125,7 +125,7 @@ const useNoahList = ({
         const length = selectedRowKeys.length;
         const valid = length !== 0;
         if (!valid) {
-            message.error('请至少选择一个项目');
+            Toast.error('请至少选择一个项目');
         }
         return valid;
     }, [selectedRowKeys]);
@@ -137,7 +137,7 @@ const useNoahList = ({
         });
         const {code} = res;
         if (code === REQUEST_CODE.SUCCESS) {
-            message.success('操作成功');
+            Toast.success('操作成功');
             setShouldUpdate(true);
             setBatchSpin(true);
             jumpTimer.current = setTimeout(

@@ -1,9 +1,9 @@
 import {useCallback, useEffect, useState} from 'react';
-import {message, Modal} from '@osui/ui';
+import {Modal} from '@osui/ui';
 import {reject, anyPass, isEmpty, isNil} from 'ramda';
 import {debounce} from 'lodash/fp';
 
-import {diskWarning, getContainerDOM, requestCallback} from '../../../utils';
+import {diskWarning, getContainerDOM, requestCallback, Toast} from '../../../utils';
 import {request} from '../../../request/fetch';
 import {COMMON_URL_PREFIX, DEFAULT_PAGINATION, REQUEST_METHODS, REQUEST_TYPE} from '../../../constant';
 import {URLS} from '../constant';
@@ -55,7 +55,7 @@ const useCronList = ({
                     current: currentPage,
                 }));
             } else {
-                message.error(msg);
+                Toast.error(msg);
             }
         } catch (e) {
             console.error(e);

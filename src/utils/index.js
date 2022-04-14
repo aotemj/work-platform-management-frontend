@@ -12,8 +12,44 @@ import {
     PROJECT_ROUTE,
     PUBLIC_PATH,
     REQUEST_CODE,
+    MESSAGE_TYPES,
 } from '../constant';
 
+export const Toast = {
+    common(type, ...args) {
+        let params = {
+            showCountDown: false,
+        };
+
+        if (args.length === 1 && typeof args[0] === 'object') {
+            const [moreParams] = args;
+            params = {
+                ...params,
+                ...moreParams,
+            };
+        } else {
+            const [content, duration, onClose] = args;
+
+            params = {
+                ...params,
+                content,
+                duration,
+                onClose,
+            };
+        }
+
+        message[type](params);
+    },
+    success(...args) {
+        Toast.common(MESSAGE_TYPES.SUCCESS, ...args);
+    },
+    error(...args) {
+        Toast.common(MESSAGE_TYPES.ERROR, ...args);
+    },
+    warning(...args) {
+        Toast.common(MESSAGE_TYPES.WARNING, ...args);
+    },
+};
 const formatWidthEero = (origin, maxLength, fillString) => {
     return String(origin).padStart(maxLength, fillString);
 };
@@ -156,7 +192,7 @@ export function requestCallback({
     const {code, msg, data} = res;
     if (code === REQUEST_CODE.SUCCESS) {
         if (!hideMessage) {
-            message.success(successMessage || msg);
+            Toast.success(successMessage || msg);
         }
         callback && callback(data);
     } else {
@@ -183,7 +219,7 @@ export const diskWarning = (diskSpaceInfo, type = 'app') => {
     };
 
     if (overstep) {
-        message.warning(typeMessages[type]);
+        Toast.warning(typeMessages[type]);
     }
 };
 
