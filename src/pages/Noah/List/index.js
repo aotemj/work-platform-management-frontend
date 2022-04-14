@@ -24,7 +24,7 @@ const mapStateToProps = ({
 };
 
 const mapDispatchToProps = (dispatch, {}) => ({
-    updateUserFromOne: () => dispatch({type: UPDATE_USER_FROM_ONE_S}),
+    updateUserFromOne: payload => dispatch({type: UPDATE_USER_FROM_ONE_S, payload}),
     getNoahList: payload => {
         dispatch({
             type: GET_NOAH_LIST_S,

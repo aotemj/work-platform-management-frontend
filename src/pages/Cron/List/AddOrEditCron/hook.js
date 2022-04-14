@@ -6,6 +6,7 @@ import {CRON_DATE_WEEKS, STRATEGIES, URLS} from '../../constant';
 import {deConvertParams} from '../../../../utils/convertNoahDetail';
 import {
     COMMON_URL_PREFIX,
+    DEFAULT_PAGINATION,
     REQUEST_METHODS,
     SPLIT_SYMBOL,
     SYMBOL_FOR_ALL,
@@ -248,6 +249,8 @@ const useAddOrEditCron = ({
             getNoahList({
                 currentPage: 1,
                 name: noahSearchName,
+                // 解决编辑模式下作业id回显问题
+                pageSize: editing ? 10000 : DEFAULT_PAGINATION.pageSize,
             });
         }
     }, [visible, noahSearchName]);

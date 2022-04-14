@@ -1,9 +1,9 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
-import {message} from '@osui/ui';
+import {message, Modal} from '@osui/ui';
 import {reject, anyPass, isEmpty, isNil} from 'ramda';
 import {debounce} from 'lodash/fp';
 
-import {requestCallback} from '../../../utils';
+import {getContainerDOM, requestCallback} from '../../../utils';
 import {request} from '../../../request/fetch';
 import {
     DEFAULT_PAGINATION,
@@ -127,15 +127,21 @@ const useExecList = getExecutionDetail => {
 
     // 重新执行
     const reExecution = useCallback(async item => {
-        const {id} = item;
-        const res = await request({
-            url: `${COMMON_URL_PREFIX}${URLS.RE_EXECUTE}${id}`,
-            method: REQUEST_METHODS.POST,
-        });
-        requestCallback({
-            res,
-            callback() {
-                reTryTimer.current = setTimeout(getList, MILLI_SECOND_STEP * 3);
+        Modal.confirm({
+            title: '确定要重新执行当前记录吗？',
+            getContainer: getContainerDOM,
+            onOk: async () => {
+                const {id} = item;
+                const res = await request({
+                    url: `${COMMON_URL_PREFIX}${URLS.RE_EXECUTE}${id}`,
+                    method: REQUEST_METHODS.POST,
+                });
+                requestCallback({
+                    res,
+                    callback() {
+                        reTryTimer.current = setTimeout(getList, MILLI_SECOND_STEP * 3);
+                    },
+                });
             },
         });
     }, [getList]);
