@@ -1,6 +1,7 @@
 import {useCallback, useEffect, useState} from 'react';
 import moment from 'moment';
 import {debounce} from 'lodash/fp';
+import {Modal} from '@osui/ui';
 
 import {CRON_DATE_WEEKS, STRATEGIES, URLS} from '../../constant';
 import {deConvertParams} from '../../../../utils/convertNoahDetail';
@@ -12,7 +13,7 @@ import {
     SYMBOL_FOR_ALL,
 } from '../../../../constant';
 import {request} from '../../../../request/fetch';
-import {requestCallback} from '../../../../utils';
+import {getContainerDOM, requestCallback} from '../../../../utils';
 
 const defaultFormikValues = {
     taskName: '', // 执行策略
@@ -156,6 +157,15 @@ const useAddOrEditCron = ({
         }
     };
 
+    const handleCancel = () => {
+        Modal.confirm({
+            title: '确定取消当前操作？',
+            getContainer: getContainerDOM,
+            onOk: () => {
+                setVisible(false);
+            },
+        });
+    };
     // 删除
     const handleRemove = () => {
 
@@ -272,6 +282,7 @@ const useAddOrEditCron = ({
         visible,
         onNoahSelectSearch,
         noahSearchName,
+        handleCancel,
     };
 };
 

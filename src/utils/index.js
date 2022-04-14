@@ -41,6 +41,7 @@ export const formatTimeStamp = (timestamp, dateSymbol = '-', timeSymbol = ':') =
 export const getDateTime = dateTimeStamp => {
 
     const parseIntForDecimal = str => parseInt(str, 10);
+    const formatTime = str => String(str)?.padStart(2, '0');
     // 获取总秒数
     let secondTime = parseIntForDecimal(dateTimeStamp / MILLI_SECOND_STEP);
     let dayTime = 0; // 天
@@ -50,19 +51,19 @@ export const getDateTime = dateTimeStamp => {
     // 如果秒数大于60，将秒数转换成整数
     if (secondTime >= MINUTE_STEP) {
         // 获取分钟，除以60取整数，得到整数分钟
-        minuteTime = parseIntForDecimal(secondTime / MINUTE_STEP);
+        minuteTime = formatTime(parseIntForDecimal(secondTime / MINUTE_STEP));
         // 获取秒数，秒数取佘，得到整数秒数
-        secondTime = parseIntForDecimal(secondTime % MINUTE_STEP);
+        secondTime = formatTime(parseIntForDecimal(secondTime % MINUTE_STEP));
         // 如果分钟大于60，将分钟转换成小时
         if (minuteTime >= MINUTE_STEP) {
             // 获取小时，获取分钟除以60，得到整数小时
-            hourTime = parseIntForDecimal(minuteTime / MINUTE_STEP);
+            hourTime = formatTime(parseIntForDecimal(minuteTime / MINUTE_STEP));
             // 获取小时后取佘的分，获取分钟除以60取佘的分
-            minuteTime = parseIntForDecimal(minuteTime % MINUTE_STEP);
+            minuteTime = formatTime(parseIntForDecimal(minuteTime % MINUTE_STEP));
         }
         if (hourTime >= HOUR_STEP) {
             dayTime = parseIntForDecimal(hourTime / HOUR_STEP);
-            hourTime = parseIntForDecimal(hourTime % HOUR_STEP);
+            hourTime = formatTime(parseIntForDecimal(hourTime % HOUR_STEP));
         }
     }
     return {

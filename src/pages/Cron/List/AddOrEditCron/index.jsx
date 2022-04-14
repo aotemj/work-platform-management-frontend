@@ -36,6 +36,7 @@ const AddOrEditCron = props => {
         indeterminate,
         setFormValues,
         handleSubmit,
+        handleCancel,
         onNoahSelectSearch,
         noahSearchName,
     } = useAddOrEditCron({
@@ -247,7 +248,7 @@ const AddOrEditCron = props => {
         disabled,
         setDisabled,
         formFields,
-        handleCancel: () => {},
+        handleCancel,
         transformRef: form => {
             formRef.current = form;
         },
