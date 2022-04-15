@@ -10,6 +10,7 @@
  */
 import React, {useMemo} from 'react';
 import {Button} from '@osui/ui';
+import {propOr} from 'ramda';
 
 import cx from './index.less';
 import useStepCard from './hook';
@@ -56,15 +57,29 @@ const StepCard = props => {
 
     // 运行状态
     const runStatus = useMemo(() => {
+        console.log(detail);
+        const stageTriggerItemList = propOr([], 'stageTriggerItemList', detail);
+
+        let hasOvertime = false;
+        const length  = stageTriggerItemList.length;
+        for (let i = 0; i < length; i++) {
+            const item = stageTriggerItemList[i];
+            if (item?.hasOvertime === 1) {
+                hasOvertime = true;
+                break;
+            }
+        }
+
         return (
             <div className={cx('exec-status')}>
                 <span
                     className={cx(
                         'exec-step-card',
                         `status-${detail?.ignoreError
-                            ? IGNORE_ERROR.styleLabel : detail?.runStatus}`)}
+                            ? IGNORE_ERROR.styleLabel : detail?.runStatus}`,
+                    )}
                 >
-                    {runStatusLabel}
+                    {hasOvertime ? '执行超时' : runStatusLabel}
                 </span>
             </div>
         );
