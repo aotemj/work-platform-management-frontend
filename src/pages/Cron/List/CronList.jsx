@@ -67,7 +67,7 @@ const CronList = props => {
 
     const columns = [
         {
-            title: 'id',
+            title: 'ID',
             render: (_, record) => {
                 return prop('id', record?.cronExecute);
             },

@@ -47,6 +47,9 @@ const ExecList = props => {
         {
             title: 'ID',
             dataIndex: 'id',
+            render: val => {
+                return `#${val}`;
+            },
         },
         {
             title: '作业名称',
