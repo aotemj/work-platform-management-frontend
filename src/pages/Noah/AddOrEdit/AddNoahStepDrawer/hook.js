@@ -34,8 +34,9 @@ const defaultFormikValues = {
     scriptLanguage: SCRIPT_TYPES[0].key,
     scriptParams: '',
     // 18. 脚本执行/文件分发，默认超时时间60秒
-    timeoutValue: 60,
-
+    timeoutValueForExecuteScript: 60,
+    timeoutValueForFileDistribution: 60,
+    timeoutValueForManualConfirm: 3,
     // about file distribution
     // 文件
     uploadLimitDisabled: true,
@@ -75,8 +76,6 @@ const useAddNoahStep = ({
     const [formikValues, setFormikValues] = useState(defaultFormikValues);
 
     const [disabled, setDisabled] = useState(false);
-
-    const [agentMapByUuid, setAgentMapByUuid] = useState({});
 
     const [userInputError, setUserInputError] = useState(false);
 
@@ -143,27 +142,25 @@ const useAddNoahStep = ({
         });
     }, [onClose]);
 
-    const handleEditTargetServer = useCallback((agents, values, agentMap) => {
+    const handleEditTargetServer = useCallback((agents, values) => {
         setStepEditingValue({
             ...values,
             targetResourceList: agents,
         });
-        setAgentMapByUuid(agentMap);
     }, [setStepEditingValue]);
 
-    const handleAddTargetServer = useCallback((agents, values, agentMap) => {
+    const handleAddTargetServer = useCallback((agents, values) => {
         setFormikValues({
             ...values,
             targetResourceList: agents,
         });
-        setAgentMapByUuid(agentMap);
     }, []);
 
     const handleChangeTargetServer = useCallback(({agents, values, agentMap, editing}) => {
         if (editing) {
-            handleEditTargetServer(agents, values, agentMap);
+            handleEditTargetServer(agents, values);
         } else {
-            handleAddTargetServer(agents, values, agentMap);
+            handleAddTargetServer(agents, values);
         }
     }, [handleAddTargetServer, handleEditTargetServer]);
 
@@ -244,15 +241,6 @@ const useAddNoahStep = ({
             name: searchUserName,
         });
     }, [searchUserName]);
-
-    useEffect(() => {
-        if (formikValues.type === STEP_TYPES.MANUAL_CONFIRM.value) {
-            setFormikValues({
-                ...formikValues,
-                timeoutValue: 3,
-            });
-        }
-    }, [formikValues.type]);
 
     // 切换脚本使用类型(兼容编辑和新建)
     useEffect(() => {

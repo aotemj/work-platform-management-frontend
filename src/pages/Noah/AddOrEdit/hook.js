@@ -294,7 +294,9 @@ const useAddOrEdit = ({
                 scriptParams,
                 scriptLanguage,
                 // 超时时间
-                timeoutValue,
+                timeoutValueForExecuteScript,
+                timeoutValueForFileDistribution,
+                timeoutValueForManualConfirm,
                 scriptOrigin: scriptType,
                 // 脚本管理平台ID
                 chooseScript: scriptId,
@@ -352,7 +354,7 @@ const useAddOrEdit = ({
                             scriptContents,
                             scriptParams,
                             scriptLanguage,
-                            timeoutValue,
+                            timeoutValue: timeoutValueForExecuteScript,
                             scriptType,
                             scriptId,
                         },
@@ -369,7 +371,7 @@ const useAddOrEdit = ({
                             describes,
                             informUserId: informUserId.join(SPLIT_SYMBOL),
                             informWay: informWay.join(SPLIT_SYMBOL),
-                            timeoutValue: convertTimeoutValue(timeoutValue),
+                            timeoutValue: convertTimeoutValue(timeoutValueForManualConfirm),
                         },
                     };
                 case FILE_DISTRIBUTION.value:
@@ -382,7 +384,7 @@ const useAddOrEdit = ({
                         stageFileBean: {
                             targetPath,
                             downloadLimit: convertFileSize(downloadLimit),
-                            timeoutValue,
+                            timeoutValue: timeoutValueForFileDistribution,
                             uploadLimit: convertFileSize(uploadLimit),
                             transmissionMode,
                         },

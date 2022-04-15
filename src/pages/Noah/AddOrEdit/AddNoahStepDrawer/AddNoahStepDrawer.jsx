@@ -73,6 +73,13 @@ const AddNoahStepDrawer = ({
         );
     };
 
+    const handleChangeStepType = (e, values) => {
+        setFormValues({
+            ...values,
+            type: e,
+        });
+    };
+
     const isFormDisabled = isViewing || isExecuting;
 
     const defaultFormField = {
@@ -88,12 +95,7 @@ const AddNoahStepDrawer = ({
                         disabled={isFormDisabled}
                         className={cx('variable-type-list-select')}
                         {...field}
-                        onChange={e => {
-                            setFormValues({
-                                ...values,
-                                type: e,
-                            });
-                        }}
+                        onChange={e => handleChangeStepType(e, values)}
                         placeholder="请选择步骤类型"
                         suffix={<IconRemark />}
                     >

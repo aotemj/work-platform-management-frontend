@@ -129,7 +129,7 @@ const deConvertStageList = list => {
                     scriptContents,
                     scriptParams,
                     scriptLanguage,
-                    timeoutValue,
+                    timeoutValueForExecuteScript: timeoutValue,
                     scriptType,
                     chooseScript: scriptId,
                     targetResourceList: convertedTargetResourceList,
@@ -148,7 +148,7 @@ const deConvertStageList = list => {
                     describes,
                     informUserId: informUserId?.split(SPLIT_SYMBOL),
                     informWay: informWay?.split(SPLIT_SYMBOL).map(item => Number(item)),
-                    timeoutValue,
+                    timeoutValueForManualConfirm: timeoutValue,
                     status: deConvertedStageListStatus(status),
                 };
             }
@@ -164,7 +164,7 @@ const deConvertStageList = list => {
                 return {
                     ...commonParams,
                     transmissionMode,
-                    timeoutValue,
+                    timeoutValueForFileDistribution: timeoutValue,
                     uploadLimitDisabled: !uploadLimit,
                     downloadLimitDisabled: !downloadLimit,
                     uploadLimit: deConvertFileSize(uploadLimit),
@@ -295,7 +295,7 @@ export const deConvertDataFromExecutionDetail = originData => {
                 scriptParams,
                 scriptType,
                 targetResourceList,
-                timeoutValue,
+                timeoutValueForExecuteScript: timeoutValue,
             };
         }
 
@@ -404,7 +404,7 @@ export const deConvertDataFromExecutionDetail = originData => {
             return {
                 ...commonParams,
                 transmissionMode,
-                timeoutValue,
+                timeoutValueForFileDistribution: timeoutValue,
                 uploadLimitDisabled: !uploadLimit,
                 downloadLimitDisabled: !downloadLimit,
                 uploadLimit: deConvertFileSize(uploadLimit),

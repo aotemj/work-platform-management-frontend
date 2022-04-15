@@ -132,8 +132,8 @@ export const getScriptExecuteFields = ({
         //     ),
         //     validate: null,
         // },
-        timeoutValue: {
-            name: 'timeoutValue',
+        timeoutValueForExecuteScript: {
+            name: 'timeoutValueForExecuteScript',
             label: '超时时长（秒）',
             hide: !isScriptExecute || isManualConfirm,
             // required: true,
@@ -220,8 +220,8 @@ export const getFileDistribution = ({
     const isManualConfirm = !isFileDistribution && !isScriptExecute;
 
     return {
-        timeoutValue: {
-            name: 'timeoutValue',
+        timeoutValueForFileDistribution: {
+            name: 'timeoutValueForFileDistribution',
             label: '超时时长(秒)',
             hide: !isFileDistribution || isManualConfirm,
             children: ({field}) => (
@@ -504,8 +504,8 @@ export const getManualConfirmFields = ({
                 />
             ),
         },
-        timeoutValue: {
-            name: 'timeoutValue',
+        timeoutValueForManualConfirm: {
+            name: 'timeoutValueForManualConfirm',
             label: '超时时间（小时）',
             hide: !isManualConfirm,
             children: ({field}) => <Select {...timeoutValueProps} {...field} />,
