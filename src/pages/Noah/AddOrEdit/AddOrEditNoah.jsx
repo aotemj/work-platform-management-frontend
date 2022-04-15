@@ -236,7 +236,7 @@ const AddOrEditNoah = props => {
                                         index={index}
                                         {...stage}
                                         editing={editing}
-                                        disabled={isExecuting}
+                                        isExecuting={isExecuting}
                                     />
                                 </div>
                             );
@@ -284,6 +284,7 @@ const AddOrEditNoah = props => {
         stepEditingValue,
         setStepEditingValue,
         editing,
+        isExecuting,
     };
 
     const ExecuteFooter = () => (

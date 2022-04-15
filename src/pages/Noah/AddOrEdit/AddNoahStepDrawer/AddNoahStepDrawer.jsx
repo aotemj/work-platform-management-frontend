@@ -22,6 +22,7 @@ const AddNoahStepDrawer = ({
     stepEditingValue,
     setStepEditingValue,
     // editing
+    isExecuting,
     isViewing,
     updateUserFromOne,
     users: usersFromOne,
@@ -72,6 +73,8 @@ const AddNoahStepDrawer = ({
         );
     };
 
+    const isFormDisabled = isViewing || isExecuting;
+
     const defaultFormField = {
         type: {
             // ...defaultField,
@@ -82,7 +85,7 @@ const AddNoahStepDrawer = ({
             children: ({field, form: {values}}) => {
                 return (
                     <Select
-                        disabled={isViewing}
+                        disabled={isFormDisabled}
                         className={cx('variable-type-list-select')}
                         {...field}
                         onChange={e => {
@@ -119,7 +122,7 @@ const AddNoahStepDrawer = ({
                 return (
                     <Input
                         {...field}
-                        disabled={isViewing}
+                        disabled={isFormDisabled}
                         className={cx('noah-textarea')}
                         maxLength={MAX_LENGTH}
                         placeholder="请输入步骤名称"
@@ -158,7 +161,7 @@ const AddNoahStepDrawer = ({
             allowClear: true,
             filterOption: false,
             onSearch: handleSearchScript,
-            disabled: isViewing,
+            disabled: isFormDisabled,
             onChange: handleChangeImportScript,
             value: formData.chooseScript,
         };
@@ -173,7 +176,7 @@ const AddNoahStepDrawer = ({
             visible,
             typeSelectProps,
             editing,
-            isViewing,
+            isFormDisabled,
         });
 
         const fileDistributionFields =  getFileDistribution({
@@ -186,19 +189,13 @@ const AddNoahStepDrawer = ({
             editing,
             userInputError,
             setUserInputError,
-            isViewing,
+            isFormDisabled,
         });
 
         const manualConfirmFields = getManualConfirmFields({
             isFileDistribution,
             isScriptExecute,
-            setFormValues,
-            formikValues: formData,
-            handleChangeTargetServer,
-            visible,
-            editing,
             usersFromOne,
-            isViewing,
             updateUserFromOne,
             handleSearchInformUser,
         });

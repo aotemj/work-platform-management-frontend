@@ -16,7 +16,7 @@ import {request} from '../../../../request/fetch';
 import {Toast} from '../../../../utils';
 
 const StepItem = props => {
-    const {name, handleClose, handleEdit, disabled, id: stageId, openStatus} = props;
+    const {name, handleClose, handleEdit, disabled, id: stageId, openStatus, isExecuting} = props;
     const [focus, setFocus] = useState(false);
     const [loading, setLoading] = useState(false);
     const [checked, setChecked] = useState(!!openStatus);
@@ -73,16 +73,16 @@ const StepItem = props => {
                     : (
                         <>
                             {/* 删除按钮 */}
-                            {(
-                                <Button
+                            {
+                                !isExecuting && <Button
                                     onClick={handleClose}
                                     type={'text'}
                                     icon={<IconFont type={'icondeleteorerror'} />}
                                     className={cx('close-button')}
                                 />
-                            )}
+                            }
                             {/* 编辑按钮 */}
-                            {focus && (
+                            {!isExecuting && focus && (
                                 <i
                                     className={cx('editing-button')}
                                     onClick={handleEdit}
