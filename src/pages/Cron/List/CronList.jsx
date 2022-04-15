@@ -69,7 +69,7 @@ const CronList = props => {
         {
             title: 'id',
             render: (_, record) => {
-                return record.cronExecute.id;
+                return prop('id', record?.cronExecute);
             },
         },
         {

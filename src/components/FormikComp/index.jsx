@@ -9,7 +9,6 @@ import * as yup from 'yup';
 import {omit} from 'ramda';
 import {Button, Collapse} from '@osui/ui';
 
-
 import FormField from '../FormField';
 import cx from './index.less';
 
@@ -129,7 +128,7 @@ const FormikComp = ({
                                             <Panel header={title} key={title}>
                                                 {
                                                     formFields.filter(item => !item.hide).map(item => {
-                                                        const {name, label, children, ...rest}  = item;
+                                                        const {name, label, children, ...rest} = item;
                                                         return (
                                                             <FormField
                                                                 name={name}
@@ -161,7 +160,6 @@ const FormikComp = ({
                                         }
                                     </FormField>
                                 );
-
 
                             })
                         }

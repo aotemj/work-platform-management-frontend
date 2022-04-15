@@ -1,18 +1,11 @@
 import {useCallback, useEffect, useState} from 'react';
 import {clone, omit} from 'ramda';
 import {Modal} from '@osui/ui';
+
 import {getContainerDOM, Toast} from '../../../../utils';
 import {ERROR_MSG, GLOBAL_VARIABLE_TYPES} from '../constants';
 import {DELETE_SYMBOL} from '../../../../constant';
 
-// describes	变量描述		false   string
-// exeChange	是否赋值可变 0：否；1：是		false    integer
-// exeRequired	是否必填 0：否；1：是		false   integer
-// id	ID		false   integer
-// name	变量名		false   string
-// status	通用状态 0：正常；-1：删除；		false   integer
-// type	类型 1：字符串；2密文		false   integer
-// value	变量值		false   string
 const defaultFormikValues = {
     type: GLOBAL_VARIABLE_TYPES.STRING.value,
     name: '',
@@ -113,7 +106,7 @@ const useGlobalVariable = ({
     }, [globalVariables, handleChangeVariable, variableMap]);
 
     // 更新全局变量
-    const handleChangeGlobalVariable = useCallback((e, editing, originData, data) => {
+    const handleChangeGlobalVariable = useCallback((e, editing, originData) => {
         if (editing) {
             handleEditGlobalVariable(e, originData);
         } else {

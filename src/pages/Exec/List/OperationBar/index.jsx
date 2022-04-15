@@ -1,6 +1,7 @@
 import React from 'react';
-import cx from '../index.less';
 import {Input} from '@osui/ui';
+
+import cx from '../index.less';
 import DateRangePicker from '../../../../components/DateRangePicker';
 import {ReactComponent as IconSearch} from '../../../../statics/icons/search.svg';
 

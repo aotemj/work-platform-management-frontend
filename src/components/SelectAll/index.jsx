@@ -4,10 +4,12 @@
 import {useState, useMemo, useEffect} from 'react';
 import {omit, cloneDeep} from 'lodash';
 import {Select, Tag} from '@osui/ui';
+
 import {SYMBOL_FOR_ALL} from '../../constant';
 
 const DEFAULT_MAX_TAG_COUNT = 3;
 const SELECT_ALL_LABEL = '全选';
+
 const SelectAll = props => {
     const {onChange: change, dropdownRender} = props;
     const isDefaultSelectAll = props?.value?.[0] === SYMBOL_FOR_ALL && props?.value?.length === 1

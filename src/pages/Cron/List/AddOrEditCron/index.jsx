@@ -102,7 +102,6 @@ const AddOrEditCron = props => {
         exePolicy: {
             label: '执行策略',
             name: 'exePolicy',
-            // required: true,
             children: ({field, form: {values}}) => {
                 return (
                     <div className={cx('strategy-container')}>
@@ -252,7 +251,6 @@ const AddOrEditCron = props => {
         transformRef: form => {
             formRef.current = form;
         },
-        // needFooter: false,
     };
 
     return (

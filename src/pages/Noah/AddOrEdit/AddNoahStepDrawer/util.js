@@ -2,6 +2,7 @@
 import {InputNumber, Radio, Select, Input, Switch, Tooltip, Checkbox} from '@osui/ui';
 import * as yup from 'yup';
 import React from 'react';
+import {debounce} from 'lodash/fp';
 
 import ScriptContent from './ScriptContent';
 import cx from './index.less';
@@ -10,7 +11,6 @@ import FileSource from '../FileSource';
 import TargetServer from './TargetServer';
 import {ReactComponent as IconRemark} from '../../../../statics/icons/remark.svg';
 import SelectAll from '../../../../components/SelectAll';
-import {debounce} from 'lodash/fp';
 import {loadMoreCallBackByScrolling} from '../../../../utils';
 
 const {Option} = Select;

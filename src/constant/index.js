@@ -59,12 +59,10 @@ export const REQUEST_CODE = {
 };
 
 export const GLOBAL_URLS = {
-    GET_USERS: (() =>
-        `/user/${getCompanyId()}/rest/v1/companies/${getCompanyId()}/users`)(),
+    GET_USERS: `/user/${getCompanyId()}/rest/v1/companies/${getCompanyId()}/users`,
     GET_SCRIPTS: '/script/rest/v1/script-tasks',
     LABELS: '/resource/sa/rest/v3/labels',
     AGENTS: '/resource/sa/rest/v1/agents',
-    // CURRENT_USER: `/api/facade/${getCompanyId()}/rest/v1/companies/${getCompanyId()}/users/current/center`,
     CURRENT_USER: `/user/${getCompanyId()}/rest/v1/companies/${getCompanyId()}/users/current/center`,
 };
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM, {render} from 'react-dom';
 import singleSpaReact from 'single-spa-react';
+
 import App from './routes';
 // import store from './store';
 // ⻚⾯挂载点, 写死是这个id
@@ -27,7 +28,7 @@ const reactLifecycles = singleSpaReact({
     ReactDOM,
     rootComponent: App,
     domElementGetter,
-    errorBoundary(err, info, props) {
+    errorBoundary() {
         // 错误出来函数
         return (<div>This renders when a catastrophic error occurs</div>);
     },

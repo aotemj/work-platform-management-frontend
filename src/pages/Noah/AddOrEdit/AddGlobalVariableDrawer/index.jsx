@@ -6,13 +6,13 @@ import {omit} from 'ramda';
 import {Button, Checkbox, Drawer, Input, Select, Tooltip} from '@osui/ui';
 import * as yup from 'yup';
 import {EyeInvisibleOutlined, EyeOutlined} from '@ant-design/icons';
+import {useMemo} from 'react';
 
 import FormikComp from '../../../../components/FormikComp';
 import cx from './index.less';
 import {GLOBAL_VARIABLE_TYPES} from '../constants';
 import {ReactComponent as IconRemark} from '../../../../statics/icons/remark.svg';
 import useGlobalVariable from '../hooks/globalVariable';
-import {useMemo} from 'react';
 
 const {TextArea} = Input;
 const {Option} = Select;

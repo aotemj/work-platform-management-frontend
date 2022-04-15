@@ -1,12 +1,12 @@
 // 文件分发/文件来源/源文件
 import React, {useCallback, useRef} from 'react';
 import {Button, Input, Table} from '@osui/ui';
+import {IconPlusOutlined} from '@osui/icons';
+import {omit} from 'ramda';
 
 import cx from './index.less';
 import useFileSource from './hook';
-import {IconPlusOutlined} from '@osui/icons';
 import TargetServer from '../AddNoahStepDrawer/TargetServer';
-import {omit} from 'ramda';
 import {convertFileSize} from '../../../../utils';
 import {ERROR, LOADING, SUCCESS} from '../constants';
 

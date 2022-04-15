@@ -96,7 +96,7 @@ const Layout = ({
             </div>
             {
                 layout === 'horizontal' && (
-                    <span className={cx('tooltip-hori')}>
+                    <span className={cx('tooltip-horizontal')}>
                         {tooltip && (
                             <Tooltip title={tooltip}>
                                 <IconRemark />

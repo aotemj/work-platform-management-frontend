@@ -148,7 +148,7 @@ const useAddOrEditCron = ({
         });
     };
 
-    const handleSubmit = async values => {
+    const handleSubmit = values => {
         if (editing) {
             handleEditCron(values);
         } else {

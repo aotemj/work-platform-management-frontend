@@ -3,7 +3,6 @@ import {PlusOutlined} from '@ant-design/icons';
 import {Input, Button} from '@osui/ui';
 
 import cx from '../index.less';
-import DateRangePicker from '../../../../components/DateRangePicker';
 import {ReactComponent as IconSearch} from '../../../../statics/icons/search.svg';
 
 const OperationBar = ({handleChangeInput, handleAddCron}) => (

@@ -35,7 +35,7 @@ const CronRecord = ({visible, recordId, onClose}) => {
         });
         requestCallback({
             res, hideMessage: true, callback(data) {
-                const {list, total} = data;
+                const {list} = data;
                 setDataSource(list);
             },
         });
