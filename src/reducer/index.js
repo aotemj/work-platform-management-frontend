@@ -5,6 +5,7 @@ import {
     UPDATE_USERS_FROM_ONE,
     UPDATE_CATEGORY_LIST,
     UPDATE_DISK_SPACE_INFO,
+    UPDATE_CURRENT_USER,
 } from '../actions/actionTypes';
 import {TYPES_OF_FETCHING} from '../constant';
 import {updateCategoryMap} from '../utils';
@@ -15,6 +16,7 @@ const initialState = {
         map: new Map(),
         currentPage: 0,
     },
+    currentUser: null,
     // 执行详情
     executionDetail: null,
     noah: {
@@ -115,6 +117,11 @@ export default (state = initialState, action) => {
             return {
                 ...state,
                 diskSpaceInfo: action.payload,
+            };
+        case UPDATE_CURRENT_USER:
+            return {
+                ...state,
+                currentUser: action.payload,
             };
         default: {
             return state;

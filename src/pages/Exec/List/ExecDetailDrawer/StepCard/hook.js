@@ -17,13 +17,21 @@ import {request} from '../../../../../request/fetch';
 import {routes} from '../../../../../routes';
 import {entirelyRetry, neglectErrors} from '../util';
 
-const useStepCard = ({detail, updateUserFromOne, submitCallback, users, executionDetail}) => {
+const useStepCard = ({
+    detail,
+    updateUserFromOne,
+    submitCallback,
+    users,
+    executionDetail,
+    updateCurrentUser,
+}) => {
     const navigate = useNavigate();
     const [noPassVisible, setNoPassVisible] = useState(false);
     const name = useMemo(() => {
         return detail?.name;
     }, [detail]);
 
+    const [confirmLoading, setConfirmLoading] = useState(false);
     // 失败IP重试 暂时隐藏，后期迭代
     // const reTryWithFailedIPs = () => {
     //
@@ -98,12 +106,14 @@ const useStepCard = ({detail, updateUserFromOne, submitCallback, users, executio
         // confirmResult	人工确认结果 1：通过；2：不通过；		false   // integer
         // id	作业步骤任务执行记录id		false   // integer
         // noPassReason	不通过原因		false   // string
+        setConfirmLoading(true);
         const res = await request({
             url: `${COMMON_URL_PREFIX}${URLS.CONFIRM_MANUAL_RESULT}`,
             method: REQUEST_METHODS.POST,
             params,
         });
         const {code} = res;
+        setConfirmLoading(false);
         if (code === REQUEST_CODE.SUCCESS) {
             Toast.success('操作成功');
             setNoPassVisible(false);
@@ -164,25 +174,28 @@ const useStepCard = ({detail, updateUserFromOne, submitCallback, users, executio
         return tempArr;
     }, [detail, viewLog]);
 
-    const manualConfirmDescContents = useMemo(() => {
-        const getInformUser = () => {
-            const informUserId = stageConfirm?.informUserId;
-            if (!informUserId) {
-                return [DEFAULT_STRING_VALUE];
-            }
-            const ids = informUserId.split(SPLIT_SYMBOL);
-            if (ids) {
-                return ids.map(id => {
-                    return users.map.get(id)?.enterpriseCard || null;
-                }).filter(item => item);
-            }
-        };
+    const getInformUser = () => {
+        const informUserId = stageConfirm?.informUserId;
+        if (!informUserId) {
+            return [DEFAULT_STRING_VALUE];
+        }
+        const ids = informUserId.split(SPLIT_SYMBOL);
+        if (ids) {
+            return ids.map(id => {
+                return users.map.get(id) || null;
+            }).filter(item => item);
+        }
+    };
 
-        const informUser = getInformUser().join(SPLIT_SYMBOL);
+    const informUserNames = getInformUser().map(item => item?.enterpriseCard).join(SPLIT_SYMBOL);
+
+    const informUserIds = getInformUser().map(item => item?.userId);
+
+    const manualConfirmDescContents = useMemo(() => {
 
         const informUserObj = {
             label: '确认人：',
-            value: informUser,
+            value: informUserNames,
         };
         const tempArr = [
             {
@@ -200,7 +213,7 @@ const useStepCard = ({detail, updateUserFromOne, submitCallback, users, executio
 
         tempArr.push(informUserObj);
         return tempArr;
-    }, [isNotPass, notPassReason, stageConfirm?.describes, stageConfirm?.informUserId, users.map]);
+    }, [informUserNames, isNotPass, notPassReason, stageConfirm?.describes]);
 
     const runStatusLabel = useMemo(() => {
         const getTitle = () => {
@@ -220,6 +233,7 @@ const useStepCard = ({detail, updateUserFromOne, submitCallback, users, executio
 
     useEffect(() => {
         updateUserFromOne({});
+        updateCurrentUser();
     }, []);
     return {
         timeDetails,
@@ -236,6 +250,8 @@ const useStepCard = ({detail, updateUserFromOne, submitCallback, users, executio
         stageConfirmResult,
         manualConfirmDescContents,
         runStatusLabel,
+        confirmLoading,
+        informUserIds,
     };
 };
 

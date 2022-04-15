@@ -8,8 +8,9 @@ import {
     getNoahDetail_A,
     updateCategories_A,
     updateDiskSpaceInfo_A,
+    updateCurrentUser_A,
 } from '../actions/actionCreators.js';
-import {users} from '../temp/users';
+import {currentUsers, users} from '../temp/users';
 import {
     UPDATE_CATEGORY_LIST_S,
     GET_EXECUTION_DETAIL_S,
@@ -17,6 +18,7 @@ import {
     GET_NOAH_LIST_S,
     UPDATE_USER_FROM_ONE_S,
     UPDATE_DISK_SPACE_INFO_S,
+    UPDATE_CURRENT_USER_S,
 } from './types';
 import {request} from '../request/fetch';
 import {
@@ -39,7 +41,7 @@ function* updateUserFromOne({payload}) {
     let finalUserObj;
     let finalUsers;
     if (IS_PROD) {
-        const {pageSize}  = DEFAULT_PAGINATION;
+        const {pageSize} = DEFAULT_PAGINATION;
         finalUserObj = yield request({
             url: getURlWithPrefix(GLOBAL_URL_PREFIX, GLOBAL_URLS.GET_USERS),
             params: {
@@ -172,6 +174,21 @@ function* updateDiskSpaceInfo() {
     );
 }
 
+function* updateCurrentUser() {
+    let res;
+    if (IS_PROD) {
+        res = yield request({
+            url: getURlWithPrefix(GLOBAL_URL_PREFIX, GLOBAL_URLS.CURRENT_USER),
+        });
+    } else {
+        res = currentUsers;
+    }
+    const {code, payload} = res;
+    if (!code) {
+        yield put(updateCurrentUser_A(payload));
+    }
+}
+
 export default function* () {
     yield all([
         takeLatest(UPDATE_USER_FROM_ONE_S, updateUserFromOne),
@@ -180,5 +197,6 @@ export default function* () {
         takeLatest(GET_NOAH_DETAIL_S, getNoahWorkPlanDetail),
         takeLatest(UPDATE_CATEGORY_LIST_S, getCategoryList),
         takeLatest(UPDATE_DISK_SPACE_INFO_S, updateDiskSpaceInfo),
+        takeLatest(UPDATE_CURRENT_USER_S, updateCurrentUser),
     ]);
 };

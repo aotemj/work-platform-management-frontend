@@ -15,11 +15,10 @@ const groupType = !projectId ? 1 : 2;
 
 service.interceptors.request.use(
     config => {
-        config.headers['Group-Name'] = projectId ? projectId : companyId;
-        config.headers['Group-Type'] = groupType;
-        config.headers.Cookie
-            // eslint-disable-next-line max-len
-            = 'ai_user=6NyO9vxxTxCVdimsKANvcg|2022-01-10T08:11:56.755Z; USER_REALM_KEY="eyJyZWFsbVV1aWQiOiJvc2MiLCJjbGllbnRJZCI6Im9uZS1zc28ifQ=="; PRE-GW-LOAD=eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjEiLCJ1U05DcmVhdGVkIjoiMSIsImRpc3BsYXlOYW1lIjoi5LyB5Lia6LSf6LSj5Lq6Iiwic0FNQWNjb3VudE5hbWUiOiJvc2MtYWRtaW4iLCJjb21wYW55Ijoib3NjIiwiY29tcGFueUlkZW50aXR5IjoiQ09NUEFOWV9PV05FUiIsInVzZXJQcmluY2lwYWxOYW1lIjoib3NjLWFkbWluQHFxLmNvbSIsImp0aSI6IjIxMjY4ODZmMjAwZDRjYWE4Mjk5NGFlNTQ5ZTU0Yjc5IiwiaWF0IjoxNjQ5ODMwNjI4LCJzdWIiOiIxIiwiZXhwIjoxNjUwNDAyMDAwfQ.VsXYXvpxFpjuA2yrAt9kWE-FmJBTIDRCmGe23F-0A9g; PRE-GW-SESSION=2126886f200d4caa82994ae549e54b79; JSESSIONID=11vbb4zxfq2ckyw16jh1de5pu';
+        // config.headers['HEADER-USERINFO'] = 'eyJyZWFsbVV1aWQiOiJvc2MiLCJjbGllbnRJZCI6Im9uZS1zc28ifQ==';
+        // config.headers['Company-Uuid'] = 'noah-company';
+        config.headers['group-name'] = projectId ? projectId : companyId;
+        config.headers['group-type'] = groupType;
         return config;
     },
     error => {

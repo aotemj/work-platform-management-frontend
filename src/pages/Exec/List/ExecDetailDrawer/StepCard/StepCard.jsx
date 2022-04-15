@@ -17,7 +17,16 @@ import NoPassReasonModal from './NoPassReasonModal';
 import {IGNORE_ERROR, RUNNING} from '../../constant';
 
 const StepCard = props => {
-    const {users, detail, updateUserFromOne, submitCallback, executionDetail, stepId} = props;
+    const {
+        users,
+        detail,
+        updateUserFromOne,
+        submitCallback,
+        executionDetail,
+        stepId,
+        updateCurrentUser,
+        currentUser,
+    } = props;
 
     const {
         consumeObj,
@@ -34,13 +43,17 @@ const StepCard = props => {
         stageConfirmResult,
         manualConfirmDescContents,
         runStatusLabel,
+        confirmLoading,
+        informUserIds,
     } = useStepCard({
         detail,
         updateUserFromOne,
         submitCallback,
         users,
         executionDetail,
+        updateCurrentUser,
     });
+
     // 运行状态
     const runStatus = useMemo(() => {
         return (
@@ -68,8 +81,13 @@ const StepCard = props => {
 
     const BottomContent = () => {
         const ManualConfirmContent = () => {
+            // 当前用户是否是确认人
+            const isConfirmUser = informUserIds.includes(currentUser?.userId);
 
-            const showOperation = !stageConfirmResult && detail?.runStatus === RUNNING.value;
+            const showOperation = useMemo(() => {
+                return isConfirmUser && !stageConfirmResult && detail?.runStatus === RUNNING.value;
+            }, [isConfirmUser]);
+
             return (
                 <div className={cx('desc-container')}>
                     {
@@ -87,11 +105,18 @@ const StepCard = props => {
                         <div className={cx('operations')}>
                             <Button
                                 danger
+                                loading={confirmLoading}
                                 className={cx('deny-button')}
                                 onClick={handleToggleNoPassReasonModal}
                             >不通过
                             </Button>
-                            <Button type="primary" className={cx('confirm-button')} onClick={handlePass}>通过</Button>
+                            <Button
+                                loading={confirmLoading}
+                                type="primary"
+                                className={cx('confirm-button')}
+                                onClick={handlePass}
+                            >通过
+                            </Button>
                         </div>
                     )}
                 </div>
