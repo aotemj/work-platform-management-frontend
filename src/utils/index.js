@@ -158,16 +158,15 @@ export function convertConsumeTime(executionDetail, needDefaultDate = true) {
         return;
     }
     let {consumeTime = null, beginTime} = executionDetail;
-    if (needDefaultDate) {
-        if (!consumeTime) {
-            if (beginTime) {
-                consumeTime = (Date.now() - beginTime) / MILLI_SECOND_STEP;
-            } else {
-                return DEFAULT_STRING_VALUE;
-            }
+
+    if (!consumeTime) {
+        if (!needDefaultDate || !beginTime) {
+            return DEFAULT_STRING_VALUE;
         }
-    } else if (!consumeTime) {
-        return DEFAULT_STRING_VALUE;
+
+        if (beginTime) {
+            consumeTime = (Date.now() - beginTime) / MILLI_SECOND_STEP;
+        }
     }
 
     const {
