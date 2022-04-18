@@ -1,14 +1,13 @@
 // 执行记录
 import {Drawer, Table} from '@osui/ui';
 import {useEffect, useState} from 'react';
-import {debounce} from 'lodash/fp';
 import {reject, anyPass, isEmpty, isNil} from 'ramda';
 
 import DateRangePicker from '../../../../components/DateRangePicker';
 import {COMMON_URL_PREFIX} from '../../../../constant';
 import {request} from '../../../../request/fetch';
 import {URLS} from '../../constant';
-import {convertConsumeTime, formatTimeStamp, requestCallback} from '../../../../utils';
+import {convertConsumeTime, debounceWith500ms, formatTimeStamp, requestCallback} from '../../../../utils';
 import StatusTag from '../../../../components/StatusTag';
 import cx from './index.less';
 import {RUN_STATUSES} from '../../../Exec/List/constant';
@@ -21,7 +20,7 @@ const CronRecord = ({visible, recordId, onClose}) => {
     const [dataSource, setDataSource] = useState([]);
     const [searchValue, setSearchValue] = useState(defaultSearchValue);
 
-    const handleChangeDate = debounce(500)(({startTime, endTime}) => {
+    const handleChangeDate = debounceWith500ms(({startTime, endTime}) => {
         setSearchValue(value => ({
             ...value, startTime, endTime,
         }));

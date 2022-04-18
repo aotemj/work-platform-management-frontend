@@ -1,9 +1,8 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {Modal} from '@osui/ui';
-import {debounce} from 'lodash/fp';
 import {useNavigate} from 'react-router-dom';
 
-import {diskWarning, getContainerDOM, getUrlPrefixReal, Toast} from '../../../utils';
+import {debounceWith500ms, diskWarning, getContainerDOM, getUrlPrefixReal, Toast} from '../../../utils';
 import {DROP_DOWN_MENU, URLS} from './constants';
 import {
     DEFAULT_PAGINATION,
@@ -199,7 +198,7 @@ const useNoahList = ({
     };
 
     // 更新页码
-    const handlePaginationChange = debounce(500)((current, pageSize = DEFAULT_PAGINATION.pageSize) => {
+    const handlePaginationChange = debounceWith500ms((current, pageSize = DEFAULT_PAGINATION.pageSize) => {
         updateData({
             current,
             pageSize,
@@ -207,7 +206,7 @@ const useNoahList = ({
         setShouldUpdate(true);
     });
 
-    const onCategorySearchCallback = debounce(250)(e => {
+    const onCategorySearchCallback = debounceWith500ms(e => {
         setCategorySearchName(e);
     });
 

@@ -1,9 +1,8 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {Modal} from '@osui/ui';
 import {reject, anyPass, isEmpty, isNil} from 'ramda';
-import {debounce} from 'lodash/fp';
 
-import {getContainerDOM, requestCallback, Toast} from '../../../utils';
+import {debounceWith500ms, getContainerDOM, requestCallback, Toast} from '../../../utils';
 import {request} from '../../../request/fetch';
 import {
     DEFAULT_PAGINATION,
@@ -66,7 +65,7 @@ const useExecList = getExecutionDetail => {
     }, [searchValue]);
 
     // 更新currentPage、pageSize
-    const handlePaginationChange = debounce(500)((currentPage = 1, pageSize = 10) => {
+    const handlePaginationChange = debounceWith500ms((currentPage = 1, pageSize = 10) => {
         setSearchValue(value => ({
             ...value,
             currentPage,
@@ -75,7 +74,7 @@ const useExecList = getExecutionDetail => {
     });
 
     // 输入关键字筛选 userName
-    const handleChangeInput = debounce(500)(e => {
+    const handleChangeInput = debounceWith500ms(e => {
         setSearchValue(value => ({
             ...value,
             userName: e,
@@ -83,7 +82,7 @@ const useExecList = getExecutionDetail => {
     });
 
     // 日期变化 beginTime endTime
-    const handleChangeDate = debounce(500)(({startTime: beginTime, endTime}) => {
+    const handleChangeDate = debounceWith500ms(({startTime: beginTime, endTime}) => {
         setSearchValue(value => ({
             ...value,
             beginTime,

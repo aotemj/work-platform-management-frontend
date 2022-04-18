@@ -1,13 +1,12 @@
 import {Radio, Spin, TreeSelect} from '@osui/ui';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {clone} from 'ramda';
-import {debounce} from 'lodash/fp';
 
 import {AGENT_STATUS, AGENT_TERMINAL_TYPE, LABEL_TYPE, GROUP_TYPES} from '../../constants';
 import {getCompanyId, getSpaceId} from '../../../../../utils/getRouteIds';
 import {request} from '../../../../../request/fetch';
 import cx from './index.less';
-import {getURlWithPrefix} from '../../../../../utils';
+import {debounceWith250ms, debounceWith500ms, getURlWithPrefix} from '../../../../../utils';
 import {GLOBAL_URL_PREFIX, GLOBAL_URLS, IS_PROD, PAGE_SIZE_OF_NO_PAGINATION} from '../../../../../constant';
 import {agents, labels} from '../../../../../temp/agents';
 
@@ -138,7 +137,7 @@ const TargetServer = ({
     const [type, setType] = useState(AGENT_TERMINAL_TYPE.LINUX.value);
     const [labelName, setLabelName] = useState('');
 
-    const handleSearch = debounce(250)(e => setLabelName(e));
+    const handleSearch = debounceWith250ms(e => setLabelName(e));
 
     const handleChangeType = useCallback(e => {
         handleSearch('');
@@ -197,7 +196,7 @@ const TargetServer = ({
         });
     };
 
-    const updateData = debounce(500)(async () => {
+    const updateData = debounceWith500ms(async () => {
         if (!needUpdate) {
             return;
         }

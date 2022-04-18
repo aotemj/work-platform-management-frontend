@@ -4,13 +4,14 @@
 
 import {Formik} from 'formik';
 import React, {createRef, useRef} from 'react';
-import {debounce, isEqual, set} from 'lodash/fp';
+import {isEqual, set} from 'lodash/fp';
 import * as yup from 'yup';
 import {omit} from 'ramda';
 import {Button, Collapse} from '@osui/ui';
 
 import FormField from '../FormField';
 import cx from './index.less';
+import {debounceWith250ms} from '../../utils';
 
 const {Panel} = Collapse;
 /**
@@ -53,7 +54,7 @@ const FormikComp = ({
 
     validateObj.grantGroups = yup.array();
     const validateSchema = yup.object().shape(validateObj);
-    const handleFinalChange = debounce(250)((values, valid) => {
+    const handleFinalChange = debounceWith250ms((values, valid) => {
         setDisabled(!valid);
     });
     const validate = values => {

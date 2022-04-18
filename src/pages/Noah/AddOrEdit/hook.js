@@ -2,9 +2,8 @@ import {useNavigate, useParams} from 'react-router-dom';
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {Modal} from '@osui/ui';
 import {clone, isNil, omit, pickBy, prop} from 'ramda';
-import {debounce} from 'lodash/fp';
 
-import {getContainerDOM, getUrlPrefixReal, Toast} from '../../../utils';
+import {debounceWith500ms, getContainerDOM, getUrlPrefixReal, Toast} from '../../../utils';
 import useGlobalVariable from './hooks/globalVariable';
 import {request} from '../../../request/fetch';
 import {URLS, UPDATE_FILE_STATUS, BOOLEAN_FROM_SERVER, ERROR_MSG} from './constants';
@@ -427,7 +426,7 @@ const useAddOrEdit = ({
         };
     }, [convertCategory, convertStageList, convertWorkVariateList, globalVariables]);
 
-    const handleSubmit = debounce(500)(async e => {
+    const handleSubmit = debounceWith500ms(async e => {
         const params = convertParams(e);
 
         const {POST, PUT} = REQUEST_METHODS;

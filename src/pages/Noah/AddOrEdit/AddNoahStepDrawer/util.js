@@ -2,7 +2,6 @@
 import {InputNumber, Radio, Select, Input, Switch, Tooltip, Checkbox} from '@osui/ui';
 import * as yup from 'yup';
 import React from 'react';
-import {debounce} from 'lodash/fp';
 
 import ScriptContent from './ScriptContent';
 import cx from './index.less';
@@ -11,7 +10,7 @@ import FileSource from '../FileSource';
 import TargetServer from './TargetServer';
 import {ReactComponent as IconRemark} from '../../../../statics/icons/remark.svg';
 import SelectAll from '../../../../components/SelectAll';
-import {loadMoreCallBackByScrolling} from '../../../../utils';
+import {debounceWith250ms, loadMoreCallBackByScrolling} from '../../../../utils';
 
 const {Option} = Select;
 const {TextArea} = Input;
@@ -463,7 +462,7 @@ export const getManualConfirmFields = ({
                     className={cx('category-dropdown')}
                     placeholder="请选择通知人员"
                     onSearch={handleSearchInformUser}
-                    onPopupScroll={debounce(250)(e => {
+                    onPopupScroll={debounceWith250ms(e => {
                         loadMoreCallBackByScrolling(e, {dispatch: updateUserFromOne, currentPage: usersCurrentPage});
                     })}
                     filterOption={false}

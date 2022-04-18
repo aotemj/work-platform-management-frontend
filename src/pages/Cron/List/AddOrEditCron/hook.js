@@ -1,6 +1,5 @@
 import {useCallback, useEffect, useState} from 'react';
 import moment from 'moment';
-import {debounce} from 'lodash/fp';
 import {Modal} from '@osui/ui';
 
 import {CRON_DATE_WEEKS, STRATEGIES, URLS} from '../../constant';
@@ -14,7 +13,7 @@ import {
     SYMBOL_FOR_ALL,
 } from '../../../../constant';
 import {request} from '../../../../request/fetch';
-import {getContainerDOM, requestCallback} from '../../../../utils';
+import {debounceWith250ms, getContainerDOM, requestCallback} from '../../../../utils';
 
 const defaultFormikValues = {
     taskName: '', // 执行策略
@@ -232,7 +231,7 @@ const useAddOrEditCron = ({
         });
     };
 
-    const onNoahSelectSearch = debounce(250)(e => {
+    const onNoahSelectSearch = debounceWith250ms(e => {
         setNoahSearchName(e);
     });
 

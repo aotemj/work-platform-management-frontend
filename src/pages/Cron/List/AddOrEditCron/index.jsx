@@ -2,14 +2,13 @@ import {Drawer, Input, Radio, DatePicker, Select, Checkbox, TimePicker} from '@o
 import * as yup from 'yup';
 import moment from 'moment';
 import {useRef} from 'react';
-import {debounce} from 'lodash/fp';
 
 import cx from './index.less';
 import FormikComp from '../../../../components/FormikComp';
 import useAddOrEditCron from './hook';
 import {CRON_DATE_WEEKS, STRATEGIES} from '../../constant';
 import NoahDetail from './NoahDetail';
-import {loadMoreCallBackByScrolling} from '../../../../utils';
+import {debounceWith250ms, loadMoreCallBackByScrolling} from '../../../../utils';
 
 const AddOrEditCron = ({
     visible,
@@ -221,7 +220,7 @@ const AddOrEditCron = ({
                     allowClear: true,
                     onSearch: onNoahSelectSearch,
                     onChange: e => handleChangeNoah(e, values),
-                    onPopupScroll: debounce(250)(e => {
+                    onPopupScroll: debounceWith250ms(e => {
                         loadMoreCallBackByScrolling(
                             e,
                             {dispatch: getNoahList, currentPage, params: {name: noahSearchName}});

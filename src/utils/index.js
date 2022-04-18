@@ -14,6 +14,7 @@ import {
     REQUEST_CODE,
     MESSAGE_TYPES,
 } from '../constant';
+import {debounce} from 'lodash/fp';
 
 export const Toast = {
     common(type, ...args) {
@@ -247,6 +248,9 @@ export const loadMoreCallBackByScrolling = ((e, {dispatch, currentPage, params})
     }
 });
 
+export const debounceWith500ms = fn => debounce(500)(fn);
+
+export const debounceWith250ms = fn => debounce(250)(fn);
 
 
 

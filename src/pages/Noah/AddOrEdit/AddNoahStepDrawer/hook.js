@@ -1,9 +1,8 @@
 import {useCallback, useEffect, useState} from 'react';
 import {Modal} from '@osui/ui';
 import {omit} from 'ramda';
-import {debounce} from 'lodash/fp';
 
-import {getContainerDOM, getURlWithPrefix, Toast} from '../../../../utils';
+import {debounceWith250ms, getContainerDOM, getURlWithPrefix, Toast} from '../../../../utils';
 import {
     RUNNING_ENVIRONMENT,
     SCRIPT_TYPES,
@@ -220,11 +219,11 @@ const useAddNoahStep = ({
 
     }, [formikValues, scriptsMap, setStepEditingValue, stepEditingValue]);
 
-    const handleSearchInformUser = debounce(250)(e => {
+    const handleSearchInformUser = debounceWith250ms(e => {
         setSearchUserName(e);
     });
 
-    const handleSearchScript = debounce(250)(e => {
+    const handleSearchScript = debounceWith250ms(e => {
         setSearchScriptName(e);
     });
 

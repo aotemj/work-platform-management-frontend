@@ -1,10 +1,9 @@
 import {Button, Dropdown, Input, Menu, Select} from '@osui/ui';
-import {debounce} from 'lodash/fp';
 
 import cx from '../index.less';
 import {DROP_DOWN_MENU} from '../constants';
 import {ReactComponent as IconSearch} from '../../../../statics/icons/search.svg';
-import {loadMoreCallBackByScrolling} from '../../../../utils';
+import {debounceWith250ms, loadMoreCallBackByScrolling} from '../../../../utils';
 
 const OperationBar = ({
     handleChange,
@@ -33,7 +32,7 @@ const OperationBar = ({
         onClear: () => {
             setNoahType(null);
         },
-        onPopupScroll: debounce(250)(e => {
+        onPopupScroll: debounceWith250ms(e => {
             loadMoreCallBackByScrolling(e, {
                 dispatch: getCategoryList,
                 currentPage: categoryCurrentPage,

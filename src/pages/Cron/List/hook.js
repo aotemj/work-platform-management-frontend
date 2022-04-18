@@ -1,9 +1,8 @@
 import {useCallback, useEffect, useState} from 'react';
 import {Modal} from '@osui/ui';
 import {reject, anyPass, isEmpty, isNil} from 'ramda';
-import {debounce} from 'lodash/fp';
 
-import {diskWarning, getContainerDOM, requestCallback, Toast} from '../../../utils';
+import {debounceWith500ms, diskWarning, getContainerDOM, requestCallback, Toast} from '../../../utils';
 import {request} from '../../../request/fetch';
 import {COMMON_URL_PREFIX, DEFAULT_PAGINATION, REQUEST_METHODS, REQUEST_TYPE} from '../../../constant';
 import {URLS} from '../constant';
@@ -65,7 +64,7 @@ const useCronList = ({
     };
 
     // 更新currentPage、pageSize
-    const handlePaginationChange = debounce(500)((currentPage = 1, pageSize = 10) => {
+    const handlePaginationChange = debounceWith500ms((currentPage = 1, pageSize = 10) => {
         setSearchValue(value => ({
             ...value,
             currentPage,
@@ -74,7 +73,7 @@ const useCronList = ({
     });
 
     // 输入关键字筛选 userName
-    const handleChangeInput = debounce(500)(e => {
+    const handleChangeInput = debounceWith500ms(e => {
         setSearchValue(value => ({
             ...value,
             userName: e,
@@ -82,7 +81,7 @@ const useCronList = ({
     });
 
     // 日期变化 beginTime endTime
-    const handleChangeDate = debounce(500)(({startTime: beginTime, endTime}) => {
+    const handleChangeDate = debounceWith500ms(({startTime: beginTime, endTime}) => {
         setSearchValue(value => ({
             ...value,
             beginTime,
@@ -101,7 +100,7 @@ const useCronList = ({
         Modal.confirm({
             title: `确定要删除定时任务${taskName}吗？`,
             getContainer: getContainerDOM,
-            onOk: debounce(500)(async () => {
+            onOk: debounceWith500ms(async () => {
                 const res = await request({
                     method: REQUEST_METHODS.DELETE,
                     url: `${COMMON_URL_PREFIX}${URLS.DELETE_CRON_ITEM}${id}`,
