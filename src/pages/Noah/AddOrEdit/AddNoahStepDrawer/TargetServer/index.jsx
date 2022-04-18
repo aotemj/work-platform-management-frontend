@@ -164,7 +164,7 @@ const TargetServer = ({
                 type,
                 workspaceId: 'xly-poc',
                 // workspaceId: companyId,
-                groupName: spaceId ? spaceId : companyId,
+                groupName: spaceId || companyId,
                 // groupName: 'iPipe',
                 groupType,
             },
@@ -184,7 +184,7 @@ const TargetServer = ({
             url: getURlWithPrefix(GLOBAL_URL_PREFIX, GLOBAL_URLS.LABELS),
             params: {
                 companyUuid: companyId,
-                groupName: spaceId ? spaceId : companyId,
+                groupName: spaceId || companyId,
                 groupType,
                 currentPage: '0',
                 // TreeSelect 无法监听 scroll 事件， 暂时不做分页处理
