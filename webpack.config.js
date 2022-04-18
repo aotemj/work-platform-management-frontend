@@ -11,6 +11,7 @@ const SpeedMeasurePlugin = require('speed-measure-webpack-plugin');
 // const EslintWebpackPlugin=require('eslint-webpack-plugin');
 const hasha = require('hasha');
 const namespacePefixer = require('postcss-selector-namespace');
+const AntdDayjsWebpackPlugin = require('antd-dayjs-webpack-plugin');
 
 const smp = new SpeedMeasurePlugin();
 
@@ -165,6 +166,21 @@ module.exports = (cliEnv = {}, argv) => {
             proxy: isProd ? undefined : proxyConfig,
         },
         plugins: [
+            new AntdDayjsWebpackPlugin({
+                plugins: [
+                    'isSameOrBefore',
+                    'isSameOrAfter',
+                    'advancedFormat',
+                    'customParseFormat',
+                    'weekday',
+                    'weekYear',
+                    'weekOfYear',
+                    'isMoment',
+                    'localeData',
+                    'localizedFormat',
+                ],
+                replaceMoment: true,
+            }),
             new HtmlWebpackPlugin({
                 filename: 'index.html',
                 template: path.resolve(__dirname, 'public/index.html'),

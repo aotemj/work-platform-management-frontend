@@ -82,7 +82,7 @@ const useCronList = ({
     });
 
     // 日期变化 beginTime endTime
-    const handleChangeDate = debounce(500)(({beginTime, endTime}) => {
+    const handleChangeDate = debounce(500)(({startTime: beginTime, endTime}) => {
         setSearchValue(value => ({
             ...value,
             beginTime,

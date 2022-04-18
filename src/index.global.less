@@ -88,6 +88,36 @@ html {
             .osc-noah .osui-dropdown {
                 min-width: unset !important;
             }
+
+            .osc-noah .ant-radio-group {
+                background-color: rgb(245, 246, 248) !important;
+                border-radius: 6px;
+                padding: 2px;
+                box-sizing: border-box;
+            }
+
+            .osc-noah .osui-radio-group .ant-radio-button-wrapper:first-child:not(.ant-radio-button-wrapper-disabled):not(.ant-radio-button-wrapper-checked) {
+                &:hover {
+                    border: none;
+                }
+
+                border: none;
+            }
+
+            .osc-noah .ant-radio-button-wrapper:not(:first-child)::before {
+                width: 0;
+            }
+
+            .osc-noah .ant-radio-button-wrapper-checked:not([class*=' ant-radio-button-wrapper-disabled']).ant-radio-button-wrapper:first-child,
+            .osc-noah .osui-radio-group .ant-radio-button-wrapper:not(.ant-radio-button-wrapper-disabled):not(.ant-radio-button-wrapper-checked):hover {
+                border: none;
+            }
+
+            .osc-noah .ant-radio-button-wrapper {
+                background-color: transparent;
+                color: #909AAA;
+                border: none;
+            }
         }
     }
 }

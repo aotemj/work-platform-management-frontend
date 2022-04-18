@@ -159,6 +159,7 @@ const NoahList = props => {
     const tableProps = {
         dataSource: data.list,
         columns,
+        loading,
         pagination: {
             ...omit('list', data),
             onChange: handlePaginationChange,

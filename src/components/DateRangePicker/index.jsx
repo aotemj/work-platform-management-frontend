@@ -2,9 +2,8 @@
  * 日期选择组件 日期有间隔最大默认31， 自动补齐开始及结束时分秒
  */
 import React, {useState} from 'react';
-import {DatePicker} from '@osui/ui';
+import {DatePicker} from 'antd';
 import moment from 'moment';
-
 const {RangePicker} = DatePicker;
 
 const DateRangePicker = ({handleChangeDate, dateRange = 31}) => {
