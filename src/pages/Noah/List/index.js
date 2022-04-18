@@ -1,5 +1,4 @@
 import {connect} from 'react-redux';
-import {compose} from 'lodash/fp';
 
 import NoahList from './NoahList';
 import {
@@ -38,6 +37,4 @@ const mapDispatchToProps = (dispatch, {}) => ({
     }),
 });
 
-const withRedux = connect(mapStateToProps, mapDispatchToProps);
-
-export default compose(withRedux)(NoahList);
+export default connect(mapStateToProps, mapDispatchToProps)(NoahList);

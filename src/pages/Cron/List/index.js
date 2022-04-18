@@ -1,5 +1,4 @@
 import {connect} from 'react-redux';
-import {compose} from 'lodash/fp';
 
 import CronList from './CronList';
 import {GET_NOAH_DETAIL_S, GET_NOAH_LIST_S, UPDATE_DISK_SPACE_INFO_S} from '../../../sagas/types';
@@ -29,5 +28,4 @@ const mapDispatchToProps = dispatch => ({
     updateDiskSpaceInfo: () => dispatch({type: UPDATE_DISK_SPACE_INFO_S}),
 });
 
-const withRedux = connect(mapStateToProps, mapDispatchToProps);
-export default compose(withRedux)(CronList);
+export default connect(mapStateToProps, mapDispatchToProps)(CronList);

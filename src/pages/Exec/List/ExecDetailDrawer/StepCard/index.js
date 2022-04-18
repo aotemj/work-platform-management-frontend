@@ -1,5 +1,4 @@
 import {connect} from 'react-redux';
-import {compose} from 'lodash/fp';
 
 import StepCard from './StepCard';
 import {UPDATE_CURRENT_USER_S, UPDATE_USER_FROM_ONE_S} from '../../../../../sagas/types';
@@ -24,6 +23,4 @@ const mapDispatchToProps = dispatch => ({
     },
 });
 
-const withRedux = connect(mapStateToProps, mapDispatchToProps);
-
-export default compose(withRedux)(StepCard);
+export default connect(mapStateToProps, mapDispatchToProps)(StepCard);

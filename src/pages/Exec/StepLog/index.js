@@ -1,5 +1,4 @@
 import {connect} from 'react-redux';
-import {compose} from 'lodash/fp';
 
 import StepLog from './StepLog';
 import {GET_EXECUTION_DETAIL_S, GET_NOAH_DETAIL_S, UPDATE_CATEGORY_LIST_S} from '../../../sagas/types';
@@ -32,6 +31,4 @@ const mapDispatchToProps = dispatch => ({
     }),
 });
 
-const withRedux = connect(mapStateToProps, mapDispatchToProps);
-
-export default compose(withRedux)(StepLog);
+export default connect(mapStateToProps, mapDispatchToProps)(StepLog);

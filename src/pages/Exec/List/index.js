@@ -1,5 +1,4 @@
 import {connect} from 'react-redux';
-import {compose} from 'lodash/fp';
 
 import ExecList from './ExecList';
 import {GET_EXECUTION_DETAIL_S} from '../../../sagas/types';
@@ -19,6 +18,4 @@ const mapDispatchToProps = (dispatch, {}) => ({
     },
 });
 
-const withRedux = connect(mapStateToProps, mapDispatchToProps);
-
-export default compose(withRedux)(ExecList);
+export default connect(mapStateToProps, mapDispatchToProps)(ExecList);

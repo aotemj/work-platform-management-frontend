@@ -1,5 +1,4 @@
 import {connect} from 'react-redux';
-import {compose} from 'lodash/fp';
 
 import {UPDATE_CATEGORY_LIST_S, GET_NOAH_DETAIL_S} from '../../../sagas/types';
 import AddOrEditNoah from './AddOrEditNoah';
@@ -29,6 +28,4 @@ const mapDispatchToProps = dispatch => ({
     }),
 });
 
-const withRedux = connect(mapStateToProps, mapDispatchToProps);
-
-export default compose(withRedux)(AddOrEditNoah);
+export default connect(mapStateToProps, mapDispatchToProps)(AddOrEditNoah);

@@ -1,5 +1,4 @@
 import {connect} from 'react-redux';
-import {compose} from 'lodash/fp';
 
 import {UPDATE_USER_FROM_ONE_S} from '../../../../sagas/types';
 import AddNoahStepDrawer from './AddNoahStepDrawer';
@@ -17,6 +16,4 @@ const mapDispatchToProps = dispatch => ({
     },
 });
 
-const withRedux = connect(mapStateToProps, mapDispatchToProps);
-
-export default compose(withRedux)(AddNoahStepDrawer);
+export default connect(mapStateToProps, mapDispatchToProps)(AddNoahStepDrawer);
