@@ -11,18 +11,17 @@ import {CRON_DATE_WEEKS, STRATEGIES} from '../../constant';
 import NoahDetail from './NoahDetail';
 import {loadMoreCallBackByScrolling} from '../../../../utils';
 
-const AddOrEditCron = props => {
-    const {
-        visible,
-        setVisible,
-        onClose,
-        editing,
-        noah,
-        noahDetail,
-        getNoahList,
-        getNoahWorkPlanDetail,
-        editDetailId,
-    } = props;
+const AddOrEditCron = ({
+    visible,
+    setVisible,
+    onClose,
+    editing,
+    noah,
+    noahDetail,
+    getNoahList,
+    getNoahWorkPlanDetail,
+    editDetailId,
+}) => {
     const {
         disabled,
         setDisabled,
