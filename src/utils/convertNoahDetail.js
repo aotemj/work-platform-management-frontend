@@ -183,9 +183,6 @@ const deConvertWorkPlan = workPlan => {
         id,
         name,
         describes,
-        // useTemp,
-        // typeNames,
-        // status,
         groupRelList,
         workVariateList,
     } = workPlan;
@@ -198,7 +195,6 @@ const deConvertWorkPlan = workPlan => {
             id,
             noahDescribes: describes,
             category: convertedGroupRelList,
-            // status
             variable: tempList,
         },
         tempList,
