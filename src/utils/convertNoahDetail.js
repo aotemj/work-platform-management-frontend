@@ -243,16 +243,17 @@ export const deConvertDataFromExecutionDetail = originData => {
     switch (type) {
         case EXECUTE_SCRIPT.value:
         {
-            const {stageScript} = stageTriggerItemList[0]?.stageTriggerItemParams;
             const {
-                runtimeEnv: runningEnvironment,
-                scriptContents,
-                scriptId,
-                scriptLanguage,
-                scriptParams,
-                scriptType,
-                timeoutValue,
-            } = stageScript;
+                stageScript: {
+                    runtimeEnv: runningEnvironment,
+                    scriptContents,
+                    scriptId,
+                    scriptLanguage,
+                    scriptParams,
+                    scriptType,
+                    timeoutValue,
+                }} = stageTriggerItemList[0]?.stageTriggerItemParams;
+
             const targetResourceList = stageTriggerItemList.map(item => {
                 const {
                     sortIndex,
