@@ -1,5 +1,5 @@
 import {Modal, Input} from '@osui/ui';
-import {useState} from 'react';
+import {useRef, useState} from 'react';
 import * as yup from 'yup';
 
 import FormikComp from '../../../../../../components/FormikComp';
@@ -10,12 +10,13 @@ const {TextArea} = Input;
 const defaultData = {reason: ''};
 const NoPassReasonModal = ({visible, setVisible, confirmManualResult, stageTriggerItemId}) => {
     const [disabled, setDisabled] = useState(true);
-    const [data, setData] = useState(defaultData);
+    const formRef = useRef();
 
     const handleSubmit = async () => {
+        const {reason} = formRef.current?.values;
         const params = {
             confirmResult: CONFIRM_RESULTS.NO_PASS,
-            noPassReason: data.reason,
+            noPassReason: reason,
             id: stageTriggerItemId,
         };
         await confirmManualResult(params);
@@ -30,11 +31,8 @@ const NoPassReasonModal = ({visible, setVisible, confirmManualResult, stageTrigg
         onOk: handleSubmit,
         onCancel: () => {
             setVisible(false);
-            setData(defaultData);
         },
     };
-
-    const handleChangeReason = e => setData({reason: e.target.value});
 
     const formFields = {
         name: {
@@ -52,7 +50,6 @@ const NoPassReasonModal = ({visible, setVisible, confirmManualResult, stageTrigg
                         maxLength={MAX_LENGTH}
                         autoSize={{minRows: 5}}
                         {...field}
-                        onChange={handleChangeReason}
                     />
                 );
             },
@@ -65,13 +62,16 @@ const NoPassReasonModal = ({visible, setVisible, confirmManualResult, stageTrigg
         },
     };
     const formikProps = {
-        initialValues: data,
+        initialValues: defaultData,
         disabled,
         setDisabled,
         formFields,
         // handleCancel: () => setVisible(false),
         needFooter: false,
         okText: '保存',
+        transformRef: form => {
+            formRef.current = form;
+        },
     };
     return (
         <Modal {...modalProps}>

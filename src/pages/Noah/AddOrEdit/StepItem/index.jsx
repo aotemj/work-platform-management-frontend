@@ -63,7 +63,7 @@ const StepItem = props => {
             <span className={cx('icon')}>[/] </span>
             <span className={cx('main')}>{name}</span>
             {
-                disabled ? (
+                isExecuting || disabled ? (
                     <div className={cx('executing')}>
                         <Spin spinning={loading}>
                             <Switch checked={checked} onChange={handleChangeExecution} />
