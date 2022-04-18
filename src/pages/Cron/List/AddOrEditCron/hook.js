@@ -164,10 +164,6 @@ const useAddOrEditCron = ({
             },
         });
     };
-    // 删除
-    const handleRemove = () => {
-
-    };
 
     const convertParams = originalData => {
         const {
@@ -276,7 +272,6 @@ const useAddOrEditCron = ({
         indeterminate,
         setFormValues,
         handleSubmit,
-        handleRemove,
         visible,
         onNoahSelectSearch,
         noahSearchName,
