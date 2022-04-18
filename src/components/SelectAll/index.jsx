@@ -87,19 +87,18 @@ const SelectAll = props => {
     const existProps = ['mode', 'onSelect', 'onDeselect', 'onClear', 'maxTagPlaceholder', 'tagRender'];
 
     useEffect(() => {
-        if (props?.value) {
-            if (props?.value?.length) {
-                if (props?.value?.[0] === SYMBOL_FOR_ALL && props?.children.length === 1
-                    || props?.value.length === props?.children.length
-                ) {
-                    const allValWithAll = [SYMBOL_FOR_ALL, ...props.children.map(item => item.props.value)];
-                    setSelectedVal(allValWithAll);
-                } else {
-                    setSelectedVal(props?.value);
-                }
+        if (props?.value?.length) {
+            const {value, children} = props;
+            if (value?.[0] === SYMBOL_FOR_ALL && children.length === 1
+                || value.length === children.length
+            ) {
+                const allValWithAll = [SYMBOL_FOR_ALL, ...children.map(item => item.props.value)];
+                setSelectedVal(allValWithAll);
+            } else {
+                setSelectedVal(value);
             }
         }
-    }, [props?.value, props.children, props]);
+    }, [props]);
 
     return (
         <Select
