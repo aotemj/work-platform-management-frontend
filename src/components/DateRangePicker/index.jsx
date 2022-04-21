@@ -5,6 +5,8 @@ import React, {useState} from 'react';
 import {DatePicker} from 'antd';
 import moment from 'moment';
 const {RangePicker} = DatePicker;
+import 'moment/locale/zh-cn';
+import locale from 'antd/es/date-picker/locale/zh_CN';
 
 const DateRangePicker = ({handleChangeDate, dateRange = 31}) => {
     const [dates, setDates] = useState([]);
@@ -44,6 +46,7 @@ const DateRangePicker = ({handleChangeDate, dateRange = 31}) => {
     // 时间段选择做多31天
     return (
         <RangePicker
+            locale={locale}
             value={hackValue || value}
             disabledDate={disabledDate}
             onCalendarChange={val => setDates(val)}
