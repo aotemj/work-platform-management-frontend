@@ -5,11 +5,18 @@ import fileDownload from 'js-file-download';
 
 import cx from '../index.less';
 import HeaderDetailItem from '../../components/HeaderDetailItem';
-import {convertConsumeTime, formatTimeStamp, Toast} from '../../../../utils';
-import {FAILED, RUN_STATUSES} from '../../List/constant';
+import {convertConsumeTime, formatTimeStamp, requestCallback, Toast} from '../../../../utils';
+import {FAILED, RUN_STATUSES, URLS} from '../../List/constant';
 import {entirelyRetry, neglectErrors} from '../../List/ExecDetailDrawer/util';
-import {LOG_CONTENT_SEPARATOR, MILLI_SECOND_STEP, PROMISE_STATUS} from '../../../../constant';
+import {
+    COMMON_URL_PREFIX,
+    LOG_CONTENT_SEPARATOR,
+    MILLI_SECOND_STEP,
+    PROMISE_STATUS,
+    REQUEST_METHODS,
+} from '../../../../constant';
 import {transformLogUrl} from '../constant';
+import {request} from '../../../../request/fetch';
 
 const Header = ({executionDetail, params, dataSource, setAddStepDrawerVisible}) => {
     const navigate = useNavigate();
@@ -26,6 +33,7 @@ const Header = ({executionDetail, params, dataSource, setAddStepDrawerVisible}) 
 
         return !availableCount;
     }, [dataSource]);
+
     // 下载日志
     const downloadLog = async () => {
         const promises = dataSource.map(item => {
@@ -89,11 +97,11 @@ const Header = ({executionDetail, params, dataSource, setAddStepDrawerVisible}) 
     const errorOperations = [
         {
             label: '全部主机重试',
-            execution: () => entirelyRetry({id: params?.stepId}),
+            execution: () => entirelyRetry({id: params?.stepId}, navigate),
         },
         {
             label: '忽略错误',
-            execution: neglectErrors,
+            execution: () => neglectErrors(stepDetail, navigate),
         },
     ];
 

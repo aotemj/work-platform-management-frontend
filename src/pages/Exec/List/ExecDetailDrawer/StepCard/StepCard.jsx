@@ -57,7 +57,6 @@ const StepCard = props => {
 
     // 运行状态
     const runStatus = useMemo(() => {
-        console.log(detail);
         const stageTriggerItemList = propOr([], 'stageTriggerItemList', detail);
 
         let hasOvertime = false;

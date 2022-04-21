@@ -2,6 +2,7 @@ import {connect} from 'react-redux';
 
 import StepLog from './StepLog';
 import {GET_EXECUTION_DETAIL_S, GET_NOAH_DETAIL_S, UPDATE_CATEGORY_LIST_S} from '../../../sagas/types';
+import {UPDATE_NOAH_DETAIL} from '../../../actions/actionTypes';
 
 const mapStateToProps = ({
     executionDetail,
@@ -27,6 +28,10 @@ const mapDispatchToProps = dispatch => ({
     }),
     getCategoryList: payload => dispatch({
         type: UPDATE_CATEGORY_LIST_S,
+        payload,
+    }),
+    updateNoahDetail: payload => dispatch({
+        type: UPDATE_NOAH_DETAIL,
         payload,
     }),
 });

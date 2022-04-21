@@ -8,7 +8,7 @@ import {
     REQUEST_METHODS,
     REQUEST_TYPE,
     COMMON_URL_PREFIX,
-    MAGE_BYTE_SCALE
+    MAGE_BYTE_SCALE,
 } from '../../../../constant';
 import {Toast} from '../../../../utils';
 
@@ -123,7 +123,6 @@ const useFileSource = ({
         } = e.target.files[0];
 
         const key = Date.now();
-        console.log(fileSize);
         // 2556442818
         // 2147483648
         if (fileSize > 2 * Math.pow(MAGE_BYTE_SCALE, 3)) {
