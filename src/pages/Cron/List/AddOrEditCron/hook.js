@@ -1,6 +1,7 @@
 import {useCallback, useEffect, useState} from 'react';
 import moment from 'moment';
 import {Modal} from '@osui/ui';
+import urlJoin from 'url-join';
 
 import {CRON_DATE_WEEKS, STRATEGIES, URLS} from '../../constant';
 import {deConvertParams} from '../../../../utils/convertNoahDetail';
@@ -117,7 +118,7 @@ const useAddOrEditCron = ({
         const {exePolicy, taskName, workId} = values;
         const exeCron = convertCronExpress(values);
         const res = await request({
-            url: `${COMMON_URL_PREFIX}${URLS.EDIT_CRON}${cronId}`,
+            url: urlJoin(COMMON_URL_PREFIX, URLS.EDIT_CRON, String(cronId)),
             method: REQUEST_METHODS.PUT,
             params: {
                 exeCron, exePolicy, taskName, workId,
@@ -136,7 +137,8 @@ const useAddOrEditCron = ({
         const {exePolicy, taskName, workId} = values;
         const exeCron = convertCronExpress(values);
         const res = await request({
-            url: `${COMMON_URL_PREFIX}${URLS.ADD_CRON}`, method: REQUEST_METHODS.POST, params: {
+            url: urlJoin(COMMON_URL_PREFIX, URLS.ADD_CRON),
+            method: REQUEST_METHODS.POST, params: {
                 exeCron, exePolicy, taskName, workId,
             },
         });
@@ -210,7 +212,7 @@ const useAddOrEditCron = ({
     // 获取 cron 详情
     const getCronDetail = async detailId => {
         const res = await request({
-            url: `${COMMON_URL_PREFIX}${URLS.GET_CRON_DETAIL}${detailId}`,
+            url: urlJoin(COMMON_URL_PREFIX, URLS.GET_CRON_DETAIL, String(detailId)),
         });
         requestCallback({
             res,

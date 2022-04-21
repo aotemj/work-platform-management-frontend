@@ -5,7 +5,7 @@ const commonHeadersConfig = {
     // 生产环境需要去掉
     'Company-Uuid': 'noah-company',
     'Group-Name': 'noah-project',
-    'Group-Type': 1,
+    'Group-Type': 2,
 };
 module.exports = {
     '/api': {

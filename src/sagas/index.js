@@ -1,5 +1,6 @@
 import {put, all, takeLatest} from 'redux-saga/effects';
 import {omit} from 'ramda';
+import urlJoin from 'url-join';
 
 import {
     getExecutionDetail_A,
@@ -80,7 +81,7 @@ function* updateUserFromOne({payload}) {
 // 获取执行详情
 function* getExecutionDetail({payload}) {
     const res = yield request({
-        url: `${COMMON_URL_PREFIX}${URLS.GET_EXECUTION_DETAIL}${payload}`,
+        url: urlJoin(COMMON_URL_PREFIX, URLS.GET_EXECUTION_DETAIL, String(payload)),
     });
     const {code, data} = res;
     if (code === REQUEST_CODE.SUCCESS) {
@@ -95,7 +96,7 @@ function* getNoahList({payload}) {
     const {INIT} = TYPES_OF_FETCHING;
     const {type = INIT, pageSize = DEFAULT_PAGINATION.pageSize} = payload;
     const res = yield request({
-        url: `${COMMON_URL_PREFIX}${URLS.LIST}`,
+        url: urlJoin(COMMON_URL_PREFIX, URLS.LIST),
         params: {
             pageSize,
             ...omit(['type'], payload),
@@ -117,7 +118,7 @@ function* getNoahList({payload}) {
 
 function* getNoahWorkPlanDetail({payload}) {
     const res = yield request({
-        url: `${COMMON_URL_PREFIX}${URLS.GET_NOAH_WORK_PLAN_DETAIL}${payload}`,
+        url: urlJoin(COMMON_URL_PREFIX, URLS.GET_NOAH_WORK_PLAN_DETAIL, String(payload)),
     });
     const {code, data} = res;
     if (code === REQUEST_CODE.SUCCESS) {
@@ -129,7 +130,7 @@ function* getCategoryList({payload = {currentPage: 1}}) {
     const {INIT} = TYPES_OF_FETCHING;
     const {type = INIT, currentPage} = payload;
     const res = yield request({
-        url: `${COMMON_URL_PREFIX}${URLS.CATEGORIES}`,
+        url: urlJoin(COMMON_URL_PREFIX, URLS.CATEGORIES),
         params: {
             currentPage,
             pageSize: DEFAULT_PAGINATION.pageSize,
@@ -153,10 +154,10 @@ function* getCategoryList({payload = {currentPage: 1}}) {
 
 function* updateDiskSpaceInfo() {
     const res = yield request({
-        url: `${COMMON_URL_PREFIX}${URLS.DISK_SPACE_INFO}`,
+        url: urlJoin(COMMON_URL_PREFIX, URLS.DISK_SPACE_INFO),
     });
     const res1 = yield request({
-        url: `${COMMON_URL_PREFIX}${URLS.CHECK_DISK_SPACE}`,
+        url: urlJoin(COMMON_URL_PREFIX, URLS.CHECK_DISK_SPACE),
     });
     const resList = yield Promise.allSettled([res, res1]);
     let info = {};

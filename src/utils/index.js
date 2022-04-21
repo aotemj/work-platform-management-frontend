@@ -15,6 +15,7 @@ import {
     MESSAGE_TYPES,
 } from '../constant';
 import {debounce} from 'lodash/fp';
+import {generatePath} from 'react-router';
 
 export const Toast = {
     common(type, ...args) {
@@ -251,10 +252,9 @@ export const debounceWith500ms = fn => debounce(500)(fn);
 
 export const debounceWith250ms = fn => debounce(250)(fn);
 
-
-
-
-
+export const generateFullPath = (url, params) => {
+    return `${getUrlPrefixReal()}/${generatePath(url, params)}`;
+};
 
 
 

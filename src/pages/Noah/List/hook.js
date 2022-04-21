@@ -1,8 +1,15 @@
-import {useCallback, useEffect, useRef, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {Modal} from '@osui/ui';
 import {useNavigate} from 'react-router-dom';
+import urlJoin from 'url-join';
 
-import {debounceWith500ms, diskWarning, getContainerDOM, getUrlPrefixReal, Toast} from '../../../utils';
+import {
+    debounceWith500ms,
+    diskWarning,
+    generateFullPath,
+    getContainerDOM,
+    Toast,
+} from '../../../utils';
 import {DROP_DOWN_MENU, URLS} from './constants';
 import {
     DEFAULT_PAGINATION,
@@ -51,10 +58,10 @@ const useNoahList = ({
         });
     };
 
-    const onSelectChange = useCallback((keys, selectedRows) => {
+    const onSelectChange = (keys, selectedRows) => {
         setSelectedRowKeys(keys);
         setSelectRows(selectedRows);
-    }, []);
+    };
 
     const getList = async () => {
         if (!shouldUpdate) {
@@ -75,21 +82,15 @@ const useNoahList = ({
     };
 
     // 单个执行作业
-    const executeNoah = useCallback(async noahItem => {
-        navigate(routes.NOAH_PRE_EXECUTING.getUrl(noahItem.id));
-    }, [navigate]);
+    const executeNoah = ({id: detailId}) => navigate(generateFullPath(routes.NOAH_PRE_EXECUTING.path, {detailId}));
     // 编辑作业
-    const editNoah = useCallback((detail = {'id': 1}) => {
-        navigate(routes.NOAH_EDIT.getUrl(detail.id));
-    }, [navigate]);
+    const editNoah = ({id: detailId}) => navigate(generateFullPath(routes.NOAH_EDIT.path, {detailId}));
 
-    const addNoah = useCallback(() => {
-        navigate(`${getUrlPrefixReal()}/${routes.NOAH_ADD.url}`);
-    }, [navigate]);
+    const addNoah = () => navigate(generateFullPath(routes.NOAH_ADD.path));
 
-    const individualDelete = useCallback(async noahId => {
+    const individualDelete = async noahId => {
         const res = await request({
-            url: `${COMMON_URL_PREFIX}${URLS.INDIVIDUAL_DELETE}${noahId}`,
+            url: urlJoin(COMMON_URL_PREFIX, URLS.INDIVIDUAL_DELETE, String(noahId)),
             method: REQUEST_METHODS.DELETE,
         });
         const {code} = res;
@@ -97,11 +98,11 @@ const useNoahList = ({
             Toast.success('操作成功');
             setShouldUpdate(true);
         }
-    }, []);
+    };
 
-    const deleteByPatch = useCallback(async idList => {
+    const deleteByPatch = async idList => {
         const res = await request({
-            url: `${COMMON_URL_PREFIX}${URLS.DELETE_BY_BATCH}${idList.join(SPLIT_SYMBOL)}`,
+            url: urlJoin(COMMON_URL_PREFIX, URLS.DELETE_BY_BATCH, idList.join(SPLIT_SYMBOL)),
             method: REQUEST_METHODS.DELETE,
         });
         const {code} = res;
@@ -109,29 +110,29 @@ const useNoahList = ({
             Toast.success('操作成功');
             setShouldUpdate(true);
         }
-    }, []);
+    };
     // 删除作业
-    const removeNoah = useCallback(e => {
+    const removeNoah = e => {
         const {name, id} = e;
         Modal.confirm({
             title: `确定要删除作业${name}吗？`,
             getContainer: getContainerDOM,
             onOk: () => individualDelete(id),
         });
-    }, [individualDelete]);
+    };
 
-    const checkIfBatchesOperationIsValid = useCallback(() => {
+    const checkIfBatchesOperationIsValid = () => {
         const length = selectedRowKeys.length;
         const valid = length !== 0;
         if (!valid) {
             Toast.error('请至少选择一个项目');
         }
         return valid;
-    }, [selectedRowKeys]);
+    };
 
-    const executeByBatch = useCallback(async idList => {
+    const executeByBatch = async idList => {
         const res = await request({
-            url: `${COMMON_URL_PREFIX}${URLS.EXECUTE_BY_BATCH}${idList.join(SPLIT_SYMBOL)}`,
+            url: urlJoin(COMMON_URL_PREFIX, URLS.EXECUTE_BY_BATCH, idList.join(SPLIT_SYMBOL)),
             method: REQUEST_METHODS.POST,
         });
         const {code} = res;
@@ -142,15 +143,15 @@ const useNoahList = ({
             jumpTimer.current = setTimeout(
                 () => {
                     setBatchSpin(false);
-                    navigate(`${getUrlPrefixReal()}/${routes.EXEC_LIST.url}`);
-
+                    navigate(generateFullPath(routes.EXEC_LIST.path));
                 },
                 MILLI_SECOND_STEP * 5,
             );
         }
-    }, [navigate]);
+    };
+
     // 批量执行
-    const executeInBatch = useCallback(() => {
+    const executeInBatch = () => {
         if (!checkIfBatchesOperationIsValid()) {
             return false;
         }
@@ -159,10 +160,10 @@ const useNoahList = ({
             getContainer: getContainerDOM,
             onOk: () => executeByBatch(selectedRowKeys),
         });
-    }, [checkIfBatchesOperationIsValid, executeByBatch, selectedRowKeys]);
+    };
 
     // 批量删除
-    const removeInBatch = useCallback(() => {
+    const removeInBatch = () => {
         if (!checkIfBatchesOperationIsValid()) {
             return false;
         }
@@ -171,10 +172,10 @@ const useNoahList = ({
             getContainer: getContainerDOM,
             onOk: () => deleteByPatch(selectedRowKeys),
         });
-    }, [checkIfBatchesOperationIsValid, deleteByPatch, selectedRowKeys]);
+    };
 
     // 菜单点击
-    const handleMenuClick = useCallback(e => {
+    const handleMenuClick = e => {
         const {key} = e;
         const {EXECUTING, REMOVE} = DROP_DOWN_MENU;
         switch (key) {
@@ -185,7 +186,7 @@ const useNoahList = ({
                 removeInBatch();
                 break;
         }
-    }, [executeInBatch, removeInBatch]);
+    };
 
     // 作业类型筛选 change event
     const handleChange = e => {

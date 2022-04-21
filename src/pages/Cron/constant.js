@@ -1,3 +1,5 @@
+import urlJoin from 'url-join';
+
 // 执行策略
 export const STRATEGIES = {
     // 单次执行
@@ -26,7 +28,7 @@ export const URLS = {
     DELETE_CRON_ITEM: '/rest/v1/cron-execute/', // /rest/v1/cron-execute/{id}
     GET_CRON_DETAIL: '/rest/v1/cron-execute/', // rest/v1/cron-execute/{id}
     EDIT_CRON: '/rest/v1/cron-execute/', // rest/v1/cron-execute/{id}
-    getToggleCronStatusUrl: id => `/rest/v1/cron-execute/${id}/open-status`,
+    getToggleCronStatusUrl: id => urlJoin('/rest/v1/cron-execute/', String(id), 'open-status'),
     CRON_RECORD: '/rest/v1/cron-execute/cron-execute-trigger/',
 };
 

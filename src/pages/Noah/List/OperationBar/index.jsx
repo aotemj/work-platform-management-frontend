@@ -71,7 +71,12 @@ const OperationBar = ({
                 <Select {...typeSelectProps} />
             </div>
             <div className={cx('right')}>
-                <Button type="primary" className={cx('create-button')} onClick={addNoah}>新建</Button>
+                <Button
+                    type="primary"
+                    className={cx('create-button')}
+                    onClick={addNoah}
+                >新建
+                </Button>
                 <Dropdown
                     overlay={menu}
                     placement={'bottomCenter'}

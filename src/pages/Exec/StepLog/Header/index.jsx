@@ -5,18 +5,15 @@ import fileDownload from 'js-file-download';
 
 import cx from '../index.less';
 import HeaderDetailItem from '../../components/HeaderDetailItem';
-import {convertConsumeTime, formatTimeStamp, requestCallback, Toast} from '../../../../utils';
-import {FAILED, RUN_STATUSES, URLS} from '../../List/constant';
+import {convertConsumeTime, formatTimeStamp, Toast} from '../../../../utils';
+import {FAILED, RUN_STATUSES} from '../../List/constant';
 import {entirelyRetry, neglectErrors} from '../../List/ExecDetailDrawer/util';
 import {
-    COMMON_URL_PREFIX,
     LOG_CONTENT_SEPARATOR,
     MILLI_SECOND_STEP,
     PROMISE_STATUS,
-    REQUEST_METHODS,
 } from '../../../../constant';
 import {transformLogUrl} from '../constant';
-import {request} from '../../../../request/fetch';
 
 const Header = ({executionDetail, params, dataSource, setAddStepDrawerVisible}) => {
     const navigate = useNavigate();

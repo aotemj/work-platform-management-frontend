@@ -2,8 +2,7 @@ import React from 'react';
 import ReactDOM, {render} from 'react-dom';
 import singleSpaReact from 'single-spa-react';
 
-import App from './routes';
-// import store from './store';
+import App from './routes/App';
 // ⻚⾯挂载点, 写死是这个id
 const rootElementId = 'spa-mount-point';
 // 获取挂载元素的⽅法

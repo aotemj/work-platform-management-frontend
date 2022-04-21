@@ -13,16 +13,16 @@ import {MAX_DISPLAY_LENGTH, SPLIT_SYMBOL} from '../../../constant';
 
 const title = '作业管理';
 
-const NoahList = props => {
-    const {
-        getNoahList,
-        noah,
-        updateDiskSpaceInfo,
-        diskSpaceInfo,
-        categories,
-        getCategoryList,
-        categoryCurrentPage,
-    } = props;
+const NoahList = ({
+    getNoahList,
+    noah,
+    updateDiskSpaceInfo,
+    diskSpaceInfo,
+    categories,
+    getCategoryList,
+    categoryCurrentPage,
+}) => {
+
     const {
         data,
         handlePaginationChange,

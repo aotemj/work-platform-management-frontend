@@ -9,25 +9,26 @@
  4：执行成功：执行成功
  */
 import React, {useMemo} from 'react';
-import {Button} from '@osui/ui';
 import {propOr} from 'ramda';
 
 import cx from './index.less';
 import useStepCard from './hook';
 import NoPassReasonModal from './NoPassReasonModal';
-import {IGNORE_ERROR, RUNNING} from '../../constant';
+import {IGNORE_ERROR} from '../../constant';
+import TimeItem from './TimeItem';
+import ManualConfirmContent from './ManualConfirmContent';
+import ContentExceptManualConfirm from './ContentExceptManualConfirm';
 
-const StepCard = props => {
-    const {
-        users,
-        detail,
-        updateUserFromOne,
-        submitCallback,
-        executionDetail,
-        stepId,
-        updateCurrentUser,
-        currentUser,
-    } = props;
+const StepCard = ({
+    users,
+    detail,
+    updateUserFromOne,
+    submitCallback,
+    executionDetail,
+    stepId,
+    updateCurrentUser,
+    currentUser,
+}) => {
 
     const {
         consumeObj,
@@ -84,95 +85,30 @@ const StepCard = props => {
         );
     }, [detail, runStatusLabel]);
 
-    const TimeItem = ({item}) => {
-        return (
-            <span className={cx('exec-step-card-grid')}>
-                <span className={cx('exec-step-card-key')}>{item?.label}</span>
-                <span className={cx('exec-step-card-value')}>{item?.value}</span>
-            </span>
-        );
-    };
-
-    const BottomContent = () => {
-        const ManualConfirmContent = () => {
-            // 当前用户是否是确认人
-            const isConfirmUser = informUserIds.includes(currentUser?.userId);
-
-            const showOperation = useMemo(() => {
-                return isConfirmUser && !stageConfirmResult && detail?.runStatus === RUNNING.value;
-            }, [isConfirmUser]);
-
-            return (
-                <div className={cx('desc-container')}>
-                    {
-                        manualConfirmDescContents.map(item => {
-                            return (
-                                <div className={cx('desc-item')} key={item?.label}>
-                                    <span className={cx('label')}>{item?.label}</span>
-                                    <span className={cx('value')}>{item?.value}</span>
-                                </div>
-                            );
-                        })
-                    }
-
-                    {showOperation && (
-                        <div className={cx('operations')}>
-                            <Button
-                                danger
-                                loading={confirmLoading}
-                                className={cx('deny-button')}
-                                onClick={handleToggleNoPassReasonModal}
-                            >不通过
-                            </Button>
-                            <Button
-                                loading={confirmLoading}
-                                type="primary"
-                                className={cx('confirm-button')}
-                                onClick={handlePass}
-                            >通过
-                            </Button>
-                        </div>
-                    )}
-                </div>
-            );
-        };
-        const ContentExceptManualConfirm = () => {
-            return (
-                <> <TimeItem item={consumeObj} />
-
-                    <div className={cx('right')}>
-                        {
-                            operations.map(operation => {
-                                return (
-                                    <Button
-                                        type={'link'}
-                                        disabled={operation?.disabled}
-                                        key={operation.label}
-                                        onClick={() => operation.execution({id: stepId})}
-                                    >{operation.label}
-                                    </Button>
-                                );
-                            })
-                        }
-                    </div>
-                </>
-            );
-        };
-
-        return (
-            <div className={cx('bottom')}>
-                {
-                    isManualConfirm ? <ManualConfirmContent /> : <ContentExceptManualConfirm />
-                }
-            </div>
-        );
-    };
     const noPassReasonProps = {
         visible: noPassVisible,
         setVisible: setNoPassVisible,
         confirmManualResult,
         stageTriggerItemId,
     };
+
+    const manualConfirmProps = {
+        informUserIds,
+        currentUser,
+        stageConfirmResult,
+        detail,
+        manualConfirmDescContents,
+        confirmLoading,
+        handleToggleNoPassReasonModal,
+        handlePass,
+    };
+
+    const contentExceptManualConfirmProps = {
+        consumeObj,
+        operations,
+        stepId,
+    };
+
     return (
         <div className={cx('exec-step-card')}>
             {/* 执行成功 */}
@@ -183,13 +119,13 @@ const StepCard = props => {
                     {runStatus}
                     <div className={cx('right')}>
                         <div className={cx('top')}>
-                            {
-                                timeDetails.map(item => {
-                                    return (<TimeItem item={item} key={item?.label} />);
-                                })
-                            }
+                            {timeDetails.map(item => <TimeItem item={item} key={item?.label} />)}
                         </div>
-                        <BottomContent />
+                        <div className={cx('bottom')}>
+                            {isManualConfirm
+                                ? <ManualConfirmContent {...manualConfirmProps} />
+                                : <ContentExceptManualConfirm {...contentExceptManualConfirmProps} />}
+                        </div>
                     </div>
                 </div>
             </div>
