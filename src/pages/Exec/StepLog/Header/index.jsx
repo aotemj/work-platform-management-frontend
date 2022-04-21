@@ -110,14 +110,13 @@ const Header = ({executionDetail, params, dataSource, setAddStepDrawerVisible}) 
         },
     ];
 
-    if (executionDetail?.runStatus === FAILED.value) {
+    if (stepDetail?.runStatus === FAILED.value) {
         operations.unshift(...errorOperations);
     }
 
     const userName = useMemo(() => {
         return executionDetail?.userName;
     }, [executionDetail]);
-
 
     const title = useMemo(() => {
         return stepDetail?.name;

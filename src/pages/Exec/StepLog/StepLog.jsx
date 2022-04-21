@@ -61,14 +61,15 @@ const ExecLog = props => {
             {
                 title: '耗时',
                 dataIndex: 'consumeTime',
+                align: 'center',
                 render(val, record) {
                     return convertConsumeTime(record);
                 },
             },
             {
                 // status
-                width: '10%',
-                title: <PrivilegeManagement />,
+                width: '15%',
+                title: '状态',
                 dataIndex: 'allTaskSuccess',
                 render(val, record) {
                     // 由于当前存在合并主机情况，所以需要先判断是否全部任务成功(allTaskSuccess 为 true)， 如果不成功则显示失败
@@ -107,7 +108,7 @@ const ExecLog = props => {
                 <Header {...headerProps} />
                 <div className={cx('bottom')}>
                     <div className={cx('side-bar')}>
-                        <div className={cx('title')}>详情</div>
+                        <h3 className={cx('title')}>详情</h3>
                         <Table {...sideTableProps} />
                     </div>
                     <div className={cx('log-content')}>
