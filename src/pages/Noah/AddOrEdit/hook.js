@@ -647,6 +647,7 @@ const useAddOrEdit = ({
         editing,
         isExecuting,
         formRef,
+        isViewing,
 
         // about category
         handleAddCategory,

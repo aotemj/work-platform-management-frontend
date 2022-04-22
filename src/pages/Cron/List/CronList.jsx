@@ -2,7 +2,7 @@
  * 定时任务列表
  */
 import React from 'react';
-import {Table, Button, PageHeader, Spin, Switch} from '@osui/ui';
+import {Table, Button, PageHeader, Spin, Switch, Tooltip} from '@osui/ui';
 import {omit, propOr, prop} from 'ramda';
 
 import cx from './index.less';
@@ -14,6 +14,7 @@ import AddOrEditCron from './AddOrEditCron';
 import CronRecord from './CronRecord';
 import {DEFAULT_STRING_VALUE} from '../../../constant';
 import {STRATEGIES_TYPES} from '../constant';
+import EllipsisContainer from '../../../components/EllipsisContainer';
 
 const title = '定时任务';
 
@@ -75,13 +76,21 @@ const CronList = props => {
         {
             title: '任务名称',
             dataIndex: 'cronExecute',
-            render(val) {
-                return propOr(DEFAULT_STRING_VALUE, 'taskName', val);
+            render: val => {
+                const value = propOr(DEFAULT_STRING_VALUE, 'taskName', val);
+                return (
+                    <Tooltip title={value}>
+                        <div className={cx('cron-name')}>
+                            {value}
+                        </div>
+                    </Tooltip>
+                );
             },
         },
         {
             title: '作业名称',
             dataIndex: 'workPlanName',
+            render: val => <EllipsisContainer val={val} />,
         },
         {
             title: '策略类型',

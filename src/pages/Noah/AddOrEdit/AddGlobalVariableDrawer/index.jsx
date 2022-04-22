@@ -109,14 +109,19 @@ const AddGlobalVariableDrawer = ({
             label: '变量名称',
             MAX_LENGTH: 80,
             required: true,
-            children: ({field}) => (
-                <Input
-                    {...field}
-                    className={cx('noah-textarea')}
-                    maxLength={formFields.name.MAX_LENGTH}
-                    placeholder="以英文字符、下划线开头；只允许英文字符、数字、下划线、和 -"
-                />
-            ),
+            children: ({field}) => {
+                const maxLength = formFields.name.MAX_LENGTH;
+
+                return (
+                    <Input
+                        {...field}
+                        className={cx('noah-textarea')}
+                        maxLength={maxLength}
+                        placeholder="以英文字符、下划线开头；只允许英文字符、数字、下划线、和 -"
+                        suffix={<span>{field.value.length}/{maxLength}</span>}
+                    />
+                );
+            },
             validate: yup
                 .string()
                 .ensure()

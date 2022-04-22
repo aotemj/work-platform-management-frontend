@@ -2,10 +2,6 @@ const {PROXY_TARGET, COOKIE: Cookie, PROXY_TARGET_FOR_THIRD_PARTY} = require('./
 
 const commonHeadersConfig = {
     Cookie,
-    // 生产环境需要去掉
-    'Company-Uuid': 'noah-company',
-    'Group-Name': 'noah-project',
-    'Group-Type': 1,
 };
 module.exports = {
     '/api': {

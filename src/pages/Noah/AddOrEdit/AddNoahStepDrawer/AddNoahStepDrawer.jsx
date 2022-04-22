@@ -241,7 +241,7 @@ const AddNoahStepDrawer = ({
         setDisabled,
         formFields: updateFormFields(),
         handleCancel,
-        needFooter: !isViewing,
+        needFooter: !isFormDisabled,
         okText: '保存',
     };
 
