@@ -18,17 +18,26 @@ import {transformLogUrl} from '../constant';
 const Header = ({executionDetail, params, dataSource, setAddStepDrawerVisible}) => {
     const navigate = useNavigate();
     const downloadTimer = useRef();
+    // 只要有可用的下载日志url, 就可以允许下载
     const downloadButtonDisable = useMemo(() => {
         const length = dataSource.length;
-        let availableCount = 0;
+        let res = true;
         for (let i = 0; i < length; i++) {
-            const {errorInfo} = dataSource[i];
-            if (!errorInfo) {
-                return false;
+            const {logShowList} = dataSource[i];
+            const logLength = logShowList.length;
+
+            if (!res) {
+                break;
+            }
+            for (let j = 0; j < logLength; j++) {
+                const {logUrl} = logShowList[j];
+                if (logUrl) {
+                    res = false;
+                    break;
+                }
             }
         }
-
-        return !availableCount;
+        return res;
     }, [dataSource]);
 
     // 下载日志

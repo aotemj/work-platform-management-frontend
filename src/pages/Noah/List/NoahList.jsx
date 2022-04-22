@@ -10,6 +10,7 @@ import useNoahList from './hook';
 import {formatTimeStamp} from '../../../utils';
 import OperationBar from './OperationBar';
 import {MAX_DISPLAY_LENGTH, SPLIT_SYMBOL} from '../../../constant';
+import EllipsisContainer from '../../../components/EllipsisContainer';
 
 const title = '作业管理';
 
@@ -75,15 +76,7 @@ const NoahList = ({
             title: '作业名',
             dataIndex: 'name',
             width: '10%',
-            render: val => {
-                return (
-                    <Tooltip title={val}>
-                        <span className={cx('noah-name')}>
-                            {val}
-                        </span>
-                    </Tooltip>
-                );
-            },
+            render: val => <EllipsisContainer val={val} />,
         },
         {
             title: '分类',

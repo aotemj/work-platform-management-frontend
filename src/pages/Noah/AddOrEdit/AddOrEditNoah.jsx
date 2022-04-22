@@ -88,6 +88,8 @@ const AddOrEditNoah = props => {
         setStepEditingValue,
         handleStartAddStep,
         handleExecute,
+
+        isViewing,
     } = useAddOrEdit({
         getNoahWorkPlanDetail,
         noahDetail,
@@ -284,6 +286,7 @@ const AddOrEditNoah = props => {
         setStepEditingValue,
         editing,
         isExecuting,
+        isViewing,
     };
 
     const ExecuteFooter = () => (

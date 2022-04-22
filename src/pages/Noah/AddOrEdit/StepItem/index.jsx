@@ -59,10 +59,13 @@ const StepItem = props => {
             className={cx('step-item', disabled ? 'disabled' : null)}
             onMouseEnter={handleFocus}
             onMouseLeave={handleBlur}
-            onClick={disabled ? null : handleEdit}
         >
             <span className={cx('icon')}>[/] </span>
-            <span className={cx('main')}>{name}</span>
+            <span
+                className={cx('main')}
+                onClick={disabled ? null : handleEdit}
+            >{name}
+            </span>
             {
                 isExecuting || disabled ? (
                     <div className={cx('executing')}>

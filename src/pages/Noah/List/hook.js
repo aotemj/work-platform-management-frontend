@@ -35,7 +35,7 @@ const useNoahList = ({
     const navigate = useNavigate();
     const jumpTimer = useRef();
     const [batchSpin, setBatchSpin] = useState(false);
-    const [data, setData] = useState({DEFAULT_PAGINATION, list, total});
+    const [data, setData] = useState({...DEFAULT_PAGINATION, list, total});
     // 方案名过滤
     const [noahName, setNoahName] = useState('');
     // 方案类型过滤

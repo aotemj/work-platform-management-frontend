@@ -60,7 +60,6 @@ const CronRecord = ({visible, recordId, onClose}) => {
             title: '任务状态', dataIndex: 'runStatus', align: 'center', render(status) {
                 return (
                     <div className={cx('run-status')}>
-                        {RUN_STATUSES.get(status).icon}
                         <StatusTag status={status} />
                     </div>
                 );

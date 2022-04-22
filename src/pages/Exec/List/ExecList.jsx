@@ -11,6 +11,7 @@ import {formatTimeStamp} from '../../../utils';
 import OperationBar from './OperationBar';
 import StatusTag from '../../../components/StatusTag';
 import ExecDetailDrawer from './ExecDetailDrawer';
+import EllipsisContainer from '../../../components/EllipsisContainer';
 
 const title = '作业任务';
 
@@ -54,6 +55,7 @@ const ExecList = props => {
         {
             title: '作业名称',
             dataIndex: 'name',
+            render: val => <EllipsisContainer val={val} />,
         },
         {
             title: '发起人',
