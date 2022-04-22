@@ -169,8 +169,12 @@ const CronList = props => {
         }];
 
     const tableProps = {
-        dataSource: data.list, columns, rowKey: 'id', pagination: {
-            ...omit(['list'], data), showSizeChanger: true, showQuickJumper: true, onChange: handlePaginationChange,
+        dataSource: data.list,
+        columns,
+        rowKey: 'id',
+        pagination: {
+            ...omit(['list'], data),
+            onChange: handlePaginationChange,
         },
     };
     const operationBarProps = {
