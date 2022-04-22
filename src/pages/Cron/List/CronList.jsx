@@ -95,12 +95,14 @@ const CronList = props => {
         {
             title: '策略类型',
             dataIndex: 'cronExecute',
+            ellipsis: true,
             render: val => {
                 return STRATEGIES_TYPES.get(val?.exePolicy)?.label;
             },
         },
         {
             title: '更新人',
+            ellipsis: true,
             dataIndex: 'cronExecute',
             render: val => {
                 return propOr(DEFAULT_STRING_VALUE, 'userName', val);
@@ -110,6 +112,7 @@ const CronList = props => {
             title: '最新执行结果',
             dataIndex: 'latestWorkTrigger',
             align: 'center',
+            ellipsis: true,
             render(status) {
                 if (!status) {
                     return <StatusTag status={1} />;
@@ -121,6 +124,7 @@ const CronList = props => {
             title: '最近执行时间',
             dataIndex: 'latestWorkTrigger',
             align: 'center',
+            ellipsis: true,
             render(val) {
                 return formatTimeStamp(prop('beginTime', val));
             },

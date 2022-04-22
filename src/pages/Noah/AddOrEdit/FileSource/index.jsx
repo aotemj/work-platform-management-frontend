@@ -9,6 +9,7 @@ import useFileSource from './hook';
 import TargetServer from '../AddNoahStepDrawer/TargetServer';
 import {convertFileSize} from '../../../../utils';
 import {ERROR, LOADING, SUCCESS} from '../constants';
+import EllipsisContainer from '../../../../components/EllipsisContainer';
 
 const FileSource = ({
     field,
@@ -35,6 +36,8 @@ const FileSource = ({
         localFiles,
         handleRemoveLocalFile,
         chooseLocalTips,
+
+        needUpdateFileMap,
     } = useFileSource({changeCallback, storageFileList, values, setFormValues});
 
     const resetUserInputError = useCallback(() => {
@@ -129,19 +132,17 @@ const FileSource = ({
             {
                 title: '文件名',
                 dataIndex: 'fileName',
-                // width: '30%',
+                render: val => <EllipsisContainer val={val} />,
             },
             {
                 title: '文件大小',
                 dataIndex: 'fileSize',
-                // width: '20%',
                 // 单位 byte
                 render: val => convertFileSize(val),
             },
             {
                 title: '操作',
                 align: 'center',
-                // width: '10%',
                 render: (_, record) => {
                     const {status} = record;
                     switch (status) {
@@ -194,12 +195,16 @@ const FileSource = ({
                         uploadRef.current.click();
                     }}
                 >添加本地文件
-                    <input
-                        type="file"
-                        className={cx('upload-button')}
-                        ref={uploadRef}
-                        onChange={handleAddLocalFile}
-                    />
+                    {
+                        !needUpdateFileMap && (
+                            <input
+                                type="file"
+                                className={cx('upload-button')}
+                                ref={uploadRef}
+                                onInput={e => handleAddLocalFile(e, uploadRef)}
+                            />
+                        )
+                    }
                 </Button>
             </div>
         </div>

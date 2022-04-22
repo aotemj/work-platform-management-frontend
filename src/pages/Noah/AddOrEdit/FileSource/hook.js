@@ -116,20 +116,48 @@ const useFileSource = ({
         setNeedUpdateFileMap(false);
     }, [storageFileList]);
 
-    const handleAddLocalFile = async e => {
+    const checkRepeatFile = fileObj => {
+        const {fileName, fileSize} = fileObj;
+        if (fileMap[fileName] && fileMap[fileName].fileSize === fileSize) {
+            Toast.error('您已上传过该文件');
+            return false;
+        }
+        return true;
+    };
+
+    const checkFileSizeLimit = fileSize => {
+        // 2147483648 2G
+        if (fileSize > 2 * Math.pow(MAGE_BYTE_SCALE, 3)) {
+            Toast.error('当前只支持上传2G一下大小文件');
+            return false;
+        }
+        return true;
+    };
+
+    const handleAddLocalFile = async (e, uploadRef) => {
+        const resetInput = () => {
+            uploadRef.current.value = '';
+        };
+
         const params = new FormData();
+
         const {
             name: fileName,
             size: fileSize,
         } = e.target.files[0];
 
-        const key = Date.now();
-        // 2556442818
-        // 2147483648
-        if (fileSize > 2 * Math.pow(MAGE_BYTE_SCALE, 3)) {
-            Toast.error('当前只支持上传2G一下大小文件');
+        if (!checkRepeatFile({fileSize, fileName})) {
+            resetInput();
             return;
         }
+
+        if (!checkFileSizeLimit(fileSize)) {
+            resetInput();
+            return;
+        }
+
+        const key = fileName;
+
         const tempData = {
             key,
             fileName,
@@ -158,7 +186,7 @@ const useFileSource = ({
                 type: REQUEST_TYPE.FORM_DATA,
             });
             const {status, data} = res;
-
+            resetInput();
             if (!status) {
                 const {key} = tempData;
                 const {storageFileUrl} = data;
@@ -229,6 +257,8 @@ const useFileSource = ({
         localFiles,
         handleRemoveLocalFile,
         chooseLocalTips,
+
+        needUpdateFileMap,
     };
 };
 
