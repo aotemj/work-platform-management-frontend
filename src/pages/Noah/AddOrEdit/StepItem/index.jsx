@@ -7,6 +7,7 @@
 import {useState} from 'react';
 import {Button, Switch, Spin} from '@osui/ui';
 import {throttle} from 'lodash/fp';
+import urlJoin from 'url-join';
 
 import IconFont from '../../../../components/Iconfont';
 import cx from './index.less';
@@ -40,7 +41,7 @@ const StepItem = props => {
         params.append('stageId', stageId);
 
         const res = await request({
-            url: `${COMMON_URL_PREFIX}${URLS.TOGGLE_EXECUTION}`,
+            url: urlJoin(COMMON_URL_PREFIX, URLS.TOGGLE_EXECUTION),
             method: REQUEST_METHODS.PUT,
             type: REQUEST_TYPE.FORM_DATA,
             params,

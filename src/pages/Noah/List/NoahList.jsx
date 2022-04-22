@@ -14,16 +14,16 @@ import EllipsisContainer from '../../../components/EllipsisContainer';
 
 const title = '作业管理';
 
-const NoahList = props => {
-    const {
-        getNoahList,
-        noah,
-        updateDiskSpaceInfo,
-        diskSpaceInfo,
-        categories,
-        getCategoryList,
-        categoryCurrentPage,
-    } = props;
+const NoahList = ({
+    getNoahList,
+    noah,
+    updateDiskSpaceInfo,
+    diskSpaceInfo,
+    categories,
+    getCategoryList,
+    categoryCurrentPage,
+}) => {
+
     const {
         data,
         handlePaginationChange,

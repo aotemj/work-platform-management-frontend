@@ -1,9 +1,14 @@
+/**
+ * 新建、编辑、预览（执行） 作业详情
+ */
 import {useNavigate, useParams} from 'react-router-dom';
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {Modal} from '@osui/ui';
 import {clone, isNil, omit, pickBy, prop} from 'ramda';
+import {stringifyUrl} from 'query-string';
+import urlJoin from 'url-join';
 
-import {debounceWith500ms, getContainerDOM, getUrlPrefixReal, Toast} from '../../../utils';
+import {debounceWith500ms, generateFullPath, getContainerDOM, Toast} from '../../../utils';
 import useGlobalVariable from './hooks/globalVariable';
 import {request} from '../../../request/fetch';
 import {URLS, UPDATE_FILE_STATUS, BOOLEAN_FROM_SERVER, ERROR_MSG} from './constants';
@@ -63,13 +68,17 @@ const useAddOrEdit = ({
     }, [executionDetail, params]);
     // 预执行
     const isExecuting = useMemo(() => {
-        return pathname === routes.NOAH_PRE_EXECUTING.getUrl(prop('detailId', params));
+        const detailId = prop('detailId', params);
+        return detailId && pathname === generateFullPath(routes.NOAH_PRE_EXECUTING.path, {detailId});
     }, [params, pathname]);
 
-    // 预览模式（不允许编辑）
+    // 预览模式（不允许编辑, 执行日志页面不允许编辑）
     const isViewing = useMemo(() => {
         const {detailId, stepId = null, executeId = null} = params;
-        return pathname === routes.EXEC_LOG.getUrl(detailId, executeId, stepId);
+        if (!detailId || !stepId || !executeId) {
+            return false;
+        }
+        return pathname === generateFullPath(routes.EXEC_LOG.path, {detailId, executeId, stepId});
     }, [params, pathname]);
 
     // 编辑
@@ -125,7 +134,7 @@ const useAddOrEdit = ({
 
     const goBack = useCallback(() => {
         reset();
-        navigate(`${getUrlPrefixReal()}/${routes.NOAH_LIST.url}`);
+        navigate(-1);
     }, [navigate]);
 
     const goBackWithConfirm = useCallback(() => {
@@ -431,14 +440,14 @@ const useAddOrEdit = ({
 
         const {POST, PUT} = REQUEST_METHODS;
         const res = await request({
-            url: `${COMMON_URL_PREFIX}${URLS.ADD_NOAH_WORK_PLAN}`,
+            url: urlJoin(COMMON_URL_PREFIX, URLS.ADD_NOAH_WORK_PLAN),
             method: editing ? PUT : POST,
             params,
         });
         const {status} = res;
         if (!status) {
             Toast.success('操作成功');
-            navigate(`${getUrlPrefixReal()}/${routes.NOAH_LIST.url}`);
+            navigate(generateFullPath(routes.NOAH_LIST.path));
         }
     });
 
@@ -570,14 +579,17 @@ const useAddOrEdit = ({
     // 执行相关
     const handleExecute = useCallback(async () => {
         const res = await request({
-            url: `${COMMON_URL_PREFIX}${URLS.INDIVIDUAL_EXECUTE}${prop('detailId', params)}`,
+            url: urlJoin(COMMON_URL_PREFIX, URLS.INDIVIDUAL_EXECUTE, prop('detailId', params)),
             method: REQUEST_METHODS.POST,
         });
-        const {code, data} = res;
+        const {code, data: {id}} = res;
         if (code === REQUEST_CODE.SUCCESS) {
             Toast.success('操作成功');
 
-            navigate(`${getUrlPrefixReal()}/${routes.EXEC_LIST.url}?id=${data?.id}`);
+            navigate(stringifyUrl({
+                url: generateFullPath(routes.EXEC_LIST.path),
+                query: {id},
+            }));
         }
     }, [navigate, params]);
 

@@ -2,8 +2,15 @@ import {useCallback, useEffect, useMemo, useState} from 'react';
 import {Modal} from '@osui/ui';
 import {prop} from 'ramda';
 import {useNavigate} from 'react-router-dom';
+import {urlJoin} from 'url-join';
 
-import {convertConsumeTime, formatTimeStamp, getContainerDOM, Toast} from '../../../../../utils';
+import {
+    convertConsumeTime,
+    formatTimeStamp,
+    generateFullPath,
+    getContainerDOM,
+    Toast,
+} from '../../../../../utils';
 import {
     DEFAULT_STRING_VALUE,
     REQUEST_CODE,
@@ -37,11 +44,12 @@ const useStepCard = ({
     //
     // };
 
-    const viewLog = useCallback(() => {
+    const viewLog = () => {
         const {id: executeId, workPlanId: detailId} = executionDetail;
         const {id: stepId} = detail;
-        navigate(`${routes.EXEC_LOG.getUrl(detailId, executeId, stepId)}`);
-    }, [detail, executionDetail, navigate]);
+
+        navigate(generateFullPath(routes.EXEC_LOG.path, {detailId, executeId, stepId}));
+    };
 
     // NOTE  步骤类型
     //  人工确认  类型没有 结束时间
@@ -108,7 +116,7 @@ const useStepCard = ({
         // noPassReason	不通过原因		false   // string
         setConfirmLoading(true);
         const res = await request({
-            url: `${COMMON_URL_PREFIX}${URLS.CONFIRM_MANUAL_RESULT}`,
+            url: urlJoin(COMMON_URL_PREFIX, URLS.CONFIRM_MANUAL_RESULT),
             method: REQUEST_METHODS.POST,
             params,
         });
@@ -134,7 +142,7 @@ const useStepCard = ({
                 confirmManualResult(params);
             },
         });
-    }, [confirmManualResult, name, stageTriggerItemId]);
+    }, []);
 
     const operations = useMemo(() => {
         const {runStatus, ignoreError} = detail;

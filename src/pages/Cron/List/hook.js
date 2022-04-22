@@ -1,6 +1,7 @@
 import {useCallback, useEffect, useState} from 'react';
 import {Modal} from '@osui/ui';
 import {reject, anyPass, isEmpty, isNil} from 'ramda';
+import urlJoin from 'url-join';
 
 import {debounceWith500ms, diskWarning, getContainerDOM, requestCallback, Toast} from '../../../utils';
 import {request} from '../../../request/fetch';
@@ -40,7 +41,7 @@ const useCronList = ({
         setLoading(true);
         try {
             const res = await request({
-                url: `${COMMON_URL_PREFIX}${URLS.CRON_LIST_URL}`,
+                url: urlJoin(COMMON_URL_PREFIX, URLS.CRON_LIST_URL),
                 params,
             });
             const {status, data, msg} = res;
@@ -103,7 +104,7 @@ const useCronList = ({
             onOk: debounceWith500ms(async () => {
                 const res = await request({
                     method: REQUEST_METHODS.DELETE,
-                    url: `${COMMON_URL_PREFIX}${URLS.DELETE_CRON_ITEM}${id}`,
+                    url: urlJoin(COMMON_URL_PREFIX, URLS.DELETE_CRON_ITEM, String(id)),
                 });
                 requestCallback({
                     res,
@@ -139,7 +140,7 @@ const useCronList = ({
         const params = new FormData();
         params.append('openStatus', val ? 1 : 0);
         const res = await request({
-            url: `${COMMON_URL_PREFIX}${URLS.getToggleCronStatusUrl(id)}`,
+            url: urlJoin(COMMON_URL_PREFIX, URLS.getToggleCronStatusUrl(id)),
             method: REQUEST_METHODS.PUT,
             type: REQUEST_TYPE.FORM_DATA,
             params,
