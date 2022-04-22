@@ -391,9 +391,9 @@ const useAddOrEdit = ({
                         ...commonParams,
                         stageFileBean: {
                             targetPath,
-                            downloadLimit: convertFileSize(downloadLimit),
+                            downloadLimit,
                             timeoutValue: timeoutValueForFileDistribution,
-                            uploadLimit: convertFileSize(uploadLimit),
+                            uploadLimit,
                             transmissionMode,
                         },
                         storageFileList: tempStorageFileList,
@@ -402,7 +402,7 @@ const useAddOrEdit = ({
             }
 
         });
-    }, [convertStorageFileList, convertedStageListStatus, convertTimeoutValue, convertFileSize]);
+    }, [convertStorageFileList, convertedStageListStatus, convertTimeoutValue]);
 
     const convertWorkVariateList = useCallback(variables => {
         const {POSITIVE, NEGATIVE} = BOOLEAN_FROM_SERVER;

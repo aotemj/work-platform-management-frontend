@@ -72,13 +72,15 @@ export const formatTimeStamp = (timestamp, dateSymbol = '-', timeSymbol = ':') =
     const second = formatTime(date.getSeconds());
     return `${year}${dateSymbol}${month}${dateSymbol}${day} ${hour}${timeSymbol}${minute}${timeSymbol}${second}`;
 };
+
+export const parseIntForDecimal = str => parseInt(str, 10);
+
 /**
  * @param dateTimeStamp
  * @returns {{hourTime: number, secondTime: number, minuteTime: number, dayTime: number}}
  */
 export const getDateTime = dateTimeStamp => {
 
-    const parseIntForDecimal = str => parseInt(str, 10);
     const formatTime = str => String(str)?.padStart(2, '0');
     // 获取总秒数
     let secondTime = parseIntForDecimal(dateTimeStamp / MILLI_SECOND_STEP);

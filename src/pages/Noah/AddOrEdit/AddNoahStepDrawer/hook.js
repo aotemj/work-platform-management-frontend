@@ -229,8 +229,12 @@ const useAddNoahStep = ({
 
     useEffect(() => {
         const {value} = STEP_TYPES.MANUAL_CONFIRM;
-        if (visible && (stepEditingValue?.type === value || formikValues.type === value)) {
-            updateUserFromOne({});
+        if (visible) {
+            if ((stepEditingValue?.type === value || formikValues.type === value)) {
+                updateUserFromOne({});
+            }
+        } else {
+            setFormikValues(defaultFormikValues);
         }
     }, [visible, stepEditingValue?.type, formikValues.type]);
 

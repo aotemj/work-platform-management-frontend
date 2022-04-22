@@ -11,6 +11,7 @@ import TargetServer from './TargetServer';
 import {ReactComponent as IconRemark} from '../../../../statics/icons/remark.svg';
 import SelectAll from '../../../../components/SelectAll';
 import {debounceWith250ms, loadMoreCallBackByScrolling} from '../../../../utils';
+import UploadInputNumber from '../../../../components/UploadInputNumber';
 
 const {Option} = Select;
 const {TextArea} = Input;
@@ -253,11 +254,9 @@ export const getFileDistribution = ({
                             disabled={isFormDisabled}
                         />
                         { !uploadLimitDisabled && (
-                            <InputNumber
-                                className={cx('time-out-input')}
+                            <UploadInputNumber
                                 {...field}
                                 disabled={isFormDisabled}
-                                addonAfter={'MB/s'}
                             />
                         )}
                     </div>
@@ -285,11 +284,9 @@ export const getFileDistribution = ({
                             }}
                         />
                         { !downloadLimitDisabled && (
-                            <InputNumber
-                                className={cx('time-out-input')}
+                            <UploadInputNumber
                                 {...field}
                                 disabled={isFormDisabled}
-                                addonAfter={'MB/s'}
                             />
                         )}
                     </div>
@@ -366,15 +363,16 @@ export const getFileDistribution = ({
                                 <Radio.Group
                                     {...field}
                                     disabled={isFormDisabled}
-                                >
-                                    {
-                                        Object.values(TRANSMISSION_MODE).map(item => {
-                                            const {key} = item;
-                                            // eslint-disable-next-line react/jsx-key
-                                            return <Radio {...item}>{key}</Radio>;
-                                        })
+                                    optionType="button"
+                                    options={
+                                        Object.values(TRANSMISSION_MODE)
+                                            .map(item => ({
+                                                ...item,
+                                                disabled: isFormDisabled && field.value !== item.value,
+                                                label: item.key,
+                                            }))
                                     }
-                                </Radio.Group>
+                                />
                             );
                         },
                         validate: null,

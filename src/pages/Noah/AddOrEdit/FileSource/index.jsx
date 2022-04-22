@@ -194,7 +194,12 @@ const FileSource = ({
                         uploadRef.current.click();
                     }}
                 >添加本地文件
-                    <input type="file" className={cx('upload-button')} ref={uploadRef} onChange={handleAddLocalFile} />
+                    <input
+                        type="file"
+                        className={cx('upload-button')}
+                        ref={uploadRef}
+                        onChange={handleAddLocalFile}
+                    />
                 </Button>
             </div>
         </div>

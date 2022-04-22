@@ -26,8 +26,8 @@ const deConvertTimeoutValue = timeoutValue => {
 };
 
 // Kb -> Mb
-const deConvertFileSize = size => {
-    return size / MAGE_BYTE_SCALE;
+export const deConvertFileSize = size => {
+    return (size / MAGE_BYTE_SCALE).toFixed(2);
 };
 
 const deConvertedStorageFileList = list => {
@@ -167,8 +167,8 @@ const deConvertStageList = list => {
                     timeoutValueForFileDistribution: timeoutValue,
                     uploadLimitDisabled: !uploadLimit,
                     downloadLimitDisabled: !downloadLimit,
-                    uploadLimit: deConvertFileSize(uploadLimit),
-                    downloadLimit: deConvertFileSize(downloadLimit),
+                    uploadLimit,
+                    downloadLimit,
                     targetPath,
                     storageFileList: convertedStorageFileList,
                     targetResourceList: convertedTargetResourceList,
@@ -404,8 +404,8 @@ export const deConvertDataFromExecutionDetail = originData => {
                 timeoutValueForFileDistribution: timeoutValue,
                 uploadLimitDisabled: !uploadLimit,
                 downloadLimitDisabled: !downloadLimit,
-                uploadLimit: deConvertFileSize(uploadLimit),
-                downloadLimit: deConvertFileSize(downloadLimit),
+                uploadLimit,
+                downloadLimit,
                 targetPath,
                 storageFileList,
                 targetResourceList,
