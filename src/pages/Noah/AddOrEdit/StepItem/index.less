@@ -15,13 +15,15 @@
         cursor: not-allowed;
     }
 
-    &:not(.disabled) &:hover {
-        background: rgb(226, 236, 254);
-        border: 1px solid var(--active-color);
-        color: var(--active-color);
+    &:not(.disabled) {
+        &:hover {
+            background: rgb(226, 236, 254);
+            border: 1px solid var(--active-color);
+            color: var(--active-color);
 
-        > .icon {
-            background-color: transparent;
+            > .icon {
+                background-color: transparent;
+            }
         }
     }
 
