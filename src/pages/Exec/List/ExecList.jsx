@@ -135,7 +135,7 @@ const ExecList = props => {
         <div className={cx('noah-container')}>
             <PageHeader title={title} className={cx('title')} />
             <OperationBar {...operationBarProps} />
-            <Spin spinning={loading} size="large">
+            <Spin spinning={loading}>
                 <Table {...tableProps} />
             </Spin>
             <ExecDetailDrawer {...execDetailProps} />

@@ -1,31 +1,22 @@
 import {connect} from 'react-redux';
 
-import {UPDATE_CATEGORY_LIST_S, GET_NOAH_DETAIL_S} from '../../../sagas/types';
 import AddOrEditNoah from './AddOrEditNoah';
-import {UPDATE_CATEGORY_LIST, UPDATE_NOAH_DETAIL} from '../../../actions/actionTypes';
+import {addItem, getCategoryList} from '../../../reduxSlice/category/categorySlice';
+import {getNoahWorkPlanDetail, update} from '../../../reduxSlice/noah/detailSlice';
 
-const mapStateToProps = ({noahDetail, categories}) => ({
-    noahDetail,
-    categories,
-});
+const mapStateToProps = state => {
+    const {noahDetail, category: categories} = state;
+    return {
+        noahDetail,
+        categories,
+    };
+};
 
 const mapDispatchToProps = dispatch => ({
-    getNoahWorkPlanDetail: payload => dispatch({
-        type: GET_NOAH_DETAIL_S,
-        payload,
-    }),
-    getCategoryList: payload => dispatch({
-        type: UPDATE_CATEGORY_LIST_S,
-        payload,
-    }),
-    updateCategory: payload => dispatch({
-        type: UPDATE_CATEGORY_LIST,
-        payload,
-    }),
-    updateNoahDetail: payload => dispatch({
-        type: UPDATE_NOAH_DETAIL,
-        payload,
-    }),
+    getNoahWorkPlanDetail: payload => dispatch(getNoahWorkPlanDetail(payload)),
+    getCategoryList: payload => dispatch(getCategoryList(payload)),
+    updateCategory: payload => dispatch(addItem(payload)),
+    updateNoahDetail: payload => dispatch(update(payload)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddOrEditNoah);

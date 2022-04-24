@@ -2,7 +2,7 @@
  * 定时任务列表
  */
 import React from 'react';
-import {Table, Button, PageHeader, Spin, Switch, Tooltip} from '@osui/ui';
+import {Table, Button, PageHeader, Spin, Switch} from '@osui/ui';
 import {omit, propOr, prop} from 'ramda';
 
 import cx from './index.less';
@@ -18,17 +18,16 @@ import EllipsisContainer from '../../../components/EllipsisContainer';
 
 const title = '定时任务';
 
-const CronList = props => {
-    const {
-        noah,
-        noahDetail,
-        categories,
-        categoryMap,
-        getNoahList,
-        getNoahWorkPlanDetail,
-        diskSpaceInfo,
-        updateDiskSpaceInfo,
-    } = props;
+const CronList = ({
+    noah,
+    noahDetail,
+    categories,
+    categoryMap,
+    getNoahList,
+    getNoahWorkPlanDetail,
+    diskSpaceInfo,
+    updateDiskSpaceInfo,
+}) => {
     const {
         data,
         loading,
@@ -69,22 +68,14 @@ const CronList = props => {
     const columns = [
         {
             title: 'ID',
-            render: (_, record) => {
-                return prop('id', record?.cronExecute);
-            },
+            render: (_, record) => prop('id', record?.cronExecute),
         },
         {
             title: '任务名称',
             dataIndex: 'cronExecute',
             render: val => {
                 const value = propOr(DEFAULT_STRING_VALUE, 'taskName', val);
-                return (
-                    <Tooltip title={value}>
-                        <div className={cx('cron-name')}>
-                            {value}
-                        </div>
-                    </Tooltip>
-                );
+                return <EllipsisContainer val={value} />;
             },
         },
         {
@@ -96,17 +87,13 @@ const CronList = props => {
             title: '策略类型',
             dataIndex: 'cronExecute',
             ellipsis: true,
-            render: val => {
-                return STRATEGIES_TYPES.get(val?.exePolicy)?.label;
-            },
+            render: val => STRATEGIES_TYPES.get(val?.exePolicy)?.label,
         },
         {
             title: '更新人',
             ellipsis: true,
             dataIndex: 'cronExecute',
-            render: val => {
-                return propOr(DEFAULT_STRING_VALUE, 'userName', val);
-            },
+            render: val => propOr(DEFAULT_STRING_VALUE, 'userName', val),
         },
         {
             title: '最新执行结果',
@@ -125,9 +112,7 @@ const CronList = props => {
             dataIndex: 'latestWorkTrigger',
             align: 'center',
             ellipsis: true,
-            render(val) {
-                return formatTimeStamp(prop('beginTime', val));
-            },
+            render: val => formatTimeStamp(prop('beginTime', val)),
         },
         {
             title: '操作',
@@ -211,7 +196,7 @@ const CronList = props => {
         <div className={cx('cron-container')}>
             <PageHeader title={title} className={cx('title')} />
             <OperationBar {...operationBarProps} />
-            <Spin spinning={loading} size="large">
+            <Spin spinning={loading}>
                 <Table {...tableProps} />
             </Spin>
             {/* 新增、 编辑 cron */}

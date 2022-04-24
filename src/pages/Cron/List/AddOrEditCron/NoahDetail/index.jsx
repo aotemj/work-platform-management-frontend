@@ -1,4 +1,5 @@
 import {propOr} from 'ramda';
+import {Spin} from '@osui/ui';
 
 import cx from './index.less';
 import {DEFAULT_STRING_VALUE, DELETE_SYMBOL} from '../../../../../constant';
@@ -17,6 +18,7 @@ const NoahItem = ({
 const NoahDetail = ({
     noahDetail,
     noahOriginalDetail,
+    loading,
 }) => {
     const filterDeleteSymbol = item => item.status !== DELETE_SYMBOL;
 
@@ -33,7 +35,7 @@ const NoahDetail = ({
     };
     const descriptionObj = {
         label: '方案描述',
-        content: propOr('', 'noahDescribes', noahDetail),
+        content: propOr(DEFAULT_STRING_VALUE, 'noahDescribes', noahDetail),
     };
 
     const globalVariablesObj = {
@@ -89,11 +91,13 @@ const NoahDetail = ({
     ];
 
     return (
-        <div className={cx('noah-detail-container')}>
-            {
-                contents.map(item => <NoahItem key={item.label} {...item} />)
-            }
-        </div>
+        <Spin spinning={loading}>
+            <div className={cx('noah-detail-container')}>
+                {
+                    contents.map(item => <NoahItem key={item.label} {...item} />)
+                }
+            </div>
+        </Spin>
     );
 };
 

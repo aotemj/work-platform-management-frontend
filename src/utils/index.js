@@ -1,21 +1,18 @@
 import {message} from '@osui/ui';
+import urlJoin from 'url-join';
+import {debounce} from 'lodash/fp';
+import {generatePath} from 'react-router';
 
 import {getCompanyId, getSpaceId} from './getRouteIds';
 import {
-    CONTAINER_DOM_ID,
-    DEFAULT_STRING_VALUE,
-    TYPES_OF_FETCHING,
-    HOUR_STEP,
-    MAGE_BYTE_SCALE,
-    MILLI_SECOND_STEP,
-    MINUTE_STEP,
-    PROJECT_ROUTE,
-    PUBLIC_PATH,
-    REQUEST_CODE,
-    MESSAGE_TYPES,
+    CONTAINER_DOM_ID, DEFAULT_STRING_VALUE,
+    TYPES_OF_FETCHING, HOUR_STEP,
+    MAGE_BYTE_SCALE, MILLI_SECOND_STEP,
+    MINUTE_STEP, PROJECT_ROUTE,
+    PUBLIC_PATH, REQUEST_CODE,
+    MESSAGE_TYPES, REQUEST_URL_TYPES,
+    DEFAULT_SUCCESS_MESSAGE,
 } from '../constant';
-import {debounce} from 'lodash/fp';
-import {generatePath} from 'react-router';
 
 export const Toast = {
     common(type, ...args) {
@@ -188,7 +185,7 @@ export function convertConsumeTime(executionDetail, needDefaultDate = true) {
 export function requestCallback({
     res,
     hideMessage = false,
-    successMessage = '操作成功',
+    successMessage = DEFAULT_SUCCESS_MESSAGE,
     callback,
     errorCallback,
 }) {
@@ -258,7 +255,10 @@ export const generateFullPath = (url, params) => {
     return `${getUrlPrefixReal()}/${generatePath(url, params)}`;
 };
 
+export const assembleRequestUrl = (url, type = REQUEST_URL_TYPES.INTERNAL.label) =>
+    urlJoin(REQUEST_URL_TYPES[type].prefix, url);
 
+export const assembleExternalUrl = url => assembleRequestUrl(url, REQUEST_URL_TYPES.EXTERNAL.label);
 
 
 

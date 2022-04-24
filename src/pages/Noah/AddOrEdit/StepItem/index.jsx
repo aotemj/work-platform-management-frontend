@@ -7,14 +7,13 @@
 import {useState} from 'react';
 import {Button, Switch, Spin} from '@osui/ui';
 import {throttle} from 'lodash/fp';
-import urlJoin from 'url-join';
 
 import IconFont from '../../../../components/Iconfont';
 import cx from './index.less';
 import {EXECUTING_STATUS, URLS} from '../constants';
-import {REQUEST_CODE, REQUEST_METHODS, REQUEST_TYPE, COMMON_URL_PREFIX} from '../../../../constant';
+import {DEFAULT_SUCCESS_MESSAGE, REQUEST_CODE, REQUEST_METHODS, REQUEST_TYPE} from '../../../../constant';
 import {request} from '../../../../request/fetch';
-import {Toast} from '../../../../utils';
+import {assembleRequestUrl, Toast} from '../../../../utils';
 
 const StepItem = props => {
     const {name, handleClose, handleEdit, disabled, id: stageId, openStatus, isExecuting} = props;
@@ -41,7 +40,7 @@ const StepItem = props => {
         params.append('stageId', stageId);
 
         const res = await request({
-            url: urlJoin(COMMON_URL_PREFIX, URLS.TOGGLE_EXECUTION),
+            url: assembleRequestUrl(URLS.TOGGLE_EXECUTION),
             method: REQUEST_METHODS.PUT,
             type: REQUEST_TYPE.FORM_DATA,
             params,
@@ -49,7 +48,7 @@ const StepItem = props => {
         setLoading(false);
         const {code} = res;
         if (code === REQUEST_CODE.SUCCESS) {
-            Toast.success('操作成功');
+            Toast.success(DEFAULT_SUCCESS_MESSAGE);
             setChecked(e);
         }
     });

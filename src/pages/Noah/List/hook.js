@@ -4,6 +4,7 @@ import {useNavigate} from 'react-router-dom';
 import urlJoin from 'url-join';
 
 import {
+    assembleRequestUrl,
     debounceWith500ms,
     diskWarning,
     generateFullPath,
@@ -16,8 +17,8 @@ import {
     REQUEST_CODE,
     REQUEST_METHODS,
     SPLIT_SYMBOL,
-    COMMON_URL_PREFIX,
     MILLI_SECOND_STEP,
+    DEFAULT_SUCCESS_MESSAGE,
 } from '../../../constant';
 import {routes} from '../../../routes';
 import {request} from '../../../request/fetch';
@@ -41,7 +42,6 @@ const useNoahList = ({
     // 方案类型过滤
     const [noahType, setNoahType] = useState(null);
 
-    const [loading, setLoading] = useState(false);
     // 批量选择 key
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
     // 批量选择
@@ -69,15 +69,13 @@ const useNoahList = ({
         }
         const {current, pageSize} = data;
 
-        setLoading(true);
-        await getNoahList({
+        getNoahList({
             currentPage: current,
             pageSize,
             name: noahName,
             // typeId: noahType === allType.id ? '' : noahType,
             typeId: noahType,
         });
-        setLoading(false);
         setShouldUpdate(false);
     };
 
@@ -90,24 +88,24 @@ const useNoahList = ({
 
     const individualDelete = async noahId => {
         const res = await request({
-            url: urlJoin(COMMON_URL_PREFIX, URLS.INDIVIDUAL_DELETE, String(noahId)),
+            url: assembleRequestUrl(urlJoin(URLS.INDIVIDUAL_DELETE, String(noahId))),
             method: REQUEST_METHODS.DELETE,
         });
         const {code} = res;
         if (code === REQUEST_CODE.SUCCESS) {
-            Toast.success('操作成功');
+            Toast.success(DEFAULT_SUCCESS_MESSAGE);
             setShouldUpdate(true);
         }
     };
 
     const deleteByPatch = async idList => {
         const res = await request({
-            url: urlJoin(COMMON_URL_PREFIX, URLS.DELETE_BY_BATCH, idList.join(SPLIT_SYMBOL)),
+            url: assembleRequestUrl(urlJoin(URLS.DELETE_BY_BATCH, idList.join(SPLIT_SYMBOL))),
             method: REQUEST_METHODS.DELETE,
         });
         const {code} = res;
         if (code === REQUEST_CODE.SUCCESS) {
-            Toast.success('操作成功');
+            Toast.success(DEFAULT_SUCCESS_MESSAGE);
             setShouldUpdate(true);
         }
     };
@@ -132,12 +130,12 @@ const useNoahList = ({
 
     const executeByBatch = async idList => {
         const res = await request({
-            url: urlJoin(COMMON_URL_PREFIX, URLS.EXECUTE_BY_BATCH, idList.join(SPLIT_SYMBOL)),
+            url: assembleRequestUrl(urlJoin(URLS.EXECUTE_BY_BATCH, idList.join(SPLIT_SYMBOL))),
             method: REQUEST_METHODS.POST,
         });
         const {code} = res;
         if (code === REQUEST_CODE.SUCCESS) {
-            Toast.success('操作成功');
+            Toast.success(DEFAULT_SUCCESS_MESSAGE);
             setShouldUpdate(true);
             setBatchSpin(true);
             jumpTimer.current = setTimeout(
@@ -251,7 +249,6 @@ const useNoahList = ({
         handlePaginationChange,
         handleChange,
         handleChangeInput,
-        loading,
         selectedRowKeys,
         onSelectChange,
         // 点击dropdownMenu

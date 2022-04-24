@@ -1,6 +1,5 @@
 import {useCallback, useEffect, useMemo, useState} from 'react';
 import {clone, omit, propOr} from 'ramda';
-import urlJoin from 'url-join';
 
 import {request} from '../../../../request/fetch';
 import {URLS, FILE_SOURCE_TYPE, LOADING, SUCCESS, ERROR} from '../constants';
@@ -8,10 +7,9 @@ import {
     DEFAULT_STRING_VALUE,
     REQUEST_METHODS,
     REQUEST_TYPE,
-    COMMON_URL_PREFIX,
     MAGE_BYTE_SCALE,
 } from '../../../../constant';
-import {Toast} from '../../../../utils';
+import {assembleRequestUrl, Toast} from '../../../../utils';
 
 let tempFileMap = {};
 
@@ -180,7 +178,7 @@ const useFileSource = ({
         params.append('file', e.target.files[0]);
         try {
             const res = await request({
-                url: urlJoin(COMMON_URL_PREFIX, URLS.UPLOAD_LOCAL_FILE),
+                url: assembleRequestUrl(URLS.UPLOAD_LOCAL_FILE),
                 params,
                 method: REQUEST_METHODS.POST,
                 type: REQUEST_TYPE.FORM_DATA,

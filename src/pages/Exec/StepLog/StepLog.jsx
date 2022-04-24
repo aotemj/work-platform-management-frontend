@@ -2,7 +2,6 @@ import {Table, Typography, Spin} from '@osui/ui';
 
 import cx from './index.less';
 import Header from './Header';
-import {ReactComponent as PrivilegeManagement} from '../../../statics/icons/Privilege-management.svg';
 
 import {convertConsumeTime} from '../../../utils';
 import LogContent from './LogContent/index';
@@ -11,17 +10,17 @@ import AddNoahStepDrawer from '../../Noah/AddOrEdit/AddNoahStepDrawer/index';
 import useAddOrEdit from '../../Noah/AddOrEdit/hook';
 import useStepLog from './hook';
 
-const ExecLog = props => {
-    const {
-        executionDetail,
-        getExecutionDetail,
-        users,
-        getNoahWorkPlanDetail,
-        noahDetail,
-        getCategoryList,
-        updateNoahDetail,
-    } = props;
-
+const ExecLog = ({
+    executionDetail,
+    getExecutionDetail,
+    users,
+    getNoahWorkPlanDetail,
+    noahDetail,
+    getCategoryList,
+    updateNoahDetail,
+    categories,
+    categoryMap,
+}) => {
     const {Paragraph} = Typography;
 
     const {
@@ -37,6 +36,8 @@ const ExecLog = props => {
         executionDetail,
         getCategoryList,
         updateNoahDetail,
+        categories,
+        categoryMap,
     });
 
     const {

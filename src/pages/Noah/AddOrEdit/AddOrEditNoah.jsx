@@ -6,7 +6,7 @@
  *  3. 执行作业 表单不可编辑 可以修改步骤启停状态
  */
 import * as yup from 'yup';
-import {Button, Input, PageHeader, Select} from '@osui/ui';
+import {Button, Input, PageHeader, Select, Spin} from '@osui/ui';
 import {IconPlusOutlined} from '@osui/icons';
 
 import cx from './index.less';
@@ -40,15 +40,15 @@ const dropdownRender = (originNode, handleAddCallback, values) => {
     );
 };
 
-const AddOrEditNoah = props => {
-    const {
-        getNoahWorkPlanDetail,
-        noahDetail,
-        categories: {list: categories, map: categoryMap, currentPage: categoryCurrentPage},
-        getCategoryList,
-        updateCategory,
-        updateNoahDetail,
-    } = props;
+const AddOrEditNoah = ({
+    getNoahWorkPlanDetail,
+    noahDetail: {loading: detailLoading},
+    noahDetail,
+    categories: {list: categories, map: categoryMap, currentPage: categoryCurrentPage},
+    getCategoryList,
+    updateCategory,
+    updateNoahDetail,
+}) => {
     const {
         goBack,
         goBackWithConfirm,
@@ -62,6 +62,7 @@ const AddOrEditNoah = props => {
         isExecuting,
         handleRemoveStageList,
         formRef,
+        loading,
 
         // category
         addCategoryVisible,
@@ -311,6 +312,7 @@ const AddOrEditNoah = props => {
         transformRef: form => {
             formRef.current = form;
         },
+        buttonLoading: loading,
     };
 
     if (isExecuting) {
@@ -318,15 +320,17 @@ const AddOrEditNoah = props => {
     }
 
     return (
-        <div className={cx('add-container')}>
-            <PageHeader title={title} onBack={goBackWithConfirm} />
-            <div className={cx('outer')}>
-                <FormikComp {...formikProps} />
+        <Spin spinning={detailLoading}>
+            <div className={cx('add-container')}>
+                <PageHeader title={title} onBack={goBackWithConfirm} />
+                <div className={cx('outer')}>
+                    <FormikComp {...formikProps} />
+                </div>
+                {addCategoryVisible && <AddCategoryModal {...addCategoryModalProps} />}
+                <AddGlobalVariableDrawer {...globalVariableVisibleProps} />
+                <AddNoahStepDrawer {...noahStepProps} />
             </div>
-            {addCategoryVisible && <AddCategoryModal {...addCategoryModalProps} />}
-            <AddGlobalVariableDrawer {...globalVariableVisibleProps} />
-            <AddNoahStepDrawer {...noahStepProps} />
-        </div>
+        </Spin>
     );
 };
 

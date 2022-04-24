@@ -8,7 +8,7 @@ import {clone, isNil, omit, pickBy, prop} from 'ramda';
 import {stringifyUrl} from 'query-string';
 import urlJoin from 'url-join';
 
-import {debounceWith500ms, generateFullPath, getContainerDOM, Toast} from '../../../utils';
+import {assembleRequestUrl, debounceWith500ms, generateFullPath, getContainerDOM, Toast} from '../../../utils';
 import useGlobalVariable from './hooks/globalVariable';
 import {request} from '../../../request/fetch';
 import {URLS, UPDATE_FILE_STATUS, BOOLEAN_FROM_SERVER, ERROR_MSG} from './constants';
@@ -20,11 +20,10 @@ import {
     SPLIT_SYMBOL,
     STEP_TYPES,
     SYMBOL_FOR_ALL,
-    COMMON_URL_PREFIX,
     MINUTE_STEP,
-    MAGE_BYTE_SCALE,
     DEFAULT_PAGINATION,
     PAGE_SIZE_OF_NO_PAGINATION,
+    DEFAULT_SUCCESS_MESSAGE,
 } from '../../../constant';
 import {routes} from '../../../routes';
 import {deConvertDataFromExecutionDetail, deConvertParams} from '../../../utils/convertNoahDetail';
@@ -46,7 +45,7 @@ const defaultFormikValues = {
 const useAddOrEdit = ({
     executionDetail,
     getNoahWorkPlanDetail,
-    noahDetail,
+    noahDetail: {detail: noahDetail},
     categories,
     categoryMap,
     getCategoryList,
@@ -58,6 +57,7 @@ const useAddOrEdit = ({
     const urlParams = new URL(window.location.href);
     const {pathname} = urlParams;
     const [addCategoryVisible, setAddCategoryVisible] = useState(false);
+    const [loading, setLoading] = useState(false);
     let formRef = useRef();
 
     const stageId = useMemo(() => {
@@ -129,6 +129,8 @@ const useAddOrEdit = ({
 
     const reset = () => {
         setFormikValues(defaultFormikValues);
+        formRef.current?.resetForm();
+        updateNoahDetail(null);
         setStepEditingValue(null);
     };
 
@@ -157,19 +159,11 @@ const useAddOrEdit = ({
             name,
             timeStamp: id,
         };
-        updateCategory({
-            categories: {
-                list: [newCategory, ...categories],
-                map: {
-                    ...categoryMap,
-                    [name]: newCategory,
-                },
-            },
-        });
+        updateCategory(newCategory);
         Toast.success('添加成功');
         addCategoryCallback({name});
         return true;
-    }, [categoryMap, updateCategory, categories, addCategoryCallback]);
+    }, [categoryMap, updateCategory, addCategoryCallback]);
 
     const handleChangeVariable = useCallback(variables => {
         setFormikValues({
@@ -277,11 +271,6 @@ const useAddOrEdit = ({
 
     const convertTimeoutValue = useCallback(timeoutValue => {
         return timeoutValue * Math.pow(MINUTE_STEP, 2);
-    }, []);
-
-    // Mb -> Kb
-    const convertFileSize = useCallback(size => {
-        return size * MAGE_BYTE_SCALE;
     }, []);
 
     const convertStageList = useCallback(stageList => {
@@ -436,17 +425,19 @@ const useAddOrEdit = ({
     }, [convertCategory, convertStageList, convertWorkVariateList, globalVariables]);
 
     const handleSubmit = debounceWith500ms(async e => {
+        setLoading(true);
         const params = convertParams(e);
 
         const {POST, PUT} = REQUEST_METHODS;
         const res = await request({
-            url: urlJoin(COMMON_URL_PREFIX, URLS.ADD_NOAH_WORK_PLAN),
+            url: assembleRequestUrl(URLS.ADD_NOAH_WORK_PLAN),
             method: editing ? PUT : POST,
             params,
         });
         const {status} = res;
+        setLoading(false);
         if (!status) {
-            Toast.success('操作成功');
+            Toast.success(DEFAULT_SUCCESS_MESSAGE);
             navigate(generateFullPath(routes.NOAH_LIST.path));
         }
     });
@@ -579,12 +570,12 @@ const useAddOrEdit = ({
     // 执行相关
     const handleExecute = useCallback(async () => {
         const res = await request({
-            url: urlJoin(COMMON_URL_PREFIX, URLS.INDIVIDUAL_EXECUTE, prop('detailId', params)),
+            url: assembleRequestUrl(urlJoin(URLS.INDIVIDUAL_EXECUTE, prop('detailId', params))),
             method: REQUEST_METHODS.POST,
         });
         const {code, data: {id}} = res;
         if (code === REQUEST_CODE.SUCCESS) {
-            Toast.success('操作成功');
+            Toast.success(DEFAULT_SUCCESS_MESSAGE);
 
             navigate(stringifyUrl({
                 url: generateFullPath(routes.EXEC_LIST.path),
@@ -629,16 +620,20 @@ const useAddOrEdit = ({
             pageSize: editing ? PAGE_SIZE_OF_NO_PAGINATION : DEFAULT_PAGINATION.pageSize,
         });
         return () => {
-            updateNoahDetail(null);
+            reset();
         };
     }, []);
 
     // 获取编辑详情
     useEffect(() => {
-        if (!prop('detailId', params) || isViewing) {
+        const detailId = prop('detailId', params);
+        if (!detailId || isViewing) {
             // 查看历史详情
             if (isViewing && executionDetail) {
                 updateEditValeFromExecutionDetail();
+            }
+            if (!detailId) {
+                updateNoahDetail(null);
             }
             return;
         }
@@ -660,6 +655,7 @@ const useAddOrEdit = ({
         isExecuting,
         formRef,
         isViewing,
+        loading,
 
         // about category
         handleAddCategory,

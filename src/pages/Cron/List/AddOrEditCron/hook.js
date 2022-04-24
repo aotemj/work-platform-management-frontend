@@ -6,7 +6,6 @@ import urlJoin from 'url-join';
 import {CRON_DATE_WEEKS, STRATEGIES, URLS} from '../../constant';
 import {deConvertParams} from '../../../../utils/convertNoahDetail';
 import {
-    COMMON_URL_PREFIX,
     DEFAULT_PAGINATION,
     PAGE_SIZE_OF_NO_PAGINATION,
     REQUEST_METHODS,
@@ -14,7 +13,7 @@ import {
     SYMBOL_FOR_ALL,
 } from '../../../../constant';
 import {request} from '../../../../request/fetch';
-import {debounceWith250ms, getContainerDOM, requestCallback} from '../../../../utils';
+import {assembleRequestUrl, debounceWith250ms, getContainerDOM, requestCallback} from '../../../../utils';
 
 const defaultFormikValues = {
     taskName: '', // 执行策略
@@ -39,10 +38,9 @@ const useAddOrEditCron = ({
     const [selectAll, setSelectAll] = useState(false);
     const [indeterminate, setIndeterminate] = useState(false);
     const [noahSearchName, setNoahSearchName] = useState('');
+    const [loading, setLoading] = useState(false);
 
-    const setFormValues = e => {
-        return editing ? setEditValues(e) : setFormikValues(e);
-    };
+    const setFormValues = e => (editing ? setEditValues(e) : setFormikValues(e));
     // 全选
     const handleChangeDatePicker = (e, values) => {
         const selectLength = e.length;
@@ -118,18 +116,20 @@ const useAddOrEditCron = ({
         const {exePolicy, taskName, workId} = values;
         const exeCron = convertCronExpress(values);
         const res = await request({
-            url: urlJoin(COMMON_URL_PREFIX, URLS.EDIT_CRON, String(cronId)),
+            url: assembleRequestUrl(urlJoin(URLS.EDIT_CRON, String(cronId))),
             method: REQUEST_METHODS.PUT,
             params: {
                 exeCron, exePolicy, taskName, workId,
             },
         });
-
+        const callback = () => {
+            setLoading(false);
+            setVisible(false);
+        };
         requestCallback({
             res,
-            callback() {
-                setVisible(false);
-            },
+            callback,
+            errorCallback: callback,
         });
     };
 
@@ -137,11 +137,12 @@ const useAddOrEditCron = ({
         const {exePolicy, taskName, workId} = values;
         const exeCron = convertCronExpress(values);
         const res = await request({
-            url: urlJoin(COMMON_URL_PREFIX, URLS.ADD_CRON),
+            url: assembleRequestUrl(URLS.ADD_CRON),
             method: REQUEST_METHODS.POST, params: {
                 exeCron, exePolicy, taskName, workId,
             },
         });
+        setLoading(false);
         requestCallback({
             res, callback() {
                 setVisible(false);
@@ -150,6 +151,7 @@ const useAddOrEditCron = ({
     };
 
     const handleSubmit = values => {
+        setLoading(true);
         if (editing) {
             handleEditCron(values);
         } else {
@@ -212,7 +214,7 @@ const useAddOrEditCron = ({
     // 获取 cron 详情
     const getCronDetail = async detailId => {
         const res = await request({
-            url: urlJoin(COMMON_URL_PREFIX, URLS.GET_CRON_DETAIL, String(detailId)),
+            url: assembleRequestUrl(urlJoin(URLS.GET_CRON_DETAIL, String(detailId))),
         });
         requestCallback({
             res,
@@ -278,6 +280,7 @@ const useAddOrEditCron = ({
         onNoahSelectSearch,
         noahSearchName,
         handleCancel,
+        loading,
     };
 };
 

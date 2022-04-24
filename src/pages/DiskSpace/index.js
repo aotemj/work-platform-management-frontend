@@ -1,12 +1,12 @@
 import {connect} from 'react-redux';
 
 import DiskSpace from './DiskSpace';
-import {UPDATE_DISK_SPACE_INFO_S} from '../../sagas/types';
+import {updateDiskSpaceInfo} from '../../reduxSlice/diskSpace/diskSpaceSlice';
 
-const mapStateToProps = ({diskSpaceInfo}) => ({diskSpaceInfo});
+const mapStateToProps = ({diskSpace: diskSpaceInfo}) => ({diskSpaceInfo});
 
 const mapDispatchToProps = dispatch => ({
-    updateDiskSpaceInfo: () => dispatch({type: UPDATE_DISK_SPACE_INFO_S}),
+    updateDiskSpaceInfo: () => dispatch(updateDiskSpaceInfo()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(DiskSpace);

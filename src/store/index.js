@@ -1,19 +1,23 @@
-import {createStore, applyMiddleware, compose} from 'redux';
-import saga from 'redux-saga';
+import {configureStore} from '@reduxjs/toolkit';
 
-import reducer from '../reducer';
-import mySagas from '../sagas';
+import userReducer, {userNameSpace} from '../reduxSlice/uesr/userSlice';
+import noahReducer, {noahNameSpace} from '../reduxSlice/noah/noahSlice';
+import categoryReducer, {categoryNameSpace} from '../reduxSlice/category/categorySlice';
+import diskSpaceReducer, {diskSpaceNameSpace} from '../reduxSlice/diskSpace/diskSpaceSlice';
+import executionDetailReducer, {executionDetailNameSpace} from '../reduxSlice/execution/detailSlice';
+import noahDetailReducer, {noahDetailNameSpace} from '../reduxSlice/noah/detailSlice';
+import currentUserReducer, {currentUserNameSpace} from '../reduxSlice/uesr/currentUserSlice';
 
-const sagaMiddleware = saga();
-
-const composeEnhancers =   window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
-    ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({}) : compose;
-
-const enhancer = composeEnhancers(applyMiddleware(sagaMiddleware));
-
-const store = createStore(reducer, enhancer);
-sagaMiddleware.run(mySagas);
+const store = configureStore({
+    reducer: {
+        [currentUserNameSpace]: currentUserReducer,
+        [userNameSpace]: userReducer,
+        [noahNameSpace]: noahReducer,
+        [categoryNameSpace]: categoryReducer,
+        [noahDetailNameSpace]: noahDetailReducer,
+        [executionDetailNameSpace]: executionDetailReducer,
+        [diskSpaceNameSpace]: diskSpaceReducer,
+    },
+});
 
 export default store;
-
-

@@ -5,13 +5,17 @@ import {reject, anyPass, isEmpty, isNil} from 'ramda';
 import urlJoin from 'url-join';
 
 import DateRangePicker from '../../../../components/DateRangePicker';
-import {COMMON_URL_PREFIX} from '../../../../constant';
 import {request} from '../../../../request/fetch';
 import {URLS} from '../../constant';
-import {convertConsumeTime, debounceWith500ms, formatTimeStamp, requestCallback} from '../../../../utils';
+import {
+    assembleRequestUrl,
+    convertConsumeTime,
+    debounceWith500ms,
+    formatTimeStamp,
+    requestCallback,
+} from '../../../../utils';
 import StatusTag from '../../../../components/StatusTag';
 import cx from './index.less';
-import {RUN_STATUSES} from '../../../Exec/List/constant';
 
 const CronRecord = ({visible, recordId, onClose}) => {
 
@@ -31,7 +35,7 @@ const CronRecord = ({visible, recordId, onClose}) => {
         const params = reject(anyPass([isEmpty, isNil]))(searchValue);
 
         const res = await request({
-            url: urlJoin(COMMON_URL_PREFIX, URLS.CRON_RECORD, String(recordId)), params,
+            url: assembleRequestUrl(urlJoin(URLS.CRON_RECORD, String(recordId))), params,
         });
         requestCallback({
             res, hideMessage: true, callback(data) {

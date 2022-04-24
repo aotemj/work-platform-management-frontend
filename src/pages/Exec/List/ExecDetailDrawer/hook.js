@@ -4,10 +4,11 @@ import {prop} from 'ramda';
 import {convertConsumeTime, formatTimeStamp} from '../../../../utils';
 import cx from './index.less';
 import {RUN_STATUSES} from '../constant';
+import {DEFAULT_STRING_VALUE} from '../../../../constant';
 
 const useExecDetail = executionDetail => {
     const title = useMemo(() => {
-        return `作业${executionDetail?.name}的执行详情`;
+        return `作业${executionDetail?.name || DEFAULT_STRING_VALUE}的执行详情`;
     }, [executionDetail]);
 
     const userName = prop('userName', executionDetail);

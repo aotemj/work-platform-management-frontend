@@ -203,7 +203,7 @@ const deConvertWorkPlan = workPlan => {
 };
 
 export const deConvertParams = data => {
-    const {stageList, workPlan} = data;
+    const {stageList = [], workPlan} = data;
     const convertedStageList = deConvertStageList(stageList);
     const {
         tempWorkPlan,

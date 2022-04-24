@@ -33,6 +33,7 @@ const FormikComp = ({
     handleCancel,
     okText = '确定',
     transformRef,
+    buttonLoading = false,
 }) => {
     const validateObj = Object.values(formFields).reduce((prev, curr) => {
         if (!curr.hide) {
@@ -78,6 +79,7 @@ const FormikComp = ({
                 <Button
                     type={'primary'}
                     disabled={disabled}
+                    loading={buttonLoading}
                     onClick={() => handleSubmit(values)}
                     className={cx('submit-button', 'button')}
                 >{okText}

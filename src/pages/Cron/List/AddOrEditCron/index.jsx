@@ -16,7 +16,7 @@ const AddOrEditCron = ({
     onClose,
     editing,
     noah,
-    noahDetail,
+    noahDetail: {loading: detailLoading, detail: noahDetail},
     getNoahList,
     getNoahWorkPlanDetail,
     editDetailId,
@@ -37,6 +37,7 @@ const AddOrEditCron = ({
         handleCancel,
         onNoahSelectSearch,
         noahSearchName,
+        loading,
     } = useAddOrEditCron({
         noah,
         noahDetail,
@@ -204,6 +205,7 @@ const AddOrEditCron = ({
             required: true,
             children: ({field, form: {values}}) => {
                 const noahDetailProps = {
+                    loading: detailLoading,
                     noahDetail: convertedNoahDetail,
                     noahOriginalDetail: noahDetail,
                 };
@@ -246,6 +248,7 @@ const AddOrEditCron = ({
         setDisabled,
         formFields,
         handleCancel,
+        loading,
         transformRef: form => {
             formRef.current = form;
         },

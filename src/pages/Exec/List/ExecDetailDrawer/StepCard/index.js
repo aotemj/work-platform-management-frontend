@@ -1,7 +1,8 @@
 import {connect} from 'react-redux';
 
 import StepCard from './StepCard';
-import {UPDATE_CURRENT_USER_S, UPDATE_USER_FROM_ONE_S} from '../../../../../sagas/types';
+import {updateUserFromOne} from '../../../../../reduxSlice/uesr/userSlice';
+import {updateCurrentUser} from '../../../../../reduxSlice/uesr/currentUserSlice';
 
 const mapStateToProps = ({users, currentUser}) => ({
     users,
@@ -9,18 +10,8 @@ const mapStateToProps = ({users, currentUser}) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-    updateUserFromOne: payload => {
-        dispatch({
-            type: UPDATE_USER_FROM_ONE_S,
-            payload,
-        });
-    },
-    updateCurrentUser: payload => {
-        dispatch({
-            type: UPDATE_CURRENT_USER_S,
-            payload,
-        });
-    },
+    updateUserFromOne: payload => dispatch(updateUserFromOne(payload)),
+    updateCurrentUser: payload => dispatch(updateCurrentUser(payload)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(StepCard);

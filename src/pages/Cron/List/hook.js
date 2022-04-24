@@ -3,9 +3,16 @@ import {Modal} from '@osui/ui';
 import {reject, anyPass, isEmpty, isNil} from 'ramda';
 import urlJoin from 'url-join';
 
-import {debounceWith500ms, diskWarning, getContainerDOM, requestCallback, Toast} from '../../../utils';
+import {
+    assembleRequestUrl,
+    debounceWith500ms,
+    diskWarning,
+    getContainerDOM,
+    requestCallback,
+    Toast,
+} from '../../../utils';
 import {request} from '../../../request/fetch';
-import {COMMON_URL_PREFIX, DEFAULT_PAGINATION, REQUEST_METHODS, REQUEST_TYPE} from '../../../constant';
+import {DEFAULT_PAGINATION, REQUEST_METHODS, REQUEST_TYPE} from '../../../constant';
 import {URLS} from '../constant';
 
 const useCronList = ({
@@ -41,7 +48,7 @@ const useCronList = ({
         setLoading(true);
         try {
             const res = await request({
-                url: urlJoin(COMMON_URL_PREFIX, URLS.CRON_LIST_URL),
+                url: assembleRequestUrl(URLS.CRON_LIST_URL),
                 params,
             });
             const {status, data, msg} = res;
@@ -104,7 +111,7 @@ const useCronList = ({
             onOk: debounceWith500ms(async () => {
                 const res = await request({
                     method: REQUEST_METHODS.DELETE,
-                    url: urlJoin(COMMON_URL_PREFIX, URLS.DELETE_CRON_ITEM, String(id)),
+                    url: assembleRequestUrl(urlJoin(URLS.DELETE_CRON_ITEM, String(id))),
                 });
                 requestCallback({
                     res,
@@ -140,7 +147,7 @@ const useCronList = ({
         const params = new FormData();
         params.append('openStatus', val ? 1 : 0);
         const res = await request({
-            url: urlJoin(COMMON_URL_PREFIX, URLS.getToggleCronStatusUrl(id)),
+            url: assembleRequestUrl(URLS.getToggleCronStatusUrl(id)),
             method: REQUEST_METHODS.PUT,
             type: REQUEST_TYPE.FORM_DATA,
             params,

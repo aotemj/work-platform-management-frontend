@@ -128,10 +128,13 @@ const SelectAll = props => {
             maxTagCount={DEFAULT_MAX_TAG_COUNT}
             value={res}
         >
-
-            <Select.Option key={SYMBOL_FOR_ALL} value={SYMBOL_FOR_ALL} title={SYMBOL_FOR_ALL}>
-                全选
-            </Select.Option>
+            {
+                props?.children.length && (
+                    <Select.Option key={SYMBOL_FOR_ALL} value={SYMBOL_FOR_ALL} title={SYMBOL_FOR_ALL}>
+                        全选
+                    </Select.Option>
+                )
+            }
             {props.children}
         </Select>
     );

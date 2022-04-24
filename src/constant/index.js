@@ -114,3 +114,18 @@ export const MESSAGE_TYPES = {
     ERROR: 'error',
     WARNING: 'warning',
 };
+
+export const REQUEST_URL_TYPES = {
+    INTERNAL: {
+        label: 'INTERNAL',
+        value: 'COMMON',
+        prefix: COMMON_URL_PREFIX,
+    },
+    EXTERNAL: {
+        label: 'EXTERNAL',
+        value: 'GLOBAL',
+        prefix: GLOBAL_URL_PREFIX,
+    },
+};
+
+export const DEFAULT_SUCCESS_MESSAGE = '操作成功';

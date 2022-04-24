@@ -99,7 +99,6 @@ const Header = ({executionDetail, params, dataSource, setAddStepDrawerVisible}) 
         );
 
     }, [stepDetail?.runStatus]);
-
     const errorOperations = [
         {
             label: '全部主机重试',

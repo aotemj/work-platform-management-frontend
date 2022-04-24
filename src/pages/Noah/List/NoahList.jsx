@@ -9,8 +9,8 @@ import cx from './index.less';
 import useNoahList from './hook';
 import {formatTimeStamp} from '../../../utils';
 import OperationBar from './OperationBar';
-import {MAX_DISPLAY_LENGTH, SPLIT_SYMBOL} from '../../../constant';
 import EllipsisContainer from '../../../components/EllipsisContainer';
+import {MAX_DISPLAY_LENGTH, SPLIT_SYMBOL} from '../../../constant';
 
 const title = '作业管理';
 
@@ -22,13 +22,14 @@ const NoahList = ({
     categories,
     getCategoryList,
     categoryCurrentPage,
+    noah: {
+        loading: noahLoading,
+    },
 }) => {
-
     const {
         data,
         handlePaginationChange,
         handleChange,
-        loading,
         selectedRowKeys,
         onSelectChange,
         handleMenuClick,
@@ -152,7 +153,7 @@ const NoahList = ({
     const tableProps = {
         dataSource: data.list,
         columns,
-        loading,
+        loading: noahLoading,
         pagination: {
             ...omit('list', data),
             onChange: handlePaginationChange,
@@ -173,13 +174,11 @@ const NoahList = ({
         categorySearchName,
     };
     return (
-        <Spin spinning={batchSpin} tip={'正在批量操作，请稍后'} size={'large'}>
+        <Spin spinning={batchSpin} tip={'正在批量操作，请稍后'}>
             <div className={cx('noah-container')}>
                 <PageHeader title={title} className={cx('title')} />
                 <OperationBar {...operationBarProps} />
-                <Spin spinning={loading} size="large">
-                    <Table {...tableProps} />
-                </Spin>
+                <Table {...tableProps} />
             </div>
         </Spin>
     );

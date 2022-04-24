@@ -12,7 +12,7 @@ const OperationBar = ({
     noahType,
     addNoah,
     setNoahType,
-    categories: {list, currentPage: categoryCurrentPage},
+    categories: {list, currentPage: categoryCurrentPage, loading},
     getCategoryList,
     onCategorySearchCallback,
     categorySearchName,
@@ -22,6 +22,7 @@ const OperationBar = ({
             const {name, id} = project;
             return {label: name, value: id, key: id};
         }),
+        loading,
         getPopupContainer: triggerNode => triggerNode.parentNode,
         className: cx('noah-list-select'),
         placeholder: '搜索作业类型',
@@ -79,7 +80,7 @@ const OperationBar = ({
                 </Button>
                 <Dropdown
                     overlay={menu}
-                    placement={'bottomCenter'}
+                    placement={'bottom'}
                     overlayClassName={'noah-dropdown-menu'}
                     trigger={'click'}
                 >

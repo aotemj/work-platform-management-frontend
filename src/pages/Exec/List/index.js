@@ -1,21 +1,12 @@
 import {connect} from 'react-redux';
 
 import ExecList from './ExecList';
-import {GET_EXECUTION_DETAIL_S} from '../../../sagas/types';
+import {getExecutionDetail} from '../../../reduxSlice/execution/detailSlice';
 
-const mapStateToProps = state => {
-    return {
-        executionDetail: state.executionDetail,
-    };
-};
+const mapStateToProps = ({executionDetail}) => ({executionDetail});
 
-const mapDispatchToProps = (dispatch, {}) => ({
-    getExecutionDetail: payload => {
-        dispatch({
-            type: GET_EXECUTION_DETAIL_S,
-            payload,
-        });
-    },
+const mapDispatchToProps = dispatch => ({
+    getExecutionDetail: payload => dispatch(getExecutionDetail(payload)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ExecList);

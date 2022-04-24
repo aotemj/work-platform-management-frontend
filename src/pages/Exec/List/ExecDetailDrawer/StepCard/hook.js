@@ -2,9 +2,9 @@ import {useCallback, useEffect, useMemo, useState} from 'react';
 import {Modal} from '@osui/ui';
 import {prop} from 'ramda';
 import {useNavigate} from 'react-router-dom';
-import {urlJoin} from 'url-join';
 
 import {
+    assembleRequestUrl,
     convertConsumeTime,
     formatTimeStamp,
     generateFullPath,
@@ -13,13 +13,18 @@ import {
 } from '../../../../../utils';
 import {
     DEFAULT_STRING_VALUE,
+    DEFAULT_SUCCESS_MESSAGE,
     REQUEST_CODE,
     REQUEST_METHODS,
     SPLIT_SYMBOL,
     STEP_TYPES,
-    COMMON_URL_PREFIX,
 } from '../../../../../constant';
-import {CONFIRM_RESULTS, FAILED, IGNORE_ERROR, NOT_PASS, PASS, RUN_STATUSES, SUCCESS, URLS} from '../../constant';
+import {
+    CONFIRM_RESULTS, FAILED,
+    IGNORE_ERROR, NOT_PASS,
+    PASS, RUN_STATUSES,
+    SUCCESS, URLS,
+} from '../../constant';
 import {request} from '../../../../../request/fetch';
 import {routes} from '../../../../../routes';
 import {entirelyRetry, neglectErrors} from '../util';
@@ -116,14 +121,14 @@ const useStepCard = ({
         // noPassReason	不通过原因		false   // string
         setConfirmLoading(true);
         const res = await request({
-            url: urlJoin(COMMON_URL_PREFIX, URLS.CONFIRM_MANUAL_RESULT),
+            url: assembleRequestUrl(URLS.CONFIRM_MANUAL_RESULT),
             method: REQUEST_METHODS.POST,
             params,
         });
         const {code} = res;
         setConfirmLoading(false);
         if (code === REQUEST_CODE.SUCCESS) {
-            Toast.success('操作成功');
+            Toast.success(DEFAULT_SUCCESS_MESSAGE);
             setNoPassVisible(false);
             submitCallback();
         }
@@ -149,7 +154,7 @@ const useStepCard = ({
 
         const ignoreErrorObj = {
             label: '忽略错误',
-            execution: neglectErrors,
+            execution: detail => neglectErrors(detail, navigate),
             disabled: ignoreError,
         };
 
@@ -162,7 +167,7 @@ const useStepCard = ({
             // },
             {
                 label: '全部主机重试',
-                execution: entirelyRetry,
+                execution: detail => entirelyRetry(detail, navigate),
                 disabled: ignoreError,
             },
         ];
@@ -190,7 +195,7 @@ const useStepCard = ({
         const ids = informUserId.split(SPLIT_SYMBOL);
         if (ids) {
             return ids.map(id => {
-                return users.map.get(id) || null;
+                return users.map[id] || null;
             }).filter(item => item);
         }
     };
