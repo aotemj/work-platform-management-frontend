@@ -82,7 +82,7 @@ const init =  (state, action) => {
 
 const loadMore = (state, action) => {
     let {list, currentPage} = action.payload;
-    let {currentPage: originCurrent, list: originList} = state.users;
+    let {currentPage: originCurrent, list: originList} = state;
     list = [...originList, ...list];
     currentPage = originCurrent + 1;
 

@@ -53,15 +53,12 @@ const init = (state, action) => {
 };
 const loadMore = (state, action) => {
     let {list, currentPage} = action.payload;
-    let {currentPage: originCurrent, list: originList} = state.users;
+    let {currentPage: originCurrent, list: originList} = state;
     list = [...originList, ...list];
     currentPage = originCurrent + 1;
-    return {
-        ...state,
-        list,
-        currentPage,
-        map: updateCategoryMap(list),
-    };
+    state.list = list;
+    state.currentPage = currentPage;
+    state.map = updateCategoryMap(list);
 };
 const categorySlice = createSlice({
     name: categoryNameSpace,

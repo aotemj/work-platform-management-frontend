@@ -51,15 +51,12 @@ const init = (state, action) => {
 };
 const loadMore = (state, action) => {
     let {list, currentPage, total} = action.payload;
-    let {currentPage: originCurrent, list: originList} = state.users;
+    let {currentPage: originCurrent, list: originList} = state;
     list = [...originList, ...list];
     currentPage = originCurrent + 1;
-    return {
-        ...state,
-        list,
-        currentPage,
-        total,
-    };
+    state.list = list;
+    state.currentPage = currentPage;
+    state.total = total;
 };
 
 const noahSlice = createSlice({
@@ -72,6 +69,7 @@ const noahSlice = createSlice({
         },
         [getNoahList.fulfilled]: (state, action) => {
             const {type = INIT} = action.payload;
+            console.log(action.payload);
             state.loading = false;
             return type === INIT ? init(state, action) : loadMore(state, action);
         },
