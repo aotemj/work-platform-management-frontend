@@ -69,7 +69,6 @@ const noahSlice = createSlice({
         },
         [getNoahList.fulfilled]: (state, action) => {
             const {type = INIT} = action.payload;
-            console.log(action.payload);
             state.loading = false;
             return type === INIT ? init(state, action) : loadMore(state, action);
         },

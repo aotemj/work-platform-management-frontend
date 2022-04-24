@@ -16,6 +16,9 @@ const AddOrEditCron = ({
     onClose,
     editing,
     noah,
+    noah: {
+        loading: noahLoading,
+    },
     noahDetail: {loading: detailLoading, detail: noahDetail},
     getNoahList,
     getNoahWorkPlanDetail,
@@ -210,6 +213,7 @@ const AddOrEditCron = ({
                     noahOriginalDetail: noahDetail,
                 };
                 const workPlanSelectProps = {
+                    loading: noahLoading,
                     options: list?.map(item => {
                         const {name, id} = item;
                         return {label: name, value: id, key: id};
