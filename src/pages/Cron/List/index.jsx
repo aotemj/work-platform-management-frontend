@@ -4,11 +4,11 @@
 import React from 'react';
 import {Table, Button, PageHeader, Spin, Switch} from '@osui/ui';
 import {omit, propOr, prop} from 'ramda';
-import {useDispatch, useSelector} from 'react-redux';
+import {useDispatch} from 'react-redux';
 
 import cx from './index.less';
 import useCronList from './hook';
-import {formatTimeStamp, generateDispatchCallback} from '../../../utils';
+import {formatTimeStamp, generateDispatchCallback, useSelectState} from '../../../utils';
 import OperationBar from './OperationBar';
 import StatusTag from '../../../components/StatusTag';
 import AddOrEditCron from './AddOrEditCron';
@@ -23,7 +23,7 @@ const title = '定时任务';
 const Index = () => {
 
     const dispatch = useDispatch();
-    const diskSpaceInfo = useSelector(state => state.diskSpace);
+    const diskSpaceInfo = useSelectState('diskSpace');
 
     const {
         data,

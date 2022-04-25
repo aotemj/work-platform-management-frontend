@@ -10,7 +10,7 @@
  */
 import React, {useMemo} from 'react';
 import {propOr} from 'ramda';
-import {useDispatch, useSelector} from 'react-redux';
+import {useDispatch} from 'react-redux';
 
 import cx from './index.less';
 import useStepCard from './hook';
@@ -20,7 +20,7 @@ import TimeItem from './TimeItem';
 import ManualConfirmContent from './ManualConfirmContent';
 import ContentExceptManualConfirm from './ContentExceptManualConfirm';
 import {updateUserFromOne} from '../../../../../reduxSlice/uesr/userSlice';
-import {generateDispatchCallback} from '../../../../../utils';
+import {generateDispatchCallback, useSelectState} from '../../../../../utils';
 import {updateCurrentUser} from '../../../../../reduxSlice/uesr/currentUserSlice';
 
 const StepCard = ({
@@ -30,9 +30,9 @@ const StepCard = ({
 }) => {
 
     const dispatch = useDispatch();
-    const users = useSelector(state => state.users);
-    const currentUser = useSelector(state => state.currentUser);
-    const executionDetail = useSelector(state => state.executionDetail);
+    const users = useSelectState('users');
+    const currentUser = useSelectState('currentUser');
+    const executionDetail = useSelectState('executionDetail');
 
     const {
         consumeObj,

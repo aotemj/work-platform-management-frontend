@@ -39,9 +39,8 @@ const useStepCard = ({
 }) => {
     const navigate = useNavigate();
     const [noPassVisible, setNoPassVisible] = useState(false);
-    const name = useMemo(() => {
-        return detail?.name;
-    }, [detail]);
+
+    const name = prop('name', detail);
 
     const [confirmLoading, setConfirmLoading] = useState(false);
     // 失败IP重试 暂时隐藏，后期迭代
@@ -58,9 +57,7 @@ const useStepCard = ({
 
     // NOTE  步骤类型
     //  人工确认  类型没有 结束时间
-    const type = useMemo(() => {
-        return detail?.type;
-    }, [detail]);
+    const type = prop('type', detail);
 
     const stageTriggerItemList = prop('stageTriggerItemList', detail) || [];
 

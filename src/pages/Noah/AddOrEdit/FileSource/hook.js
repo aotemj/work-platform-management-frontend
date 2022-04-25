@@ -29,11 +29,13 @@ const useFileSource = ({
     const [needUpdateFileMap, setNeedUpdateFileMap] = useState(false);
 
     const chooseServerTips = useMemo(() => {
-        return `已选择 ${serverFiles.length} 个服务器文件`;
+        const length = serverFiles.length;
+        return length ? `已选择 ${length} 个服务器文件` : '暂未选择文件';
     }, [serverFiles.length]);
 
     const chooseLocalTips = useMemo(() => {
-        return `已选择 ${localFiles.length} 个本地文件`;
+        const length = localFiles.length;
+        return length ? `已选择 ${length} 个本地文件` : '暂未选择文件';
     }, [localFiles.length]);
 
     const handleUpdateStorageFileList = useCallback(storageFileList => {

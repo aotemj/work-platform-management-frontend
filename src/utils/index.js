@@ -2,6 +2,9 @@ import {message} from '@osui/ui';
 import urlJoin from 'url-join';
 import {debounce} from 'lodash/fp';
 import {generatePath} from 'react-router';
+import {parseTemplate} from 'url-template';
+import {useSelector} from 'react-redux';
+import {prop, path} from 'ramda';
 
 import {getCompanyId, getSpaceId} from './getRouteIds';
 import {
@@ -11,7 +14,7 @@ import {
     MINUTE_STEP, PROJECT_ROUTE,
     PUBLIC_PATH, REQUEST_CODE,
     MESSAGE_TYPES, REQUEST_URL_TYPES,
-    DEFAULT_SUCCESS_MESSAGE,
+    DEFAULT_SUCCESS_MESSAGE, COMMON_EXEC_URL_PREFIX,
 } from '../constant';
 
 export const Toast = {
@@ -258,8 +261,15 @@ export const assembleExternalUrl = url => assembleRequestUrl(url, REQUEST_URL_TY
 
 export const generateDispatchCallback = (dispatch, callback) => payload => dispatch(callback(payload));
 
+export const generateUrlWithParamsString = (prefix, paramsString) => parseTemplate(urlJoin(prefix, paramsString));
 
+export const generateExecUrlWithParamsString = paramsString =>
+    generateUrlWithParamsString(COMMON_EXEC_URL_PREFIX, paramsString);
 
+export const useSelectState = paths => {
+    let generateExecution = Array.isArray(paths) ? state => path(paths, state) : state => prop(paths, state);
+    return useSelector(generateExecution);
+};
 
 
 

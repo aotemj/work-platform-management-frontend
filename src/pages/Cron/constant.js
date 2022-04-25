@@ -1,6 +1,7 @@
-import urlJoin from 'url-join';
-import {parseTemplate} from 'url-template';
 // 执行策略
+import {generateExecUrlWithParamsString, generateUrlWithParamsString} from '../../utils';
+import {COMMON_EXEC_URL_PREFIX} from '../../constant';
+
 export const STRATEGIES = {
     // 单次执行
     SINGLE: {
@@ -21,16 +22,15 @@ export const STRATEGIES_TYPES = new Map([
     [STRATEGIES.LOOP.value, STRATEGIES.LOOP],
 ]);
 
-const COMMON_EXEC_URL_PREFIX = '/rest/v1/cron-execute';
 export const URLS = {
     // 分页查询定时任务
     CRON_LIST_URL: COMMON_EXEC_URL_PREFIX,
     ADD_CRON: COMMON_EXEC_URL_PREFIX,
-    DELETE_CRON_ITEM: parseTemplate(urlJoin(COMMON_EXEC_URL_PREFIX, '{id}')), // /rest/v1/cron-execute/{id}
-    GET_CRON_DETAIL: parseTemplate(urlJoin(COMMON_EXEC_URL_PREFIX, '{detailId}')), // rest/v1/cron-execute/{id}
-    EDIT_CRON: parseTemplate(urlJoin(COMMON_EXEC_URL_PREFIX, '{cronId}')), // rest/v1/cron-execute/{id}
-    TOGGLE_CRON_STATUS_TEMPLATE: parseTemplate(urlJoin(COMMON_EXEC_URL_PREFIX, '{id}', 'open-status')),
-    CRON_RECORD: parseTemplate(urlJoin(COMMON_EXEC_URL_PREFIX, 'cron-execute-trigger', '{recordId}')),
+    DELETE_CRON_ITEM: generateExecUrlWithParamsString('{id}'), // /rest/v1/cron-execute/{id}
+    GET_CRON_DETAIL: generateExecUrlWithParamsString('{detailId}'), // rest/v1/cron-execute/{id}
+    EDIT_CRON: generateExecUrlWithParamsString('{cronId}'), // rest/v1/cron-execute/{id}
+    TOGGLE_CRON_STATUS_TEMPLATE: generateExecUrlWithParamsString('{id}'),
+    CRON_RECORD: generateUrlWithParamsString(COMMON_EXEC_URL_PREFIX, 'cron-execute-trigger', '{recordId}'),
 };
 
 export const CRON_DATE_WEEKS = [

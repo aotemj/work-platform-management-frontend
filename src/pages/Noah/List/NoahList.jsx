@@ -4,11 +4,11 @@
 import React from 'react';
 import {Table, PageHeader, Button, Spin, Tooltip, Tag} from '@osui/ui';
 import {omit} from 'ramda';
-import {useDispatch, useSelector} from 'react-redux';
+import {useDispatch} from 'react-redux';
 
 import cx from './index.less';
 import useNoahList from './hook';
-import {formatTimeStamp, generateDispatchCallback} from '../../../utils';
+import {formatTimeStamp, generateDispatchCallback, useSelectState} from '../../../utils';
 import OperationBar from './OperationBar';
 import EllipsisContainer from '../../../components/EllipsisContainer';
 import {MAX_DISPLAY_LENGTH, SPLIT_SYMBOL} from '../../../constant';
@@ -19,9 +19,9 @@ import {getCategoryList} from '../../../reduxSlice/category/categorySlice';
 const title = '作业管理';
 
 const NoahList = () => {
-    const noah = useSelector(state => state.noah);
+    const noah = useSelectState('noah');
     const {loading: noahLoading} = noah;
-    const diskSpaceInfo = useSelector(state => state.diskSpace);
+    const diskSpaceInfo = useSelectState('diskSpace');
 
     const dispatch = useDispatch();
     const updateNoahList = generateDispatchCallback(dispatch, getNoahList);

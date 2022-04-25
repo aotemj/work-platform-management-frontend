@@ -5,7 +5,7 @@
 import React, {useCallback, useMemo} from 'react';
 import {Drawer, Input, Select, Tooltip} from '@osui/ui';
 import * as yup from 'yup';
-import {useDispatch, useSelector} from 'react-redux';
+import {useDispatch} from 'react-redux';
 
 import cx from './index.less';
 import {ReactComponent as IconRemark} from '../../../../statics/icons/remark.svg';
@@ -13,7 +13,7 @@ import useAddNoahStep from './hook';
 import FormikComp from '../../../../components/FormikComp';
 import {getFileDistribution, getManualConfirmFields, getScriptExecuteFields} from './util';
 import {STEP_TYPES} from '../../../../constant';
-import {generateDispatchCallback} from '../../../../utils';
+import {generateDispatchCallback, useSelectState} from '../../../../utils';
 import {updateUserFromOne} from '../../../../reduxSlice/uesr/userSlice';
 
 const {Option} = Select;
@@ -29,7 +29,7 @@ const AddNoahStepDrawer = ({
     isViewing,
 }) => {
     const dispatch = useDispatch();
-    const usersFromOne = useSelector(state => state.users);
+    const usersFromOne = useSelectState('users');
     const {
         formikValues,
         setFormikValues,

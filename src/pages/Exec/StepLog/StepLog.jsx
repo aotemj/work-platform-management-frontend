@@ -1,10 +1,10 @@
-import {useDispatch, useSelector} from 'react-redux';
+import {useDispatch} from 'react-redux';
 import {Table, Typography, Spin} from '@osui/ui';
 
 import cx from './index.less';
 import Header from './Header';
 
-import {convertConsumeTime, generateDispatchCallback} from '../../../utils';
+import {convertConsumeTime, generateDispatchCallback, useSelectState} from '../../../utils';
 import LogContent from './LogContent/index';
 import {FAILED, RUN_STATUSES} from '../List/constant';
 import AddNoahStepDrawer from '../../Noah/AddOrEdit/AddNoahStepDrawer/AddNoahStepDrawer';
@@ -17,11 +17,11 @@ import {getCategoryList} from '../../../reduxSlice/category/categorySlice';
 const ExecLog = () => {
     const {Paragraph} = Typography;
     const dispatch = useDispatch();
-    const users = useSelector(state => state.users);
-    const categories = useSelector(state => state.category.list);
-    const categoryMap = useSelector(state => state.category.map);
-    const noahDetail = useSelector(state => state.noahDetail);
-    const executionDetail = useSelector(state => state.executionDetail);
+    const users = useSelectState('users');
+    const categories = useSelectState(['category', 'list']);
+    const categoryMap = useSelectState(['category', 'map']);
+    const noahDetail = useSelectState('noahDetail');
+    const executionDetail = useSelectState('executionDetail');
 
     const updateNoahWorkPlanDetail = generateDispatchCallback(dispatch, getNoahWorkPlanDetail);
     const updateExecutionDetail = generateDispatchCallback(dispatch, getExecutionDetail);

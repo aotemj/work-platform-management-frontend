@@ -2,13 +2,13 @@
  * 执行历史 作业任务列表
  */
 import React from 'react';
-import {useDispatch, useSelector} from 'react-redux';
+import {useDispatch} from 'react-redux';
 import {omit} from 'ramda';
 import {Table, Button, PageHeader, Spin} from '@osui/ui';
 
 import cx from './index.less';
 import useExecList from './hook';
-import {formatTimeStamp, generateDispatchCallback} from '../../../utils';
+import {formatTimeStamp, generateDispatchCallback, useSelectState} from '../../../utils';
 import OperationBar from './OperationBar';
 import StatusTag from '../../../components/StatusTag';
 import ExecDetailDrawer from './ExecDetailDrawer';
@@ -19,7 +19,7 @@ const title = '作业任务';
 
 const ExecList = () => {
     const dispatch = useDispatch();
-    const executionDetail = useSelector(state => state.executionDetail);
+    const executionDetail = useSelectState('executionDetail');
     const updateExecutionDetail = generateDispatchCallback(dispatch, getExecutionDetail);
 
     const {

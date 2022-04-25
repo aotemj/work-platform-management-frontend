@@ -2,6 +2,7 @@ import {useNavigate} from 'react-router-dom';
 import {useCallback, useEffect, useMemo, useRef} from 'react';
 import {PageHeader, Button} from '@osui/ui';
 import fileDownload from 'js-file-download';
+import {prop} from 'ramda';
 
 import cx from '../index.less';
 import HeaderDetailItem from '../../components/HeaderDetailItem';
@@ -127,13 +128,9 @@ const Header = ({executionDetail, params, dataSource, setAddStepDrawerVisible}) 
         operations.unshift(...errorOperations);
     }
 
-    const userName = useMemo(() => {
-        return executionDetail?.userName;
-    }, [executionDetail]);
+    const userName = prop('userName', executionDetail);
 
-    const title = useMemo(() => {
-        return stepDetail?.name;
-    }, [stepDetail?.name]);
+    const title = prop('name', stepDetail);
 
     const beginTime = useMemo(() => {
         const beginTime = stepDetail?.beginTime;

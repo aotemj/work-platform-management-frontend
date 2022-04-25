@@ -8,7 +8,7 @@
 import * as yup from 'yup';
 import {Button, Input, PageHeader, Select, Spin} from '@osui/ui';
 import {IconPlusOutlined} from '@osui/icons';
-import {useDispatch, useSelector} from 'react-redux';
+import {useDispatch} from 'react-redux';
 
 import cx from './index.less';
 import SelectAll from '../../../components/SelectAll';
@@ -20,7 +20,12 @@ import AddGlobalVariableDrawer from './AddGlobalVariableDrawer';
 import StepItem from './StepItem';
 import AddNoahStepDrawer from './AddNoahStepDrawer/AddNoahStepDrawer';
 import {DELETE_SYMBOL} from '../../../constant';
-import {debounceWith250ms, generateDispatchCallback, loadMoreCallBackByScrolling} from '../../../utils';
+import {
+    debounceWith250ms,
+    generateDispatchCallback,
+    loadMoreCallBackByScrolling,
+    useSelectState,
+} from '../../../utils';
 import {getNoahWorkPlanDetail, update} from '../../../reduxSlice/noah/detailSlice';
 import {addItem, getCategoryList} from '../../../reduxSlice/category/categorySlice';
 
@@ -45,8 +50,8 @@ const dropdownRender = (originNode, handleAddCallback, values) => {
 
 const AddOrEditNoah = () => {
     const dispatch = useDispatch();
-    const noahDetail = useSelector(state => state.noahDetail);
-    const {list: categories, map: categoryMap, currentPage: categoryCurrentPage} = useSelector(state => state.category);
+    const noahDetail = useSelectState('noahDetail');
+    const {list: categories, map: categoryMap, currentPage: categoryCurrentPage} = useSelectState('category');
     const {loading: detailLoading} = noahDetail;
     const updateNoahWorkPlanDetail = generateDispatchCallback(dispatch, getNoahWorkPlanDetail);
     const updateCategoryList = generateDispatchCallback(dispatch, getCategoryList);
