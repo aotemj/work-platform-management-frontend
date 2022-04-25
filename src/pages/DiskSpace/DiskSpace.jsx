@@ -1,15 +1,19 @@
 import {useNavigate} from 'react-router-dom';
 import {PageHeader} from '@osui/ui';
 import {useEffect} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
 
 import cx from './index.less';
 import PieCharts from './PieCharts';
 import {ReactComponent as InfoIcon} from '../../statics/icons/newInfo.svg';
+import {updateDiskSpaceInfo} from '../../reduxSlice/diskSpace/diskSpaceSlice';
 
 const title = '磁盘空间管理';
 
-const DiskSpace = props => {
-    const {updateDiskSpaceInfo, diskSpaceInfo} = props;
+const DiskSpace = () => {
+    const diskSpaceInfo = useSelector(state => state.diskSpace);
+    const dispatch = useDispatch();
+
     const navigate = useNavigate();
 
     const goBack = () => {
@@ -17,7 +21,7 @@ const DiskSpace = props => {
     };
 
     useEffect(() => {
-        updateDiskSpaceInfo();
+        dispatch(updateDiskSpaceInfo());
     }, []);
 
     return (

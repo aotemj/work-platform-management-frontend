@@ -4,10 +4,11 @@
 import React from 'react';
 import {Table, Button, PageHeader, Spin, Switch} from '@osui/ui';
 import {omit, propOr, prop} from 'ramda';
+import {useDispatch, useSelector} from 'react-redux';
 
 import cx from './index.less';
 import useCronList from './hook';
-import {formatTimeStamp} from '../../../utils';
+import {formatTimeStamp, generateDispatchCallback} from '../../../utils';
 import OperationBar from './OperationBar';
 import StatusTag from '../../../components/StatusTag';
 import AddOrEditCron from './AddOrEditCron';
@@ -15,19 +16,15 @@ import CronRecord from './CronRecord';
 import {DEFAULT_STRING_VALUE} from '../../../constant';
 import {STRATEGIES_TYPES} from '../constant';
 import EllipsisContainer from '../../../components/EllipsisContainer';
+import {updateDiskSpaceInfo} from '../../../reduxSlice/diskSpace/diskSpaceSlice';
 
 const title = '定时任务';
 
-const CronList = ({
-    noah,
-    noahDetail,
-    categories,
-    categoryMap,
-    getNoahList,
-    getNoahWorkPlanDetail,
-    diskSpaceInfo,
-    updateDiskSpaceInfo,
-}) => {
+const Index = () => {
+
+    const dispatch = useDispatch();
+    const diskSpaceInfo = useSelector(state => state.diskSpace);
+
     const {
         data,
         loading,
@@ -48,7 +45,7 @@ const CronList = ({
         toggleCronRecord,
     } = useCronList({
         diskSpaceInfo,
-        updateDiskSpaceInfo,
+        updateDiskSpaceInfo: generateDispatchCallback(dispatch, updateDiskSpaceInfo),
     });
 
     const tableOperations = [
@@ -177,12 +174,6 @@ const CronList = ({
         },
         editDetailId,
         editing,
-        noah,
-        noahDetail,
-        categories,
-        categoryMap,
-        getNoahList,
-        getNoahWorkPlanDetail,
     };
 
     const cronRecordProps = {
@@ -207,4 +198,4 @@ const CronList = ({
     );
 };
 
-export default CronList;
+export default Index;

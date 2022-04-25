@@ -1,9 +1,11 @@
 import {Button, Dropdown, Input, Menu, Select} from '@osui/ui';
+import {useDispatch, useSelector} from 'react-redux';
 
 import cx from '../index.less';
 import {DROP_DOWN_MENU} from '../constants';
 import {ReactComponent as IconSearch} from '../../../../statics/icons/search.svg';
-import {debounceWith250ms, loadMoreCallBackByScrolling} from '../../../../utils';
+import {debounceWith250ms, generateDispatchCallback, loadMoreCallBackByScrolling} from '../../../../utils';
+import {getCategoryList} from '../../../../reduxSlice/category/categorySlice';
 
 const OperationBar = ({
     handleChange,
@@ -12,11 +14,12 @@ const OperationBar = ({
     noahType,
     addNoah,
     setNoahType,
-    categories: {list, currentPage: categoryCurrentPage, loading},
-    getCategoryList,
     onCategorySearchCallback,
     categorySearchName,
 }) => {
+    const dispatch = useDispatch();
+    const {list, currentPage: categoryCurrentPage, loading} = useSelector(state => state.category);
+    const updateCategoryList = generateDispatchCallback(dispatch, getCategoryList);
     const typeSelectProps = {
         options: list.map(project => {
             const {name, id} = project;
@@ -35,7 +38,7 @@ const OperationBar = ({
         },
         onPopupScroll: debounceWith250ms(e => {
             loadMoreCallBackByScrolling(e, {
-                dispatch: getCategoryList,
+                dispatch: updateCategoryList,
                 currentPage: categoryCurrentPage,
                 params: {
                     name: categorySearchName,

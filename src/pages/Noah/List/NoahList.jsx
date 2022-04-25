@@ -4,28 +4,29 @@
 import React from 'react';
 import {Table, PageHeader, Button, Spin, Tooltip, Tag} from '@osui/ui';
 import {omit} from 'ramda';
+import {useDispatch, useSelector} from 'react-redux';
 
 import cx from './index.less';
 import useNoahList from './hook';
-import {formatTimeStamp} from '../../../utils';
+import {formatTimeStamp, generateDispatchCallback} from '../../../utils';
 import OperationBar from './OperationBar';
 import EllipsisContainer from '../../../components/EllipsisContainer';
 import {MAX_DISPLAY_LENGTH, SPLIT_SYMBOL} from '../../../constant';
+import {getNoahList} from '../../../reduxSlice/noah/noahSlice';
+import {updateDiskSpaceInfo} from '../../../reduxSlice/diskSpace/diskSpaceSlice';
+import {getCategoryList} from '../../../reduxSlice/category/categorySlice';
 
 const title = '作业管理';
 
-const NoahList = ({
-    getNoahList,
-    noah,
-    updateDiskSpaceInfo,
-    diskSpaceInfo,
-    categories,
-    getCategoryList,
-    categoryCurrentPage,
-    noah: {
-        loading: noahLoading,
-    },
-}) => {
+const NoahList = () => {
+    const noah = useSelector(state => state.noah);
+    const {loading: noahLoading} = noah;
+    const diskSpaceInfo = useSelector(state => state.diskSpace);
+
+    const dispatch = useDispatch();
+    const updateNoahList = generateDispatchCallback(dispatch, getNoahList);
+    const updateCategoryList = generateDispatchCallback(dispatch, getCategoryList);
+
     const {
         data,
         handlePaginationChange,
@@ -48,11 +49,11 @@ const NoahList = ({
         onCategorySearchCallback,
         categorySearchName,
     } = useNoahList({
-        getNoahList,
+        getNoahList: updateNoahList,
         noah,
-        updateDiskSpaceInfo,
+        updateDiskSpaceInfo: generateDispatchCallback(dispatch, updateDiskSpaceInfo),
         diskSpaceInfo,
-        getCategoryList,
+        getCategoryList: updateCategoryList,
     });
 
     const tableOperations = [
@@ -162,17 +163,15 @@ const NoahList = ({
     };
     const operationBarProps = {
         noahType,
-        categories,
         handleChange,
         handleChangeInput,
         handleMenuClick,
         addNoah,
         setNoahType,
-        getCategoryList,
-        categoryCurrentPage,
         onCategorySearchCallback,
         categorySearchName,
     };
+
     return (
         <Spin spinning={batchSpin} tip={'正在批量操作，请稍后'}>
             <div className={cx('noah-container')}>

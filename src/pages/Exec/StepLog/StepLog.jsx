@@ -1,27 +1,31 @@
+import {useDispatch, useSelector} from 'react-redux';
 import {Table, Typography, Spin} from '@osui/ui';
 
 import cx from './index.less';
 import Header from './Header';
 
-import {convertConsumeTime} from '../../../utils';
+import {convertConsumeTime, generateDispatchCallback} from '../../../utils';
 import LogContent from './LogContent/index';
 import {FAILED, RUN_STATUSES} from '../List/constant';
-import AddNoahStepDrawer from '../../Noah/AddOrEdit/AddNoahStepDrawer/index';
+import AddNoahStepDrawer from '../../Noah/AddOrEdit/AddNoahStepDrawer/AddNoahStepDrawer';
 import useAddOrEdit from '../../Noah/AddOrEdit/hook';
 import useStepLog from './hook';
+import {getNoahWorkPlanDetail, update} from '../../../reduxSlice/noah/detailSlice';
+import {getExecutionDetail} from '../../../reduxSlice/execution/detailSlice';
+import {getCategoryList} from '../../../reduxSlice/category/categorySlice';
 
-const ExecLog = ({
-    executionDetail,
-    getExecutionDetail,
-    users,
-    getNoahWorkPlanDetail,
-    noahDetail,
-    getCategoryList,
-    updateNoahDetail,
-    categories,
-    categoryMap,
-}) => {
+const ExecLog = () => {
     const {Paragraph} = Typography;
+    const dispatch = useDispatch();
+    const users = useSelector(state => state.users);
+    const categories = useSelector(state => state.category.list);
+    const categoryMap = useSelector(state => state.category.map);
+    const noahDetail = useSelector(state => state.noahDetail);
+    const executionDetail = useSelector(state => state.executionDetail);
+
+    const updateNoahWorkPlanDetail = generateDispatchCallback(dispatch, getNoahWorkPlanDetail);
+    const updateExecutionDetail = generateDispatchCallback(dispatch, getExecutionDetail);
+    const updateCategoryList = generateDispatchCallback(dispatch, getCategoryList);
 
     const {
         // step
@@ -31,11 +35,11 @@ const ExecLog = ({
         stepEditingValue,
         setStepEditingValue,
     } = useAddOrEdit({
-        getNoahWorkPlanDetail,
+        getNoahWorkPlanDetail: updateNoahWorkPlanDetail,
         noahDetail,
         executionDetail,
-        getCategoryList,
-        updateNoahDetail,
+        getCategoryList: updateCategoryList,
+        updateNoahDetail: generateDispatchCallback(dispatch, update),
         categories,
         categoryMap,
     });
@@ -46,7 +50,7 @@ const ExecLog = ({
         errorInfo,
         loading,
         setLoading,
-    } = useStepLog(executionDetail, getExecutionDetail);
+    } = useStepLog(executionDetail, updateExecutionDetail);
 
     const sideTableProps = {
         dataSource,

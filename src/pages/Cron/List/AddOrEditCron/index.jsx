@@ -2,28 +2,33 @@ import {Drawer, Input, Radio, DatePicker, Select, Checkbox, TimePicker} from '@o
 import * as yup from 'yup';
 import moment from 'moment';
 import {useRef} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
 
 import cx from './index.less';
 import FormikComp from '../../../../components/FormikComp';
 import useAddOrEditCron from './hook';
 import {CRON_DATE_WEEKS, STRATEGIES} from '../../constant';
 import NoahDetail from './NoahDetail';
-import {debounceWith250ms, loadMoreCallBackByScrolling} from '../../../../utils';
+import {debounceWith250ms, generateDispatchCallback, loadMoreCallBackByScrolling} from '../../../../utils';
+import {getNoahList} from '../../../../reduxSlice/noah/noahSlice';
+import {getNoahWorkPlanDetail} from '../../../../reduxSlice/noah/detailSlice';
 
 const AddOrEditCron = ({
     visible,
     setVisible,
     onClose,
     editing,
-    noah,
-    noah: {
-        loading: noahLoading,
-    },
-    noahDetail: {loading: detailLoading, detail: noahDetail},
-    getNoahList,
-    getNoahWorkPlanDetail,
     editDetailId,
 }) => {
+
+    const dispatch = useDispatch();
+    const noah = useSelector(state => state.noah);
+    const {loading: noahLoading} = noah;
+    const {loading: detailLoading, detail: noahDetail} = useSelector(state => state.noahDetail);
+
+    const updateNoahList = generateDispatchCallback(dispatch, getNoahList);
+    const updateNoahWorkPlanDetail = generateDispatchCallback(dispatch, getNoahWorkPlanDetail);
+
     const {
         disabled,
         setDisabled,
@@ -46,8 +51,8 @@ const AddOrEditCron = ({
         noahDetail,
         editing,
         editDetailId,
-        getNoahList,
-        getNoahWorkPlanDetail,
+        getNoahList: updateNoahList,
+        getNoahWorkPlanDetail: updateNoahWorkPlanDetail,
         setVisible,
         visible,
     });
@@ -229,7 +234,7 @@ const AddOrEditCron = ({
                     onPopupScroll: debounceWith250ms(e => {
                         loadMoreCallBackByScrolling(
                             e,
-                            {dispatch: getNoahList, currentPage, params: {name: noahSearchName}});
+                            {dispatch: updateNoahList, currentPage, params: {name: noahSearchName}});
                     }),
                 };
 

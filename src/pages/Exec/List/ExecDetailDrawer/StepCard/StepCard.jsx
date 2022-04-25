@@ -10,6 +10,7 @@
  */
 import React, {useMemo} from 'react';
 import {propOr} from 'ramda';
+import {useDispatch, useSelector} from 'react-redux';
 
 import cx from './index.less';
 import useStepCard from './hook';
@@ -18,17 +19,20 @@ import {IGNORE_ERROR} from '../../constant';
 import TimeItem from './TimeItem';
 import ManualConfirmContent from './ManualConfirmContent';
 import ContentExceptManualConfirm from './ContentExceptManualConfirm';
+import {updateUserFromOne} from '../../../../../reduxSlice/uesr/userSlice';
+import {generateDispatchCallback} from '../../../../../utils';
+import {updateCurrentUser} from '../../../../../reduxSlice/uesr/currentUserSlice';
 
 const StepCard = ({
-    users,
     detail,
-    updateUserFromOne,
     submitCallback,
-    executionDetail,
     stepId,
-    updateCurrentUser,
-    currentUser,
 }) => {
+
+    const dispatch = useDispatch();
+    const users = useSelector(state => state.users);
+    const currentUser = useSelector(state => state.currentUser);
+    const executionDetail = useSelector(state => state.executionDetail);
 
     const {
         consumeObj,
@@ -49,11 +53,11 @@ const StepCard = ({
         informUserIds,
     } = useStepCard({
         detail,
-        updateUserFromOne,
+        updateUserFromOne: generateDispatchCallback(dispatch, updateUserFromOne),
         submitCallback,
         users,
         executionDetail,
-        updateCurrentUser,
+        updateCurrentUser: generateDispatchCallback(dispatch, updateCurrentUser),
     });
 
     // 运行状态

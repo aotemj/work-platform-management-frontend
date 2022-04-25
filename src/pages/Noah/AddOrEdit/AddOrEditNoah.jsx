@@ -8,6 +8,7 @@
 import * as yup from 'yup';
 import {Button, Input, PageHeader, Select, Spin} from '@osui/ui';
 import {IconPlusOutlined} from '@osui/icons';
+import {useDispatch, useSelector} from 'react-redux';
 
 import cx from './index.less';
 import SelectAll from '../../../components/SelectAll';
@@ -17,9 +18,11 @@ import useAddOrEdit from './hook';
 import GlobalVariableItem from './GlobalVariableItem';
 import AddGlobalVariableDrawer from './AddGlobalVariableDrawer';
 import StepItem from './StepItem';
-import AddNoahStepDrawer from './AddNoahStepDrawer/index';
+import AddNoahStepDrawer from './AddNoahStepDrawer/AddNoahStepDrawer';
 import {DELETE_SYMBOL} from '../../../constant';
-import {debounceWith250ms, loadMoreCallBackByScrolling} from '../../../utils';
+import {debounceWith250ms, generateDispatchCallback, loadMoreCallBackByScrolling} from '../../../utils';
+import {getNoahWorkPlanDetail, update} from '../../../reduxSlice/noah/detailSlice';
+import {addItem, getCategoryList} from '../../../reduxSlice/category/categorySlice';
 
 const {Option} = Select;
 
@@ -40,15 +43,14 @@ const dropdownRender = (originNode, handleAddCallback, values) => {
     );
 };
 
-const AddOrEditNoah = ({
-    getNoahWorkPlanDetail,
-    noahDetail: {loading: detailLoading},
-    noahDetail,
-    categories: {list: categories, map: categoryMap, currentPage: categoryCurrentPage},
-    getCategoryList,
-    updateCategory,
-    updateNoahDetail,
-}) => {
+const AddOrEditNoah = () => {
+    const dispatch = useDispatch();
+    const noahDetail = useSelector(state => state.noahDetail);
+    const {list: categories, map: categoryMap, currentPage: categoryCurrentPage} = useSelector(state => state.category);
+    const {loading: detailLoading} = noahDetail;
+    const updateNoahWorkPlanDetail = generateDispatchCallback(dispatch, getNoahWorkPlanDetail);
+    const updateCategoryList = generateDispatchCallback(dispatch, getCategoryList);
+
     const {
         goBack,
         goBackWithConfirm,
@@ -92,13 +94,13 @@ const AddOrEditNoah = ({
 
         isViewing,
     } = useAddOrEdit({
-        getNoahWorkPlanDetail,
+        getNoahWorkPlanDetail: updateNoahWorkPlanDetail,
         noahDetail,
         categories,
         categoryMap,
-        getCategoryList,
-        updateCategory,
-        updateNoahDetail,
+        getCategoryList: updateCategoryList,
+        updateCategory: generateDispatchCallback(dispatch, addItem),
+        updateNoahDetail: generateDispatchCallback(dispatch, update),
     });
 
     const defaultField = {
@@ -145,7 +147,10 @@ const AddOrEditNoah = ({
                     dropdownRender={originNode => dropdownRender(originNode, handleAddCategory, values)}
                     placeholder="请选择或新增作业分类"
                     onPopupScroll={debounceWith250ms(e => {
-                        loadMoreCallBackByScrolling(e, {dispatch: getCategoryList, currentPage: categoryCurrentPage});
+                        loadMoreCallBackByScrolling(e, {
+                            dispatch: updateCategoryList,
+                            currentPage: categoryCurrentPage,
+                        });
                     })}
                     {...field}
                 >

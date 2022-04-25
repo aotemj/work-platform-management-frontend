@@ -1,9 +1,9 @@
-import NoahList from '../pages/Noah/List/index';
-import AddOrEditNoah from '../pages/Noah/AddOrEdit/index';
-import ExecList from '../pages/Exec/List/index';
-import CronList from '../pages/Cron/List/index';
-import ExecLog from '../pages/Exec/StepLog';
-import DiskSpace from '../pages/DiskSpace/index';
+import NoahList from '../pages/Noah/List/NoahList';
+import AddOrEditNoah from '../pages/Noah/AddOrEdit/AddOrEditNoah';
+import ExecList from '../pages/Exec/List/ExecList';
+import Index from '../pages/Cron/List';
+import ExecLog from '../pages/Exec/StepLog/StepLog';
+import DiskSpace from '../pages/DiskSpace/DiskSpace';
 
 export const routes = {
     NOAH_LIST: {
@@ -34,7 +34,7 @@ export const routes = {
     },
     CRON_LIST: {
         path: 'cron/list',
-        element: <CronList />,
+        element: <Index />,
     },
     DISK_SPACE: {
         path: 'disk/space',

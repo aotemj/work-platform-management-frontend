@@ -4,7 +4,7 @@
 
 import {Drawer, Steps} from '@osui/ui';
 
-import StepCard from './StepCard/index';
+import StepCard from './StepCard/StepCard';
 import cx from './index.less';
 import {IGNORE_ERROR, RUN_STATUSES} from '../constant';
 import useExecDetail from './hook';
@@ -43,7 +43,6 @@ const ExecDetailDrawer = ({onClose, visible, handleChangeStep, executionDetail, 
                                     <StepCard
                                         detail={stageTrigger}
                                         submitCallback={submitCallback}
-                                        executionDetail={executionDetail}
                                         stepId={stageTrigger?.id}
                                     />
                                 )}

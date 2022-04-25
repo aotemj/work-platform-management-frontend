@@ -4,12 +4,12 @@ import {useEffect, useMemo, useState} from 'react';
 /**
  * 步骤日志 hook
  */
-const useStepLog = (executionDetail, getExecutionDetail) => {
+const useStepLog = (executionDetail, updateExecutionDetail) => {
     const params = useParams();
     const [loading, setLoading] = useState(false);
     const getExecuteId = () => {
         const {executeId} = params;
-        getExecutionDetail(executeId);
+        updateExecutionDetail(executeId);
     };
     const stageTriggerItemList = useMemo(() => {
         return executionDetail

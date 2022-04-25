@@ -252,7 +252,7 @@ export const debounceWith500ms = fn => debounce(500)(fn);
 export const debounceWith250ms = fn => debounce(250)(fn);
 
 export const generateFullPath = (url, params) => {
-    return `${getUrlPrefixReal()}/${generatePath(url, params)}`;
+    return urlJoin(getUrlPrefixReal(), generatePath(url, params));
 };
 
 export const assembleRequestUrl = (url, type = REQUEST_URL_TYPES.INTERNAL.label) =>
@@ -260,7 +260,7 @@ export const assembleRequestUrl = (url, type = REQUEST_URL_TYPES.INTERNAL.label)
 
 export const assembleExternalUrl = url => assembleRequestUrl(url, REQUEST_URL_TYPES.EXTERNAL.label);
 
-
+export const generateDispatchCallback = (dispatch, callback) => payload => dispatch(callback(payload));
 
 
 

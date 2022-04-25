@@ -2,21 +2,26 @@
  * 执行历史 作业任务列表
  */
 import React from 'react';
+import {useDispatch, useSelector} from 'react-redux';
 import {omit} from 'ramda';
 import {Table, Button, PageHeader, Spin} from '@osui/ui';
 
 import cx from './index.less';
 import useExecList from './hook';
-import {formatTimeStamp} from '../../../utils';
+import {formatTimeStamp, generateDispatchCallback} from '../../../utils';
 import OperationBar from './OperationBar';
 import StatusTag from '../../../components/StatusTag';
 import ExecDetailDrawer from './ExecDetailDrawer';
 import EllipsisContainer from '../../../components/EllipsisContainer';
+import {getExecutionDetail} from '../../../reduxSlice/execution/detailSlice';
 
 const title = '作业任务';
 
-const ExecList = props => {
-    const {executionDetail, getExecutionDetail} = props;
+const ExecList = () => {
+    const dispatch = useDispatch();
+    const executionDetail = useSelector(state => state.executionDetail);
+    const updateExecutionDetail = generateDispatchCallback(dispatch, getExecutionDetail);
+
     const {
         data,
         loading,
@@ -28,9 +33,8 @@ const ExecList = props => {
         executeDetailVisible,
         setExecuteDetailVisible,
         setCurrentExecutionId,
-        // executionDetail,
         submitCallback,
-    } = useExecList(getExecutionDetail);
+    } = useExecList(updateExecutionDetail);
 
     const tableOperations = [
         {

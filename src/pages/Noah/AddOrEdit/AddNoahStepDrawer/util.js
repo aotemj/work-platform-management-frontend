@@ -407,7 +407,7 @@ export const getFileDistribution = ({
 export const getManualConfirmFields = ({
     isFileDistribution,
     isScriptExecute,
-    usersFromOne: {list = [], currentPage: usersCurrentPage},
+    usersFromOne: {list = [], currentPage: usersCurrentPage, loading},
     updateUserFromOne,
     handleSearchInformUser,
 }) => {
@@ -422,10 +422,7 @@ export const getManualConfirmFields = ({
         placeholder: '请选择超时时间',
         defaultValue: 3,
         showSearch: true,
-        // allowClear: true,
         optionFilterProp: 'label',
-        // mode: 'multiple',
-        // onChange: () => {},
         value: [],
     };
 
@@ -460,6 +457,7 @@ export const getManualConfirmFields = ({
                     className={cx('category-dropdown')}
                     placeholder="请选择通知人员"
                     onSearch={handleSearchInformUser}
+                    loading={loading}
                     onPopupScroll={debounceWith250ms(e => {
                         loadMoreCallBackByScrolling(e, {dispatch: updateUserFromOne, currentPage: usersCurrentPage});
                     })}
@@ -470,7 +468,6 @@ export const getManualConfirmFields = ({
                         list.map(item => {
                             return (
                                 <Option
-                                    // value={Number(item.userId)}
                                     value={item.userId}
                                     key={item.enterpriseCard}
                                 >{item.enterpriseCard}
