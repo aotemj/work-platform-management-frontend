@@ -7602,6 +7602,11 @@ url-loader@^4.1.1:
     mime-types "^2.1.27"
     schema-utils "^3.0.0"
 
+url-template@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.npmmirror.com/url-template/-/url-template-3.0.0.tgz#31b6d53d44d79912f6e5737d06f377d16e214a54"
+  integrity sha512-S6P5TcJ8GrGG+yzMZ8ojdtiGtQmQG+UOMelhE3X5uQrEEoq69aDQ05eASPQGj+CjsPVfumWKbH2HrjME46sk0g==
+
 use-immer@^0.6.0:
   version "0.6.0"
   resolved "https://registry.npmmirror.com/use-immer/-/use-immer-0.6.0.tgz#ca6aa5ade93018e2c65cf128d19ada54fc23f70d"

@@ -6,8 +6,8 @@ import {AGENT_STATUS, AGENT_TERMINAL_TYPE, LABEL_TYPE, GROUP_TYPES} from '../../
 import {getCompanyId, getSpaceId} from '../../../../../utils/getRouteIds';
 import {request} from '../../../../../request/fetch';
 import cx from './index.less';
-import {debounceWith250ms, debounceWith500ms, getURlWithPrefix} from '../../../../../utils';
-import {GLOBAL_URL_PREFIX, GLOBAL_URLS, IS_PROD, PAGE_SIZE_OF_NO_PAGINATION} from '../../../../../constant';
+import {assembleExternalUrl, debounceWith250ms, debounceWith500ms} from '../../../../../utils';
+import {GLOBAL_URLS, IS_PROD, PAGE_SIZE_OF_NO_PAGINATION} from '../../../../../constant';
 import {agents, labels} from '../../../../../temp/agents';
 
 const getAgentMap = agents => {
@@ -156,7 +156,7 @@ const TargetServer = ({
         // setOriginDataUpdated(true);
 
         return request({
-            url: getURlWithPrefix(GLOBAL_URL_PREFIX, GLOBAL_URLS.AGENTS),
+            url: assembleExternalUrl(GLOBAL_URLS.AGENTS),
             params: {
                 // companyId: 'xly-poc',
                 companyUuid: companyId,
@@ -181,7 +181,7 @@ const TargetServer = ({
     // pageSize     页大小
     const fetchLabels = async () => {
         return request({
-            url: getURlWithPrefix(GLOBAL_URL_PREFIX, GLOBAL_URLS.LABELS),
+            url: assembleExternalUrl(GLOBAL_URLS.LABELS),
             params: {
                 companyUuid: companyId,
                 groupName: spaceId || companyId,

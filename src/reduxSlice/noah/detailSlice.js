@@ -15,9 +15,9 @@ export const noahDetailNameSpace = 'noahDetail';
 
 export const getNoahWorkPlanDetail = createAsyncThunk(
     urlJoin(noahDetailNameSpace, 'getNoahWorkPlanDetail'),
-    async payload => {
+    async detailId => {
         const res = await request({
-            url: assembleRequestUrl(urlJoin(URLS.GET_NOAH_WORK_PLAN_DETAIL, String(payload))),
+            url: assembleRequestUrl(URLS.GET_NOAH_WORK_PLAN_DETAIL.expand({detailId})),
         });
         const {code, data} = res;
         return code === REQUEST_CODE.SUCCESS ? data : null;
@@ -33,14 +33,14 @@ const noahDetailSlice = createSlice({
         update: updateData,
     },
     extraReducers: {
-        [getNoahWorkPlanDetail.pending]: (state, action) => {
+        [getNoahWorkPlanDetail.pending]: state => {
             state.loading = true;
         },
         [getNoahWorkPlanDetail.fulfilled]: (state, action) => {
             state.loading = false;
             return updateData(state, action);
         },
-        [getNoahWorkPlanDetail.rejected]: (state, action) => {
+        [getNoahWorkPlanDetail.rejected]: state => {
             state.loading = false;
         },
     },

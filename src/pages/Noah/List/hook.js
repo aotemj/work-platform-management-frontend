@@ -88,7 +88,7 @@ const useNoahList = ({
 
     const individualDelete = async noahId => {
         const res = await request({
-            url: assembleRequestUrl(urlJoin(URLS.INDIVIDUAL_DELETE, String(noahId))),
+            url: assembleRequestUrl(URLS.INDIVIDUAL_DELETE.expand({noahId})),
             method: REQUEST_METHODS.DELETE,
         });
         const {code} = res;

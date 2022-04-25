@@ -2,7 +2,6 @@
 import {Drawer, Table} from '@osui/ui';
 import {useEffect, useState} from 'react';
 import {reject, anyPass, isEmpty, isNil} from 'ramda';
-import urlJoin from 'url-join';
 
 import DateRangePicker from '../../../../components/DateRangePicker';
 import {request} from '../../../../request/fetch';
@@ -35,7 +34,7 @@ const CronRecord = ({visible, recordId, onClose}) => {
         const params = reject(anyPass([isEmpty, isNil]))(searchValue);
 
         const res = await request({
-            url: assembleRequestUrl(urlJoin(URLS.CRON_RECORD, String(recordId))), params,
+            url: assembleRequestUrl(URLS.CRON_RECORD.expand({recordId})), params,
         });
         requestCallback({
             res, hideMessage: true, callback(data) {

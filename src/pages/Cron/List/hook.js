@@ -1,7 +1,6 @@
 import {useCallback, useEffect, useState} from 'react';
 import {Modal} from '@osui/ui';
 import {reject, anyPass, isEmpty, isNil} from 'ramda';
-import urlJoin from 'url-join';
 
 import {
     assembleRequestUrl,
@@ -111,7 +110,7 @@ const useCronList = ({
             onOk: debounceWith500ms(async () => {
                 const res = await request({
                     method: REQUEST_METHODS.DELETE,
-                    url: assembleRequestUrl(urlJoin(URLS.DELETE_CRON_ITEM, String(id))),
+                    url: assembleRequestUrl(URLS.DELETE_CRON_ITEM.expand({id})),
                 });
                 requestCallback({
                     res,
@@ -147,7 +146,7 @@ const useCronList = ({
         const params = new FormData();
         params.append('openStatus', val ? 1 : 0);
         const res = await request({
-            url: assembleRequestUrl(URLS.getToggleCronStatusUrl(id)),
+            url: assembleRequestUrl(URLS.TOGGLE_CRON_STATUS_TEMPLATE.expand({id})),
             method: REQUEST_METHODS.PUT,
             type: REQUEST_TYPE.FORM_DATA,
             params,

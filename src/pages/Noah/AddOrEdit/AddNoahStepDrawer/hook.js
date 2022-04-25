@@ -2,7 +2,7 @@ import {useCallback, useEffect, useState} from 'react';
 import {Modal} from '@osui/ui';
 import {omit} from 'ramda';
 
-import {debounceWith250ms, getContainerDOM, getURlWithPrefix, Toast} from '../../../../utils';
+import {assembleExternalUrl, debounceWith250ms, getContainerDOM, Toast} from '../../../../utils';
 import {
     RUNNING_ENVIRONMENT,
     SCRIPT_TYPES,
@@ -13,7 +13,6 @@ import {
     DEFAULT_STRING_VALUE,
     STEP_TYPES,
     IS_PROD,
-    GLOBAL_URL_PREFIX,
     DEFAULT_PAGINATION,
     TYPES_OF_FETCHING,
 } from '../../../../constant';
@@ -155,7 +154,7 @@ const useAddNoahStep = ({
         });
     }, []);
 
-    const handleChangeTargetServer = useCallback(({agents, values, agentMap, editing}) => {
+    const handleChangeTargetServer = useCallback(({agents, values, editing}) => {
         if (editing) {
             handleEditTargetServer(agents, values);
         } else {
@@ -171,7 +170,7 @@ const useAddNoahStep = ({
         if (IS_PROD) {
             const {pageSize} = DEFAULT_PAGINATION;
             scriptObj = await request({
-                url: getURlWithPrefix(GLOBAL_URL_PREFIX, GLOBAL_URLS.GET_SCRIPTS),
+                url: assembleExternalUrl(GLOBAL_URLS.GET_SCRIPTS),
                 params: {
                     _offset: currentPage * pageSize,
                     _limit: pageSize,

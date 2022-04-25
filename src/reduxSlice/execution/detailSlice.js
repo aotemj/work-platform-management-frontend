@@ -14,9 +14,9 @@ const update = (state, action) => action.payload;
 
 export const getExecutionDetail = createAsyncThunk(
     urlJoin(executionDetailNameSpace, 'getExecutionDetail'),
-    async payload => {
+    async detailId => {
         const res = await request({
-            url: assembleRequestUrl(urlJoin(URLS.GET_EXECUTION_DETAIL, String(payload))),
+            url: assembleRequestUrl(URLS.GET_EXECUTION_DETAIL.expand({detailId})),
         });
         const {code, data} = res;
         if (code === REQUEST_CODE.SUCCESS) {

@@ -1,7 +1,6 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {Modal} from '@osui/ui';
 import {reject, anyPass, isEmpty, isNil} from 'ramda';
-import urlJoin from 'url-join';
 
 import {assembleRequestUrl, debounceWith500ms, getContainerDOM, requestCallback, Toast} from '../../../utils';
 import {request} from '../../../request/fetch';
@@ -132,7 +131,7 @@ const useExecList = getExecutionDetail => {
             onOk: async () => {
                 const {id} = item;
                 const res = await request({
-                    url: assembleRequestUrl(urlJoin(URLS.RE_EXECUTE, String(id))),
+                    url: assembleRequestUrl(URLS.RE_EXECUTE.expand({id})),
                     method: REQUEST_METHODS.POST,
                 });
                 requestCallback({

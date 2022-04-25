@@ -115,15 +115,11 @@ export function getContainerDOM() {
     return document.getElementById(CONTAINER_DOM_ID);
 }
 
-export function getURlWithPrefix(prefix, url) {
-    return `${prefix}${url}`;
-}
-
 export function getUrlPrefixReal() {
     const companyId = getCompanyId();
     const projectId = getSpaceId();
-    const PREFIX = projectId ? `${PUBLIC_PATH}${companyId}/${projectId}` : `${PUBLIC_PATH}${companyId}`;
-    return `${PREFIX}/${PROJECT_ROUTE}`;
+    const PREFIX = projectId ? urlJoin(PUBLIC_PATH, companyId, projectId) : urlJoin(PUBLIC_PATH, companyId);
+    return urlJoin(PREFIX, PROJECT_ROUTE);
 }
 
 export const byteToGage = size => {

@@ -1,3 +1,6 @@
+import urlJoin from 'url-join';
+import {parseTemplate} from 'url-template';
+
 import {ReactComponent as ReadyRun} from '../../../statics/icons/readyrun.svg';// 未开始
 import {ReactComponent as CloseCircle} from '../../../statics/icons/closecircle.svg';// 执行失败
 import {ReactComponent as CheckCircle} from '../../../statics/icons/checkcircle.svg';// 初始化、执行成功
@@ -11,12 +14,14 @@ export const URLS = {
     CATEGORIES: '/rest/v1/work-group/list',
     // 作业列表
     LIST: '/rest/v1/work-plan/infos',
-    GET_NOAH_WORK_PLAN_DETAIL: '/rest/v1/work-plan/',
-    GET_EXECUTION_DETAIL: '/rest/v1/execute/', // 执行详情 // /rest/v1/execute/{id}
-    RE_EXECUTE: '/rest/v1/execute/retry/work-trigger/', // '/rest/v1/execute/retry/work-trigger/{id}' // 重新执行详情
-    NEGLECT_ERRORS: '/rest/v1/execute/error/ignore/', // 忽略错误 // /rest/v1/execute/error/ignore/{id}
+    GET_NOAH_WORK_PLAN_DETAIL: parseTemplate(urlJoin('/rest/v1/work-plan/', '{detailId}')),
+    GET_EXECUTION_DETAIL: parseTemplate(urlJoin('/rest/v1/execute/', '{detailId}')), // 执行详情 // /rest/v1/execute/{id}
+    // '/rest/v1/execute/retry/work-trigger/{id}' // 重新执行详情
+    RE_EXECUTE: parseTemplate(urlJoin('/rest/v1/execute/retry/work-trigger/', '{id}')),
+    // 忽略错误 // /rest/v1/execute/error/ignore/{id}
+    NEGLECT_ERRORS: parseTemplate(urlJoin('/rest/v1/execute/error/ignore/', '{id}')),
     // 全部重新执行  // /rest/v1/execute/retry/stage-trigger/{id}
-    ENTIRELY_RE_EXECUTE: '/rest/v1/execute/retry/stage-trigger/',
+    ENTIRELY_RE_EXECUTE: parseTemplate(urlJoin('/rest/v1/execute/retry/stage-trigger/', '{id}')),
     // 作业步骤人工确认结果
     CONFIRM_MANUAL_RESULT: '/rest/v1/execute/stage-confirm',
     // 分页获取执行列表
