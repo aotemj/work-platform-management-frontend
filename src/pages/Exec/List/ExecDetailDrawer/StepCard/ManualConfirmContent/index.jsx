@@ -19,7 +19,7 @@ export const ManualConfirmContent = ({
 
     const showOperation = useMemo(() => {
         return isConfirmUser && !stageConfirmResult && detail?.runStatus === RUNNING.value;
-    }, [isConfirmUser]);
+    }, [detail, isConfirmUser, stageConfirmResult]);
 
     return (
         <div className={cx('desc-container')}>
