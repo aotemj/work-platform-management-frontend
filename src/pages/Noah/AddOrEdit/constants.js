@@ -1,3 +1,7 @@
+import {parseTemplate} from 'url-template';
+import urlJoin from 'url-join';
+import {UPLOAD_URL_PREFIX} from '../../../constant';
+
 // 全局变量类型
 export const GLOBAL_VARIABLE_TYPES = {
     STRING: {
@@ -87,8 +91,14 @@ export const URLS = {
     // NOAH_DETAIL: id => `/rest/v1/work-plan`,
     // 切换启停
     TOGGLE_EXECUTION: '/rest/v1/work-stage/open-status',
-    // 作业单个执行
-    INDIVIDUAL_EXECUTE: '/rest/v1/execute/initialize/', // /rest/v1/execute/initialize/{id}
+    // 作业单个执行 // /rest/v1/execute/initialize/{id}
+    INDIVIDUAL_EXECUTE: parseTemplate(urlJoin('/rest/v1/execute/initialize/', '{id}')),
+    // 分片上传 检查
+    UPLOAD_LOCAL_BY_SEPARATING_CHECK: urlJoin(UPLOAD_URL_PREFIX, 'check'),
+    // 分片上传
+    UPLOAD_LOCAL_BY_SEPARATING: UPLOAD_URL_PREFIX,
+    // 分片上传完成
+    UPLOAD_LOCAL_BY_SEPARATING_FINISHED: urlJoin(UPLOAD_URL_PREFIX, 'finish'),
 };
 
 // 主机类型

@@ -131,3 +131,5 @@ export const REQUEST_URL_TYPES = {
 export const DEFAULT_SUCCESS_MESSAGE = '操作成功';
 
 export const COMMON_EXEC_URL_PREFIX = '/rest/v1/cron-execute';
+
+export const UPLOAD_URL_PREFIX = '/rest/v1/file/local/multipart-upload';

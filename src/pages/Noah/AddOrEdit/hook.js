@@ -6,9 +6,15 @@ import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {Modal} from '@osui/ui';
 import {clone, isNil, omit, pickBy, prop} from 'ramda';
 import {stringifyUrl} from 'query-string';
-import urlJoin from 'url-join';
 
-import {assembleRequestUrl, debounceWith500ms, generateFullPath, getContainerDOM, Toast} from '../../../utils';
+import {
+    assembleRequestUrl,
+    debounceWith250ms,
+    debounceWith500ms,
+    generateFullPath,
+    getContainerDOM,
+    Toast,
+} from '../../../utils';
 import useGlobalVariable from './hooks/globalVariable';
 import {request} from '../../../request/fetch';
 import {URLS, UPDATE_FILE_STATUS, BOOLEAN_FROM_SERVER, ERROR_MSG} from './constants';
@@ -568,9 +574,10 @@ const useAddOrEdit = ({
     }, [getNoahWorkPlanDetail, params]);
 
     // 执行相关
-    const handleExecute = useCallback(async () => {
+    const handleExecute = debounceWith250ms(async () => {
+        const detailId = prop('detailId', params);
         const res = await request({
-            url: assembleRequestUrl(urlJoin(URLS.INDIVIDUAL_EXECUTE, prop('detailId', params))),
+            url: assembleRequestUrl(URLS.INDIVIDUAL_EXECUTE.expand({id: detailId})),
             method: REQUEST_METHODS.POST,
         });
         const {code, data: {id}} = res;
@@ -582,7 +589,7 @@ const useAddOrEdit = ({
                 query: {id},
             }));
         }
-    }, [navigate, params]);
+    });
 
     const updateEditValeFromExecutionDetail = () => {
         const {stageTriggerList} = executionDetail;
