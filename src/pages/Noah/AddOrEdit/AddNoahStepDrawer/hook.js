@@ -17,7 +17,7 @@ import {
     TYPES_OF_FETCHING,
 } from '../../../../constant';
 import {request} from '../../../../request/fetch';
-import {GLOBAL_URLS} from '../../../../constant/index';
+import {GLOBAL_URLS} from '../../../../constant';
 import {TEMP_SCRIPTS} from '../../../../temp/scripts';
 
 const defaultFormikValues = {
