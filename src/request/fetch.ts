@@ -1,11 +1,16 @@
 import service from './service'
 import { REQUEST_METHODS, REQUEST_TYPE } from '../constant'
 
+interface Headers {
+  'Content-Type'?: string
+  'Access-Control-Allow-Origin'?: string
+}
+
 export const fetch = async (url, params, method, type) => {
   const { POST, GET, PUT } = REQUEST_METHODS
   const { FORM_DATA, BLOB, JSON: JSON_TYPE } = REQUEST_TYPE
 
-  const headers = {
+  const headers: Headers = {
     'Access-Control-Allow-Origin': '*'
   }
   if (method === POST || method === PUT) {
@@ -32,7 +37,7 @@ export const fetch = async (url, params, method, type) => {
         }
         let ret = ''
         // eslint-disable-next-line
-                for (let it in data) {
+        for (let it in data) {
           ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
         }
         return ret

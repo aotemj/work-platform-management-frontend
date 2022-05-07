@@ -4,7 +4,7 @@ import { debounce } from 'lodash/fp'
 import { generatePath } from 'react-router'
 import { parseTemplate, Template } from 'url-template'
 import { useSelector, TypedUseSelectorHook } from 'react-redux'
-import { propOr, path } from 'ramda'
+import { propOr, path, isEmpty } from 'ramda'
 
 import { RootState } from '../store'
 import { getCompanyId, getSpaceId } from './getRouteIds'
@@ -267,4 +267,8 @@ export const generateExecUrlWithParamsString = (paramsString: string): Template 
 export const useSelectState = (paths: string): TypedUseSelectorHook<RootState> => {
   const generateExecution = Array.isArray(paths) ? (state: RootState) => path(paths, state) : (state: RootState) => propOr('', paths, state)
   return useSelector(generateExecution) as TypedUseSelectorHook<RootState>
+}
+
+export const generateResponseMessage = (messageFromResponse, defaultMessage) => {
+  const isEmptyMessage = isEmpty(messageFromResponse)
 }
