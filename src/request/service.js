@@ -49,7 +49,7 @@ service.interceptors.response.use(
         });
     },
     error => {
-        const {status, data} = error.response;
+        const {status, data = {}} = error.response || {};
         let msg = '';
         const localtions = window.location;
         switch (status) {

@@ -1,6 +1,6 @@
 import {parseTemplate} from 'url-template';
 import urlJoin from 'url-join';
-import {UPLOAD_URL_PREFIX} from '../../../constant';
+import {STEP_TYPES, UPLOAD_URL_PREFIX} from '../../../constant';
 
 // 全局变量类型
 export const GLOBAL_VARIABLE_TYPES = {
@@ -197,4 +197,47 @@ export const BOOLEAN_FROM_SERVER = {
 export const EXECUTING_STATUS = {
     OPEN: 1,
     CLOSE: 0,
+};
+
+export const defaultFormikValues = {
+    type: STEP_TYPES.EXECUTE_SCRIPT.value,
+    name: '',
+    // about execute script
+    runningEnvironment: RUNNING_ENVIRONMENT.AGENT.value,
+    scriptOrigin: SCRIPTS_ORIGIN.MANUAL_INPUT.value,
+    chooseScript: null, // number 类型
+    scriptContents: '',
+    targetResourceList: [],
+    scriptLanguage: SCRIPT_TYPES[0].key,
+    scriptParams: '',
+    // 18. 脚本执行/文件分发，默认超时时间60秒
+    timeoutValueForExecuteScript: 60,
+    timeoutValueForFileDistribution: 60,
+    timeoutValueForManualConfirm: 3,
+    // about file distribution
+    // 文件
+    uploadLimitDisabled: true,
+    // 后端单位kb, 接口提交需要前端转换
+    uploadLimit: 0,
+    downloadLimitDisabled: true,
+    downloadLimit: 0,
+    storageFileList: [],
+    transmissionMode: 1,
+    targetPath: '',
+
+    // 人工确认 相关
+    // 通知方式
+    informWay: [NOTICE_APPROACHES.EMAIL.value],
+    // 通知描述
+    describes: '',
+    // 通知人员
+    informUserId: [],
+};
+
+export const LOADING_STATUS = {
+    STARTING: 'STARTING',
+    UPLOADING: 'UPLOADING',
+    SUCCESS: 'SUCCESS',
+    CHECKING: 'CHECKING',
+    ERROR: 'ERROR',
 };

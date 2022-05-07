@@ -20,6 +20,7 @@ const Layout = ({
     hints = [],
     style,
     hideLabel = false,
+    hideError = false,
     // ...rest
 }) => {
     const hasError = useMemo(
@@ -82,7 +83,7 @@ const Layout = ({
                 <div className={cx('control')}>
                     {children}
                 </div>
-                {printableErrors.map(({text, level}, index) => (
+                {!hideError && printableErrors.map(({text, level}, index) => (
                     <div key={index} className={cx('error-message', `level-${level}`)}>
                         {LevelIconMap[level]}
                         {text}

@@ -5,6 +5,7 @@ import {generatePath} from 'react-router';
 import {parseTemplate} from 'url-template';
 import {useSelector} from 'react-redux';
 import {prop, path} from 'ramda';
+import md5 from 'md5';
 
 import {getCompanyId, getSpaceId} from './getRouteIds';
 import {
@@ -126,7 +127,7 @@ export function getUrlPrefixReal() {
 }
 
 export const byteToGage = size => {
-    return (size / Math.pow(MAGE_BYTE_SCALE, 3)).toFixed(2);
+    return Number((size / Math.pow(MAGE_BYTE_SCALE, 3)).toFixed(2));
 };
 
 /**
@@ -134,8 +135,8 @@ export const byteToGage = size => {
  * @param fileSize 单位 byte
  */
 export function convertFileSize(fileSize) {
-    let size = 0;
-    let symbol = 'byte';
+    let size;
+    let symbol;
     const doubleUnit = Math.pow(MAGE_BYTE_SCALE, 2);
     const treblingUnit = Math.pow(MAGE_BYTE_SCALE, 3);
     if (fileSize < doubleUnit) {
@@ -271,8 +272,33 @@ export const useSelectState = paths => {
     return useSelector(generateExecution);
 };
 
+export const generateMd5ForFile = file => {
+    const {name, size} = file;
+    return md5(urlJoin(name, String(size)));
+};
 
+export const generateFormData = params => {
+    const formData = new FormData();
 
+    for (const paramsKey in params) {
+        formData.append(paramsKey, params[paramsKey]);
+    }
+
+    return formData;
+};
+
+export const generateFileKey = ({fileName, fileSize}) => {
+    return urlJoin(btoa(encodeURI(fileName)), btoa(encodeURI(fileSize)));
+};
+export const decodeFileKey = target => {
+    const [btoa1, btoa2] = target.split('/');
+    return {
+        fileName: decodeURI(atob(btoa1)),
+        fileSize: decodeURI(atob(btoa2)),
+    };
+};
+
+export const getDefaultPopupContainer = triggerNode => triggerNode.parentNode;
 
 
 

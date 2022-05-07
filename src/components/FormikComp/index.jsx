@@ -125,7 +125,7 @@ const FormikComp = ({
                                 ...rest
                             }) => {
                                 if (collapseProps) {
-                                    const {formFields, title, autoOpen} = collapseProps;
+                                    const {formFields, title, autoOpen, hideError} = collapseProps;
                                     return (
                                         <Collapse key={title} defaultActiveKey={autoOpen ? title : ''}>
                                             <Panel header={title} key={title}>
@@ -134,14 +134,13 @@ const FormikComp = ({
                                                         const {name, label, children, ...rest} = item;
                                                         return (
                                                             <FormField
+                                                                hideError={hideError}
                                                                 name={name}
                                                                 label={label}
                                                                 key={label}
                                                                 {...omit('validate', rest)}
                                                             >
-                                                                {
-                                                                    children
-                                                                }
+                                                                {children}
                                                             </FormField>
                                                         );
                                                     })

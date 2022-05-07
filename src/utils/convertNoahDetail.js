@@ -26,7 +26,7 @@ const deConvertTimeoutValue = timeoutValue => {
 };
 
 // Kb -> Mb
-export const deConvertFileSize = size => {
+export const deConvertFileSize = (size = 0) => {
     return (size / MAGE_BYTE_SCALE).toFixed(2);
 };
 

@@ -1,15 +1,20 @@
 // 文件分发/文件来源/源文件
-import React, {useCallback, useRef} from 'react';
-import {Button, Input, Table} from '@osui/ui';
+import React, {useCallback, useMemo, useRef} from 'react';
+import {Button, Input, Table, Progress, Space} from '@osui/ui';
 import {IconPlusOutlined} from '@osui/icons';
-import {omit} from 'ramda';
+import {omit, propOr} from 'ramda';
+
+import TargetServer from '../AddNoahStepDrawer/TargetServer';
+import EllipsisContainer from '../../../../components/EllipsisContainer';
+import LoadingButton from './LoadingButton';
 
 import cx from './index.less';
 import useFileSource from './hook';
-import TargetServer from '../AddNoahStepDrawer/TargetServer';
-import {convertFileSize} from '../../../../utils';
+import {convertFileSize, useSelectState} from '../../../../utils';
 import {ERROR, LOADING, SUCCESS} from '../constants';
-import EllipsisContainer from '../../../../components/EllipsisContainer';
+import {pick} from 'lodash/fp';
+import Layout from '../../../../components/FormField/Layout';
+import RetryButton from './RetryButton';
 
 const FileSource = ({
     field,
@@ -20,24 +25,27 @@ const FileSource = ({
     userInputError,
     setUserInputError,
     disabled,
+    form,
 }) => {
     const uploadRef = useRef();
+    const localFilesMap = useSelectState(['uploadDetail', 'localFilesMap']);
+    const serverFilesMap = useSelectState(['uploadDetail', 'serverFilesMap']);
+    const uploadingMap = useSelectState(['uploadDetail', 'uploadingMap']);
+
     const {
         // about server file
         handleChangeSourcePath,
         handleAddServerFile,
         handleChangeServerFileSourceResource,
         handleRemoveServerFile,
-        chooseServerTips,
-        serverFiles,
 
         // about local file
         handleAddLocalFile,
-        localFiles,
         handleRemoveLocalFile,
-        chooseLocalTips,
 
         needUpdateFileMap,
+
+        handleReUploadLocalFile,
     } = useFileSource({changeCallback, storageFileList, values, setFormValues});
 
     const resetUserInputError = useCallback(() => {
@@ -45,10 +53,6 @@ const FileSource = ({
             setUserInputError(false);
         }
     }, [setUserInputError, userInputError]);
-
-    const RetryButton = () => {
-        return <span>重试</span>;
-    };
 
     const RemoveButton = ({record}) => {
         return (
@@ -60,9 +64,12 @@ const FileSource = ({
         );
     };
 
-    const LoadingButton = () => {
-        return <span>正在上传</span>;
-    };
+    const serverFiles = Object.values(serverFilesMap);
+
+    const chooseServerTips = useMemo(() => {
+        const length = serverFiles.length;
+        return length ? `已选择 ${length} 个服务器文件` : '暂未选择文件';
+    }, [serverFiles.length]);
 
     const serverFileTableProps = {
         dataSource: serverFiles,
@@ -72,9 +79,13 @@ const FileSource = ({
                 dataIndex: 'sourcePath',
                 width: '30%',
                 render: (val, record) => {
+                    const errors = form.errors?.storageFileList?.map(item => {
+                        return pick('sourcePath', item);
+                    });
                     return (
-                        <>
+                        <Layout id={'sourcePath'} errors={!val && errors} className={cx('layout-item')}>
                             <Input
+                                name={'sourcePath'}
                                 value={val}
                                 {...omit(['value'], field)}
                                 disabled={disabled}
@@ -87,7 +98,7 @@ const FileSource = ({
                                 onFocus={resetUserInputError}
                                 placeholder={'请输入路径'}
                             />
-                        </>
+                        </Layout>
                     );
                 },
             },
@@ -95,16 +106,22 @@ const FileSource = ({
                 title: '服务器',
                 dataIndex: 'sourceUuid',
                 render: (val, record) => {
+                    const errors = form.errors?.storageFileList?.map(item => {
+                        return pick('sourceUuid', item);
+                    });
                     return (
-                        <TargetServer
-                            multiple={false}
-                            allowClear={false}
-                            disabled={disabled}
-                            field={{...omit(['onChange'], field), value: val}}
-                            resetUserInputError={resetUserInputError}
-                            handleChange={(agents, agentMapByUuid) =>
-                                handleChangeServerFileSourceResource(agents, agentMapByUuid, record.key)}
-                        />
+                        <Layout id={'sourceUuid'} errors={!val && errors} className={cx('layout-item')}>
+                            <TargetServer
+                                name={'sourceUuid'}
+                                multiple={false}
+                                allowClear={false}
+                                disabled={disabled}
+                                field={{...omit(['onChange'], field), value: val}}
+                                resetUserInputError={resetUserInputError}
+                                handleChange={(agents, agentMapByUuid) =>
+                                    handleChangeServerFileSourceResource(agents, agentMapByUuid, record.key)}
+                            />
+                        </Layout>
                     );
                 },
             },
@@ -115,7 +132,7 @@ const FileSource = ({
                 render: (_, record) => {
                     return (
                         <span
-                            className={cx('delete-button', disabled ? 'disabled' : '')}
+                            className={cx('delete-button', disabled ? 'disabled' : '', 'server-button')}
                             onClick={() => (disabled ? null : handleRemoveServerFile(record))}
                         >移除
                         </span>
@@ -126,8 +143,19 @@ const FileSource = ({
         pagination: false,
     };
 
+    const localFiles = useMemo(() => {
+        return Object.values(localFilesMap);
+    }, [localFilesMap]);
+
+    const chooseLocalTips = useMemo(() => {
+        const length = localFiles.length;
+        return length ? `已选择 ${length} 个本地文件` : '暂未选择文件';
+    }, [localFiles.length]);
+
     const localFileTableProps = {
         dataSource: localFiles,
+        // 后期如果服务端分片大小小于 100M/每片，前端显示可以不正常，需要添加横向滚动
+        // scroll: {x: 750},
         columns: [
             {
                 title: '文件名',
@@ -138,27 +166,43 @@ const FileSource = ({
                 title: '文件大小',
                 dataIndex: 'fileSize',
                 // 单位 byte
-                render: val => convertFileSize(val),
+                render: val => <EllipsisContainer val={convertFileSize(val)} />,
             },
             {
                 title: '操作',
                 align: 'center',
                 render: (_, record) => {
-                    const {status} = record;
+                    const {status, fileName, uploadStatusByFrontEnd, key} = record;
+                    // 上传进度
+                    const process = propOr(0, 'process', uploadingMap?.[fileName]);
+                    const total = propOr(1, 'total', uploadingMap?.[fileName]);
+                    const loadingProps = {
+                        process,
+                        total,
+                        uploadStatusByFrontEnd,
+                    };
                     switch (status) {
                         case SUCCESS.value:
-                            return (
-                                <RemoveButton record={record} />
-                            );
+                            return (<RemoveButton record={record} />);
                         case ERROR.value:
                             return (
-                                <>
-                                    <RetryButton />
+                                <Space>
+                                    <RetryButton fileKey={key} handleReUploadLocalFile={handleReUploadLocalFile} />
                                     <RemoveButton record={record} />
-                                </>
+                                </Space>
                             );
                         case LOADING.value:
-                            return <LoadingButton />;
+                            return (
+                                <>
+                                    <LoadingButton {...loadingProps} />
+                                    <Progress
+                                        percent={process}
+                                        steps={total}
+                                        size="small"
+                                        strokeColor="#52c41a"
+                                    />
+                                </>
+                            );
                     }
 
                 },

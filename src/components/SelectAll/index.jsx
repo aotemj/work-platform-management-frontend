@@ -11,13 +11,14 @@ const DEFAULT_MAX_TAG_COUNT = 3;
 const SELECT_ALL_LABEL = '全选';
 
 const SelectAll = props => {
-    const {onChange: change, dropdownRender} = props;
-    const isDefaultSelectAll = props?.value?.[0] === SYMBOL_FOR_ALL && props?.value?.length === 1
-    || (props?.value.length && props?.value.length === props?.children.length);
+    const {onChange: change, dropdownRender, value = [], children = []} = props;
+    const valueLength = value.length;
+    const childrenLength = children.length;
+    const isDefaultSelectAll = value[0] === SYMBOL_FOR_ALL && valueLength === 1
+    || (valueLength && valueLength === childrenLength);
     // 已选中的值
     const [selectedVal, setSelectedVal] = useState(isDefaultSelectAll
         ? [SYMBOL_FOR_ALL, ...props.children.map(item => item.props.value)] : props.value || []);
-    // const [manualChange, setManualChange] = useState(false);
     // 带全选的所有值
     const allValWithAll = useMemo(() => {
         const arr = props.children.map(item => item.props?.value);
@@ -28,7 +29,7 @@ const SelectAll = props => {
     const allVal = useMemo(() => props.children.map(item => item.props?.value), [props.children]);
 
     const res = isDefaultSelectAll
-        ? [SYMBOL_FOR_ALL, ...props.children.map(item => item.props.value)] : props.value || [];
+        ? [SYMBOL_FOR_ALL, ...props.children.map(item => item.props?.value)] : props.value || [];
 
     const onItClear = () => {
         setSelectedVal([]);

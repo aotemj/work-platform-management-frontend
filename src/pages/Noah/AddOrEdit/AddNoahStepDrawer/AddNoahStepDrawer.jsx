@@ -7,14 +7,16 @@ import {Drawer, Input, Select, Tooltip} from '@osui/ui';
 import * as yup from 'yup';
 import {useDispatch} from 'react-redux';
 
-import cx from './index.less';
 import {ReactComponent as IconRemark} from '../../../../statics/icons/remark.svg';
-import useAddNoahStep from './hook';
 import FormikComp from '../../../../components/FormikComp';
+
+import cx from './index.less';
+import useAddNoahStep from './hook';
 import {getFileDistribution, getManualConfirmFields, getScriptExecuteFields} from './util';
 import {STEP_TYPES} from '../../../../constant';
 import {generateDispatchCallback, useSelectState} from '../../../../utils';
 import {updateUserFromOne} from '../../../../reduxSlice/uesr/userSlice';
+import {defaultFormikValues} from '../constants';
 
 const {Option} = Select;
 
@@ -24,7 +26,6 @@ const AddNoahStepDrawer = ({
     handleChangeStep,
     stepEditingValue,
     setStepEditingValue,
-    // editing
     isExecuting,
     isViewing,
 }) => {
@@ -139,16 +140,13 @@ const AddNoahStepDrawer = ({
                 .string()
                 .ensure()
                 .trim()
-                // .test('code', '以英文字符、下划线开头；只允许英文字符、数字、下划线、和 -', value =>
-                //     /^[a-zA-Z_][\w-]*$/.test(value),
-                // )
                 .required('请输入步骤名称')
                 .max(60, '步骤名称限60个字符'),
         },
     };
 
     const updateFormFields = useCallback(() => {
-        const formData = editing ? stepEditingValue : formikValues;
+        const formData = editing ? {...defaultFormikValues, ...stepEditingValue} : formikValues;
         const {type} = formData;
         const isScriptExecute = type === STEP_TYPES.EXECUTE_SCRIPT.value;
 

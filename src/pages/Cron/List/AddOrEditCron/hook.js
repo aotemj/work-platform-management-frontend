@@ -110,7 +110,7 @@ const useAddOrEditCron = ({
         setEditValues(null);
     };
 
-    const handleEditCron = async values => {
+    const handleEditCron = debounceWith250ms(async values => {
         const cronId = editDetailId;
         const {exePolicy, taskName, workId} = values;
         const exeCron = convertCronExpress(values);
@@ -130,9 +130,9 @@ const useAddOrEditCron = ({
             callback,
             errorCallback: callback,
         });
-    };
+    });
 
-    const handleAddCron = async values => {
+    const handleAddCron = debounceWith250ms(async values => {
         const {exePolicy, taskName, workId} = values;
         const exeCron = convertCronExpress(values);
         const res = await request({
@@ -147,7 +147,7 @@ const useAddOrEditCron = ({
                 setVisible(false);
             },
         });
-    };
+    });
 
     const handleSubmit = values => {
         setLoading(true);

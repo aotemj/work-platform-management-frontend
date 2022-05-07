@@ -1,13 +1,13 @@
 import {useCallback, useEffect, useState} from 'react';
 import {Modal} from '@osui/ui';
 import {omit} from 'ramda';
+import {useDispatch} from 'react-redux';
 
 import {assembleExternalUrl, debounceWith250ms, getContainerDOM, Toast} from '../../../../utils';
 import {
-    RUNNING_ENVIRONMENT,
-    SCRIPT_TYPES,
     SCRIPTS_ORIGIN,
-    NOTICE_APPROACHES, LOADING,
+    LOADING,
+    defaultFormikValues,
 } from '../constants';
 import {
     DEFAULT_STRING_VALUE,
@@ -19,48 +19,7 @@ import {
 import {request} from '../../../../request/fetch';
 import {GLOBAL_URLS} from '../../../../constant/index';
 import {TEMP_SCRIPTS} from '../../../../temp/scripts';
-
-const defaultFormikValues = {
-    type: STEP_TYPES.EXECUTE_SCRIPT.value,
-    name: '',
-    // about execute script
-    runningEnvironment: RUNNING_ENVIRONMENT.AGENT.value,
-    scriptOrigin: SCRIPTS_ORIGIN.MANUAL_INPUT.value,
-    chooseScript: null, // number 类型
-    scriptContents: '',
-    targetResourceList: [],
-    scriptLanguage: SCRIPT_TYPES[0].key,
-    scriptParams: '',
-    // 18. 脚本执行/文件分发，默认超时时间60秒
-    timeoutValueForExecuteScript: 60,
-    timeoutValueForFileDistribution: 60,
-    timeoutValueForManualConfirm: 3,
-    // about file distribution
-    // 文件
-    uploadLimitDisabled: true,
-    // 后端单位kb, 接口提交需要前端转换
-    uploadLimit: 0,
-    downloadLimitDisabled: true,
-    downloadLimit: 0,
-    storageFileList: [
-        // {
-        //     key: 0,
-        //     sourcePath: '123123',
-        //     fileSource: FILE_SOURCE_TYPE.SERVER,
-        //     sourceResourceName: '8809a811-195f-45fd-9bac-237abe904f25',
-        // },
-    ],
-    transmissionMode: 1,
-    targetPath: '',
-
-    // 人工确认 相关
-    // 通知方式
-    informWay: [NOTICE_APPROACHES.EMAIL.value],
-    // 通知描述
-    describes: '',
-    // 通知人员
-    informUserId: [],
-};
+import {updateLocalFile, updateServerFile} from '../../../../reduxSlice/fileUpload/uploadDetailSlice';
 
 const useAddNoahStep = ({
     onClose,
@@ -70,9 +29,11 @@ const useAddNoahStep = ({
     updateUserFromOne,
     visible,
 }) => {
+    const dispatch = useDispatch();
+    const updateLocalFileMap = item => dispatch(updateLocalFile(item));
+    const updateServerFileMap = item => dispatch(updateServerFile(item));
 
     const [formikValues, setFormikValues] = useState(defaultFormikValues);
-
     const [disabled, setDisabled] = useState(false);
 
     const [userInputError, setUserInputError] = useState(false);
@@ -114,7 +75,7 @@ const useAddNoahStep = ({
 
     }, []);
 
-    const handleSubmit = useCallback((e, stepEditingValue) => {
+    const handleSubmit = debounceWith250ms((e, stepEditingValue) => {
         const available = checkStorageListAvailable(e);
 
         if (!available) {
@@ -125,8 +86,7 @@ const useAddNoahStep = ({
         setUserInputError(false);
         handleChangeStep(e, stepEditingValue);
         setFormikValues(defaultFormikValues);
-
-    }, [checkStorageListAvailable, handleChangeStep]);
+    });
 
     const handleCancel = useCallback(() => {
         Modal.confirm({
@@ -234,6 +194,8 @@ const useAddNoahStep = ({
             }
         } else {
             setFormikValues(defaultFormikValues);
+            updateServerFileMap({key: ''});
+            updateLocalFileMap({key: ''});
         }
     }, [visible, stepEditingValue?.type, formikValues.type]);
 

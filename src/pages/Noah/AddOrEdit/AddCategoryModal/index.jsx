@@ -3,10 +3,11 @@
  */
 
 import {Button, Input, Modal} from '@osui/ui';
-import React, {useCallback, useState} from 'react';
+import React, {useState} from 'react';
 import * as yup from 'yup';
 import FormikComp from '../../../../components/FormikComp';
 import cx from './index.less';
+import {debounceWith250ms} from '../../../../utils';
 
 const defaultInitialValues = {
     name: '',
@@ -42,11 +43,11 @@ const AddCategoryModal = ({visible, setVisible, handleSubmitAddCategory}) => {
                 .max(20, '分类名称限20个字符'),
         },
     };
-    const handleSubmit = useCallback(values => {
+    const handleSubmit = debounceWith250ms(values => {
         if (handleSubmitAddCategory(values)) {
             setVisible(false);
         }
-    }, [handleSubmitAddCategory, setVisible]);
+    });
 
     const modalProps = {
         title: '新增分类',

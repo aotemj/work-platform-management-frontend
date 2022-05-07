@@ -5,6 +5,7 @@ import * as yup from 'yup';
 import FormikComp from '../../../../../../components/FormikComp';
 import cx from './index.less';
 import {CONFIRM_RESULTS} from '../../../constant';
+import {debounceWith250ms} from '../../../../../../utils';
 
 const {TextArea} = Input;
 const defaultData = {reason: ''};
@@ -12,7 +13,7 @@ const NoPassReasonModal = ({visible, setVisible, confirmManualResult, stageTrigg
     const [disabled, setDisabled] = useState(true);
     const formRef = useRef();
 
-    const handleSubmit = async () => {
+    const handleSubmit = debounceWith250ms(async () => {
         const {reason} = formRef.current?.values;
         const params = {
             confirmResult: CONFIRM_RESULTS.NO_PASS,
@@ -20,7 +21,7 @@ const NoPassReasonModal = ({visible, setVisible, confirmManualResult, stageTrigg
             id: stageTriggerItemId,
         };
         await confirmManualResult(params);
-    };
+    });
 
     const modalProps = {
         visible,

@@ -1,57 +1,22 @@
-import {Radio, Spin, TreeSelect} from '@osui/ui';
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import {TreeSelect} from '@osui/ui';
+import React, {useEffect, useMemo, useState} from 'react';
 import {clone} from 'ramda';
+
+import DropDownRender from './DropDownRender';
 
 import {AGENT_STATUS, AGENT_TERMINAL_TYPE, LABEL_TYPE, GROUP_TYPES} from '../../constants';
 import {getCompanyId, getSpaceId} from '../../../../../utils/getRouteIds';
 import {request} from '../../../../../request/fetch';
 import cx from './index.less';
-import {assembleExternalUrl, debounceWith250ms, debounceWith500ms} from '../../../../../utils';
+import {
+    assembleExternalUrl,
+    debounceWith250ms,
+    debounceWith500ms,
+    getDefaultPopupContainer,
+} from '../../../../../utils';
 import {GLOBAL_URLS, IS_PROD, PAGE_SIZE_OF_NO_PAGINATION} from '../../../../../constant';
 import {agents, labels} from '../../../../../temp/agents';
-
-const getAgentMap = agents => {
-    const tempMap = {};
-    const agentMapByUuid = {};
-    for (let i = 0; i < agents.length; i++) {
-        const agent = agents[i];
-        agent.title = agent.name;
-        agent.value = agent.uuid;
-        agent.key = agent.uuid;
-        agent.disabled = agent.status !== AGENT_STATUS.ONLINE;
-
-        const tempObj = tempMap[agent.labelId];
-        agentMapByUuid[agent.uuid] = agent;
-        if (tempObj) {
-            const {activeCount: originActiveCount, list: originList, totalCount: originTotalCount} = tempObj;
-            tempMap[agent.labelId] = {
-                list: [...originList, agent],
-                activeCount: agent.status === AGENT_STATUS.ONLINE ? originActiveCount + 1 : originActiveCount,
-                totalCount: originTotalCount + 1,
-            };
-        } else {
-            tempMap[agent.labelId] = {
-                list: [agent],
-                activeCount: agent.status === AGENT_STATUS.ONLINE ? 1 : 0,
-                totalCount: 1,
-            };
-        }
-    }
-    return {
-        tempMap,
-        agentMapByUuid,
-    };
-};
-
-const formatChildNodes = (label, agentObj = {list: [], activeCount: 0, totalCount: 0}) => {
-    const tempObj = clone(label);
-    const {deleteStatus} = tempObj;
-    tempObj.children = agentObj.list;
-    tempObj.activeCount = !deleteStatus ? agentObj.activeCount : 0;
-    tempObj.totalCount = agentObj.totalCount;
-
-    return tempObj;
-};
+import {formatChildNodes, getAgentMap} from './util';
 
 // label 处理
 const formatLabels = (agentMap, labels, currentType) => {
@@ -123,6 +88,7 @@ const TargetServer = ({
     allowClear = true,
     resetUserInputError,
     disabled,
+    name,
 }) => {
     const companyId = getCompanyId();
     const spaceId = getSpaceId();
@@ -139,10 +105,10 @@ const TargetServer = ({
 
     const handleSearch = debounceWith250ms(e => setLabelName(e));
 
-    const handleChangeType = useCallback(e => {
+    const handleChangeType = e => {
         handleSearch('');
         setType(e.target.value);
-    }, [handleSearch]);
+    };
 
     const isEnterPriseType = useMemo(() => {
         return getSpaceId() === '';
@@ -153,19 +119,14 @@ const TargetServer = ({
     }, [isEnterPriseType]);
 
     const fetchAgents = async () => {
-        // setOriginDataUpdated(true);
 
         return request({
             url: assembleExternalUrl(GLOBAL_URLS.AGENTS),
             params: {
-                // companyId: 'xly-poc',
                 companyUuid: companyId,
-                // linux, windows
                 type,
-                workspaceId: 'xly-poc',
-                // workspaceId: companyId,
+                workspaceId: companyId,
                 groupName: spaceId || companyId,
-                // groupName: 'iPipe',
                 groupType,
             },
         });
@@ -227,7 +188,7 @@ const TargetServer = ({
         setAgentMapByUuid(agentMapByUuid);
     });
 
-    const getActiveAgentInfoByLabel = useCallback(labelId => {
+    const getActiveAgentInfoByLabel = labelId => {
         const label = labelMap[labelId];
         if (label.deleteStatus) {
             return [];
@@ -242,17 +203,17 @@ const TargetServer = ({
             }
         }
         return res;
-    }, [labelMap]);
+    };
 
-    const filterAgent = useCallback(agent => {
+    const filterAgent = agent => {
         if (typeof agent === 'number') {
             return getActiveAgentInfoByLabel(agent);
         }
         return [agentMapByUuid[agent]];
 
-    }, [agentMapByUuid, getActiveAgentInfoByLabel]);
+    };
 
-    const onChange = useCallback(e => {
+    const onChange = e => {
         const agents = [];
         if (multiple) {
             for (let i = 0; i < e.length; i++) {
@@ -263,7 +224,7 @@ const TargetServer = ({
             agents.push(...filterAgent(e));
         }
         handleChange(agents, agentMapByUuid);
-    }, [agentMapByUuid, filterAgent, handleChange, multiple]);
+    };
 
     useEffect(() => {
         setNeedUpdate(visible);
@@ -277,8 +238,11 @@ const TargetServer = ({
         setNeedUpdate(true);
     }, [labelName, type]);
 
+    const dropDownRenderProps = {type, handleChangeType, loading};
+
     return (
         <TreeSelect
+            name={name}
             showSearch
             className={cx('agent-select-tree')}
             dropdownStyle={{maxHeight: 400, overflow: 'auto', width: '100%'}}
@@ -286,32 +250,15 @@ const TargetServer = ({
             showArrow
             allowClear={allowClear}
             multiple={multiple}
-            // open
             onSearch={handleSearch}
             treeData={treeData}
             filterTreeNode={false}
-            getPopupContainer={triggerNode => triggerNode.parentNode}
+            getPopupContainer={getDefaultPopupContainer}
             treeDefaultExpandAll
             dropdownClassName={cx('agent-select-tree-dropdown')}
             onFocus={resetUserInputError}
             disabled={disabled}
-            dropdownRender={originNode => {
-                return (
-                    <>
-                        <div className={cx('dropdown-custom-content')}>
-                            <Radio.Group
-                                options={Object.values(AGENT_TERMINAL_TYPE)}
-                                value={type}
-                                onChange={handleChangeType}
-                                optionType="button"
-                            />
-                        </div>
-                        <Spin spinning={loading}>
-                            {originNode}
-                        </Spin>
-                    </>
-                );
-            }}
+            dropdownRender={originNode => <DropDownRender originNode={originNode} {...dropDownRenderProps} />}
             {...field}
             onChange={onChange}
         />

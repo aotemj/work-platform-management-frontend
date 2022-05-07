@@ -6,7 +6,7 @@ import Layout from './Layout';
 export const fakeEvent = (name, value) => ({target: {name, value}});
 
 // eslint-disable-next-line max-len
-const layoutProps = ['id', 'layout', 'label', 'tooltip', 'required', 'errors', 'hints', 'className', 'style', 'labelClassName', 'hideLabel'];
+const layoutProps = ['id', 'layout', 'label', 'tooltip', 'required', 'errors', 'hints', 'className', 'style', 'labelClassName', 'hideLabel', 'hideError'];
 
 const formikProps = ['as', 'children', 'component', 'innerRef', 'name', 'render', 'validate'];
 

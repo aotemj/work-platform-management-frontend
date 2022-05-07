@@ -4,14 +4,21 @@ import * as yup from 'yup';
 import React from 'react';
 
 import ScriptContent from './ScriptContent';
-import cx from './index.less';
-import {NOTICE_APPROACHES, RUNNING_ENVIRONMENT, SCRIPTS_ORIGIN, TRANSMISSION_MODE} from '../constants';
 import FileSource from '../FileSource';
 import TargetServer from './TargetServer';
-import {ReactComponent as IconRemark} from '../../../../statics/icons/remark.svg';
-import SelectAll from '../../../../components/SelectAll';
-import {debounceWith250ms, loadMoreCallBackByScrolling} from '../../../../utils';
 import UploadInputNumber from '../../../../components/UploadInputNumber';
+import SelectAll from '../../../../components/SelectAll';
+import {ReactComponent as IconRemark} from '../../../../statics/icons/remark.svg';
+
+import {
+    defaultFormikValues,
+    NOTICE_APPROACHES,
+    RUNNING_ENVIRONMENT,
+    SCRIPTS_ORIGIN,
+    TRANSMISSION_MODE,
+} from '../constants';
+import cx from './index.less';
+import {debounceWith250ms, loadMoreCallBackByScrolling} from '../../../../utils';
 
 const {Option} = Select;
 const {TextArea} = Input;
@@ -40,6 +47,7 @@ export const getScriptExecuteFields = ({
             children: ({field, form: {values}}) => (
                 <Radio.Group
                     {...field}
+                    defaultValue={defaultFormikValues.runningEnvironment}
                     disabled={isFormDisabled}
                     options={Object.values(RUNNING_ENVIRONMENT).filter(item => !item.disabled)}
                     onChange={e => {
@@ -61,6 +69,7 @@ export const getScriptExecuteFields = ({
             children: ({field, form: {values}}) => (
                 <Radio.Group
                     {...field}
+                    defaultValue={formikValues.scriptOrigin}
                     options={Object.values(SCRIPTS_ORIGIN)
                         .map(item => ({...item, disabled: isFormDisabled && field.value !== item.value}))}
                     onChange={e => {
@@ -300,15 +309,17 @@ export const getFileDistribution = ({
             collapseProps: {
                 title: '文件来源',
                 autoOpen: true,
+                hideError: true,
                 formFields: [
                     {
                         name: 'storageFileList',
                         label: '源文件',
                         required: true,
                         hide: !isFileDistribution,
-                        children: ({field, form: {values}}) => {
+                        children: ({field, form, form: {values}}) => {
                             return (
                                 <FileSource
+                                    form={form}
                                     field={field}
                                     values={values}
                                     setFormValues={setFormValues}
@@ -326,8 +337,8 @@ export const getFileDistribution = ({
                             );
                         },
                         validate: isFileDistribution ? (yup.array().min(1, '请选择文件来源').of(yup.object({
-                            sourcePath: yup.string().ensure().required('请输入文件路径并选择相关服务器'),
-                            sourceResourceName: yup.string().ensure().required('请输入文件路径并选择相关服务器'),
+                            sourcePath: yup.string().ensure().required('请输入文件路径'),
+                            sourceUuid: yup.string().ensure().required('请选择服务器'),
                         }))) : null,
                     },
                 ],
@@ -362,6 +373,7 @@ export const getFileDistribution = ({
                             return (
                                 <Radio.Group
                                     {...field}
+                                    defaultValue={defaultFormikValues.transmissionMode}
                                     disabled={isFormDisabled}
                                     optionType="button"
                                     options={
@@ -386,6 +398,7 @@ export const getFileDistribution = ({
                         hide: !isFileDistribution,
                         children: ({field, form: {values}}) => (
                             <TargetServer
+                                name={'targetResourceList'}
                                 field={field}
                                 disabled={isFormDisabled}
                                 handleChange={(agents, agentMap) =>
@@ -395,7 +408,6 @@ export const getFileDistribution = ({
                         ),
                         validate: yup
                             .array()
-                            .ensure()
                             .min(1, '请选择目标服务器'),
                     },
                 ],

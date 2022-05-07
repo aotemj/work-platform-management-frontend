@@ -7,6 +7,7 @@ import diskSpaceReducer, {diskSpaceNameSpace} from '../reduxSlice/diskSpace/disk
 import executionDetailReducer, {executionDetailNameSpace} from '../reduxSlice/execution/detailSlice';
 import noahDetailReducer, {noahDetailNameSpace} from '../reduxSlice/noah/detailSlice';
 import currentUserReducer, {currentUserNameSpace} from '../reduxSlice/uesr/currentUserSlice';
+import uploadDetailReducer, {uploadDetailNameSpace} from '../reduxSlice/fileUpload/uploadDetailSlice';
 
 const store = configureStore({
     reducer: {
@@ -17,6 +18,7 @@ const store = configureStore({
         [noahDetailNameSpace]: noahDetailReducer,
         [executionDetailNameSpace]: executionDetailReducer,
         [diskSpaceNameSpace]: diskSpaceReducer,
+        [uploadDetailNameSpace]: uploadDetailReducer,
     },
 });
 
