@@ -1,16 +1,17 @@
 import service from './service'
 import { REQUEST_METHODS, REQUEST_TYPE } from '../constant'
+import { AxiosRequestHeadersExtend, RequestParams, RequestResults } from './types'
 
-interface Headers {
-  'Content-Type'?: string
-  'Access-Control-Allow-Origin'?: string
-}
-
-export const fetch = async (url, params, method, type) => {
+export const fetch = async ({
+  url,
+  params,
+  method,
+  type
+}: RequestParams): Promise<RequestResults> => {
   const { POST, GET, PUT } = REQUEST_METHODS
   const { FORM_DATA, BLOB, JSON: JSON_TYPE } = REQUEST_TYPE
 
-  const headers: Headers = {
+  const headers: AxiosRequestHeadersExtend = {
     'Access-Control-Allow-Origin': '*'
   }
   if (method === POST || method === PUT) {
@@ -20,12 +21,12 @@ export const fetch = async (url, params, method, type) => {
       headers['Content-Type'] = 'application/json'
     }
   }
+
   return await service({
-    method: method,
+    method,
     headers,
     url,
     data: method === POST || method === PUT ? params : '',
-    response: type === BLOB ? BLOB : JSON_TYPE,
     responseType: type === BLOB ? BLOB : JSON_TYPE,
     transformRequest: [
       function (data) {
@@ -47,10 +48,17 @@ export const fetch = async (url, params, method, type) => {
   })
 }
 
-export const request = async ({ url, params, method = REQUEST_METHODS.GET, type }) => {
+export const request = async ({
+  url,
+  params,
+  method = REQUEST_METHODS.GET,
+  type
+}: RequestParams): Promise<RequestResults> => {
   return await new Promise((resolve, reject) => {
-    fetch(url, params, method, type).then(res => {
+    fetch({ url, params, method, type }).then(res => {
       resolve(res)
+    }).catch(e => {
+      reject(e)
     })
   })
 }

@@ -1,20 +1,13 @@
-import axios, { AxiosRequestConfig, AxiosRequestHeaders, AxiosResponse } from 'axios'
+import axios, { AxiosResponse, AxiosInstance } from 'axios'
 import { isEmpty } from 'ramda'
 import { message } from '@osui/ui'
 import { getCompanyId, getSpaceId } from '../utils/getRouteIds'
-import { Toast } from '../utils'
+import { generateResponseMessage, Toast } from '../utils'
+import { AxiosRequestConfigExtend } from './types'
 
-const service = axios.create({
+const service: AxiosInstance = axios.create({
   // timeout: 30000,
 })
-
-interface AxiosRequestHeadersExtend extends AxiosRequestHeaders {
-  [props: string]: string|number|boolean
-}
-
-interface AxiosRequestConfigExtend extends AxiosRequestConfig {
-  headers?: AxiosRequestHeadersExtend
-}
 
 const companyId = getCompanyId()
 const projectId = getSpaceId()
@@ -63,13 +56,12 @@ service.interceptors.response.use(
     }
   },
   async error => {
-    const { status, data: { msg = '' } } = error.response
+    const { status, data } = error.response
     let finalMessage = ''
-    let isEmptyMessage = isEmpty(msg)
     const localtions = window.location
     switch (status) {
       case 400:
-        finalMessage = !isEmptyMessage ? msg : '错误的请求，请检查确认'
+        finalMessage = generateResponseMessage(data, '错误的请求，请检查确认')
         break
       case 401:
         window.location.href = `${localtions.origin}/login?redirect=${encodeURIComponent(localtions.href)}`
@@ -81,32 +73,32 @@ service.interceptors.response.use(
         window.location.href = `${localtions.origin}/${getCompanyId()}/${getSpaceId()}/403`
         break
       case 404:
-        finalMessage = !isEmpty(msg) ? msg : '资源为空'
+        finalMessage = generateResponseMessage(data, '资源为空')
         break
       case 500:
-        finalMessage = isEmptyMessage ? msg: '服务异常，请刷新重试或联系管理员'
+        finalMessage = generateResponseMessage(data, '服务异常，请刷新重试或联系管理员')
         break
       case 502:
-        finalMessage = isEmptyMessage ? msg : '网关异常，请联系管理员'
+        finalMessage = generateResponseMessage(data, '网关异常，请联系管理员')
         break
       case 503:
-        finalMessage = isEmptyMessage ? msg : '服务不可用，请联系管理员'
+        finalMessage = generateResponseMessage(data, '服务不可用，请联系管理员')
         break
       case 504:
-        msg = data.msg || '网关请求超时，请刷新重试或联系管理员'
+        finalMessage = generateResponseMessage(data, '网关请求超时，请刷新重试或联系管理员')
         break
       default:
-        msg = data.msg || '服务器错误'
+        finalMessage = generateResponseMessage(data, '服务器错误')
         break
     }
-    if (msg) {
-      Toast.error(msg)
+    if (!isEmpty(finalMessage)) {
+      Toast.error(finalMessage)
     }
-    return await Promise.resolve({
+    return {
       status: -1,
       data: null,
-      msg: msg
-    })
+      msg: finalMessage
+    }
   }
 )
 

@@ -1,4 +1,4 @@
-import {getCompanyId} from '../utils/getRouteIds'
+import { getCompanyId } from '../utils/getRouteIds'
 
 export const IS_PROD = process.env.NODE_ENV === 'production'
 
@@ -19,17 +19,22 @@ export const DEFAULT_PAGINATION = {
 
 export const CONTAINER_DOM_ID = 'osc-noah'
 
-export const REQUEST_METHODS = {
-  GET: 'GET',
-  POST: 'post',
-  PUT: 'put',
-  DELETE: 'delete'
+export enum REQUEST_METHODS {
+  GET= 'get',
+  POST= 'post',
+  PUT= 'put',
+  DELETE= 'delete'
 }
 
-export const REQUEST_TYPE = {
-  FORM_DATA: 'formData',
-  BLOB: 'blob',
-  JSON: 'json'
+// export const REQUEST_TYPE = {
+//   FORM_DATA: 'formData',
+//   BLOB: 'blob',
+//   JSON: 'json'
+// }
+export enum REQUEST_TYPE {
+  FORM_DATA= 'formData',
+  BLOB= 'blob',
+  JSON= 'json'
 }
 
 export const SYMBOL_FOR_ALL = '*'

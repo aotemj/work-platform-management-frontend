@@ -1,7 +1,7 @@
 declare module '*.css'
 declare module '*.less'
 declare module '*.svg' {
-  export function ReactComponent (
+  export function ReactComponent(
     props: React.SVGProps<SVGSVGElement>,
   ): React.ReactElement
 
@@ -9,7 +9,7 @@ declare module '*.svg' {
   export default url
 }
 
-interface Window {
+type Window = {
   globalState: any
   env: any
   singleSpaNavigate: any
