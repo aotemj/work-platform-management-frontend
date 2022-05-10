@@ -23,5 +23,7 @@ module.exports = {
     'react',
     '@typescript-eslint'
   ],
-  rules: {}
+  rules: {
+    '@typescript-eslint/consistent-type-definitions': ['error', 'type']
+  }
 }
